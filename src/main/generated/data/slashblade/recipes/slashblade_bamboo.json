@@ -1,0 +1,21 @@
+{
+  "type": "slashblade:shaped_blade",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "item": "slashblade:slashblade_wood"
+    },
+    "L": {
+      "tag": "c:bamboo"
+    }
+  },
+  "pattern": [
+    "  L",
+    " L ",
+    "B  "
+  ],
+  "result": {
+    "item": "slashblade:slashblade_bamboo"
+  },
+  "show_notification": true
+}

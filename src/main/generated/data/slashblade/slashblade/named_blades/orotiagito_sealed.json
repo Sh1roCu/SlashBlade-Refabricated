@@ -1,0 +1,12 @@
+{
+  "name": "slashblade:orotiagito_sealed",
+  "properties": {
+    "attack_base": 5.0,
+    "max_damage": 60,
+    "slash_art": "slashblade:wave_edge"
+  },
+  "render": {
+    "model": "slashblade:model/named/agito.obj",
+    "texture": "slashblade:model/named/agito_true.png"
+  }
+}

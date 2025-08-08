@@ -1,0 +1,48 @@
+{
+  "package": "cn.sh1rocu.slashblade.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "required": true,
+  "minVersion": "0.8",
+  "plugin": "cn.sh1rocu.slashblade.util.MixinPlugin",
+  "refmap": "slashblade.refmap.json",
+  "mixins": [
+    "accessor.AnvilMenuAccessor",
+    "accessor.ServerPlayerAccessor",
+    "common.AbstractHorseMixin",
+    "common.AnvilMenuMixin",
+    "common.BundlePacketMixin",
+    "common.ClipContextMixin",
+    "common.EnchantmentHelperMixin",
+    "common.EnchantmentMixin",
+    "common.EnderDragonMixin",
+    "common.EntityMixin",
+    "common.ItemEntityMixin",
+    "common.ItemStackMixin",
+    "common.LivingEntityMixin",
+    "common.MagmaCubeMixin",
+    "common.MobMixin",
+    "common.PersistentEntitySectionManagerMixin",
+    "common.PlayerMixin",
+    "common.ServerLevelMixin"
+  ],
+  "client": [
+    "accessor.AdvancementsScreenAccessor",
+    "accessor.AdvancementTabAccessor",
+    "accessor.AdvancementWidgetAccessor",
+    "accessor.EntityRendererAccessor",
+    "accessor.LivingEntityRendererAccessor",
+    "client.ClientLevelMixin",
+    "client.EntityRenderDispatcherMixin",
+    "client.ItemEntityRendererMixin",
+    "client.ItemRendererMixin",
+    "client.LivingEntityRendererMixin",
+    "client.LocalPlayerMixin",
+    "client.MinecraftMixin",
+    "client.PlayerRendererMixin",
+    "client.RemotePlayerMixin",
+    "client.TextureAtlasMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "type": "slashblade:shaped_blade",
+  "blade": "slashblade:rodai_netherite",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "type": "slashblade:blade",
+      "item": "slashblade:slashblade_silverbamboo",
+      "request": {
+        "kill": 100,
+        "sword_type": [
+          "broken"
+        ]
+      }
+    },
+    "P": {
+      "item": "slashblade:proudsoul_trapezohedron"
+    },
+    "S": {
+      "tag": "c:string"
+    },
+    "W": {
+      "item": "minecraft:netherite_sword"
+    }
+  },
+  "pattern": [
+    "  P",
+    " B ",
+    "WS "
+  ],
+  "result": {
+    "item": "slashblade:slashblade"
+  },
+  "show_notification": true
+}

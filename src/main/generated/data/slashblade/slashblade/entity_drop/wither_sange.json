@@ -1,0 +1,6 @@
+{
+  "blade": "slashblade:sange",
+  "drop_rate": 0.3,
+  "entity_type": "minecraft:wither",
+  "request_slashblade": true
+}

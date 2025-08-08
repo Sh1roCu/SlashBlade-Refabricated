@@ -1,0 +1,25 @@
+{
+  "enchantments": [
+    {
+      "id": "minecraft:smite",
+      "lvl": 3
+    },
+    {
+      "id": "minecraft:unbreaking",
+      "lvl": 3
+    }
+  ],
+  "name": "slashblade:tagayasan",
+  "properties": {
+    "attack_base": 5.0,
+    "max_damage": 70,
+    "slash_art": "slashblade:drive_vertical",
+    "sword_type": [
+      "bewitched"
+    ]
+  },
+  "render": {
+    "carry_type": "katana",
+    "texture": "slashblade:model/named/tagayasan.png"
+  }
+}

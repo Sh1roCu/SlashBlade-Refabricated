@@ -1,0 +1,39 @@
+{
+  "type": "slashblade:shaped_blade",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "type": "slashblade:blade",
+      "item": "slashblade:slashblade_white",
+      "request": {
+        "sword_type": [
+          "broken"
+        ]
+      }
+    },
+    "D": {
+      "tag": "c:storage_blocks/coal"
+    },
+    "E": {
+      "tag": "c:rods/blaze"
+    },
+    "I": {
+      "tag": "c:ingots/gold"
+    },
+    "P": {
+      "tag": "c:dyes/blue"
+    },
+    "S": {
+      "tag": "c:string"
+    }
+  },
+  "pattern": [
+    " EI",
+    "PBD",
+    "SI "
+  ],
+  "result": {
+    "item": "slashblade:slashblade"
+  },
+  "show_notification": true
+}

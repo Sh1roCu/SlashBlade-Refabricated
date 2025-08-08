@@ -1,0 +1,29 @@
+{
+  "enchantments": [
+    {
+      "id": "minecraft:smite",
+      "lvl": 4
+    },
+    {
+      "id": "minecraft:knockback",
+      "lvl": 2
+    },
+    {
+      "id": "minecraft:fire_aspect",
+      "lvl": 2
+    }
+  ],
+  "name": "slashblade:fox_black",
+  "properties": {
+    "attack_base": 5.0,
+    "max_damage": 70,
+    "slash_art": "slashblade:piercing",
+    "sword_type": [
+      "bewitched"
+    ]
+  },
+  "render": {
+    "model": "slashblade:model/named/sange/sange.obj",
+    "texture": "slashblade:model/named/sange/black.png"
+  }
+}

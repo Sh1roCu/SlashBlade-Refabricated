@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_slashblade_bamboo": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "slashblade:slashblade_bamboo"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "slashblade:slashblade_silverbamboo"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_slashblade_bamboo",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "slashblade:slashblade_silverbamboo"
+    ]
+  },
+  "sends_telemetry_event": false
+}

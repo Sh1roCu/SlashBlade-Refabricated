@@ -1,0 +1,30 @@
+{
+  "type": "slashblade:shaped_blade",
+  "blade": "slashblade:sabigatana",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "type": "slashblade:blade",
+      "item": "slashblade:slashblade",
+      "request": {
+        "name": "slashblade:sabigatana",
+        "sword_type": [
+          "broken",
+          "sealed"
+        ]
+      }
+    },
+    "P": {
+      "item": "slashblade:proudsoul_ingot"
+    }
+  },
+  "pattern": [
+    "  P",
+    " P ",
+    "B  "
+  ],
+  "result": {
+    "item": "slashblade:slashblade"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,31 @@
+{
+  "display": {
+    "title": {
+      "translate": "item.slashblade.slashblade_wood"
+    },
+    "description": {
+      "translate": "item.slashblade.slashblade_wood.desc"
+    },
+    "icon": {
+      "item": "slashblade:slashblade_wood"
+    },
+    "frame": "task"
+  },
+  "parent": "slashblade:root",
+  "criteria": {
+    "crafting": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["slashblade:slashblade_wood"]
+          }
+        ]
+      }
+    }
+  },
+  "rewards": {
+    "recipes": ["slashblade:slashblade_white","slashblade:slashblade_bamboo"],
+    "loot": ["slashblade:rewards/wood"]
+  }
+}

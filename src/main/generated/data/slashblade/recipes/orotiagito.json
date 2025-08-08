@@ -1,0 +1,32 @@
+{
+  "type": "slashblade:shaped_blade",
+  "blade": "slashblade:orotiagito",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "type": "slashblade:blade",
+      "item": "slashblade:slashblade",
+      "request": {
+        "kill": 1000,
+        "name": "slashblade:orotiagito_sealed",
+        "proud_soul": 1000,
+        "refine": 10
+      }
+    },
+    "P": {
+      "item": "slashblade:proudsoul"
+    },
+    "S": {
+      "item": "slashblade:proudsoul_sphere"
+    }
+  },
+  "pattern": [
+    "PSP",
+    "SBS",
+    "PSP"
+  ],
+  "result": {
+    "item": "slashblade:slashblade"
+  },
+  "show_notification": true
+}

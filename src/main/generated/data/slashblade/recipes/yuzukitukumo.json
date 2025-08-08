@@ -1,0 +1,48 @@
+{
+  "type": "slashblade:shaped_blade",
+  "blade": "slashblade:yuzukitukumo",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "type": "slashblade:blade",
+      "item": "slashblade:slashblade",
+      "request": {
+        "enchantments": [
+          {
+            "id": "minecraft:fire_aspect"
+          }
+        ]
+      }
+    },
+    "D": {
+      "tag": "c:storage_blocks/diamond"
+    },
+    "E": {
+      "tag": "c:storage_blocks/emerald"
+    },
+    "G": {
+      "tag": "c:storage_blocks/gold"
+    },
+    "I": {
+      "tag": "c:storage_blocks/iron"
+    },
+    "L": {
+      "tag": "c:storage_blocks/lapis"
+    },
+    "R": {
+      "tag": "c:storage_blocks/redstone"
+    },
+    "S": {
+      "item": "slashblade:proudsoul_sphere"
+    }
+  },
+  "pattern": [
+    "ESD",
+    "RBL",
+    "ISG"
+  ],
+  "result": {
+    "item": "slashblade:slashblade"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,15 @@
+{
+  "name": "slashblade:yamato",
+  "properties": {
+    "attack_base": 7.0,
+    "sword_type": [
+      "broken",
+      "sealed"
+    ]
+  },
+  "render": {
+    "carry_type": "default",
+    "model": "slashblade:model/named/yamato.obj",
+    "texture": "slashblade:model/named/yamato.png"
+  }
+}

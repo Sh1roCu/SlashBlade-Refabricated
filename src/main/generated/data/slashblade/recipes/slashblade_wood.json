@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "item": "minecraft:wooden_sword"
+    },
+    "L": {
+      "tag": "minecraft:logs"
+    }
+  },
+  "pattern": [
+    "  L",
+    " L ",
+    "B  "
+  ],
+  "result": {
+    "item": "slashblade:slashblade_wood"
+  },
+  "show_notification": true
+}

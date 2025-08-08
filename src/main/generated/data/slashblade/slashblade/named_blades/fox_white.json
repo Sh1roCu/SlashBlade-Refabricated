@@ -1,0 +1,36 @@
+{
+  "enchantments": [
+    {
+      "id": "minecraft:knockback",
+      "lvl": 2
+    },
+    {
+      "id": "minecraft:bane_of_arthropods",
+      "lvl": 2
+    },
+    {
+      "id": "minecraft:unbreaking",
+      "lvl": 3
+    },
+    {
+      "id": "minecraft:fire_aspect",
+      "lvl": 2
+    },
+    {
+      "id": "minecraft:looting",
+      "lvl": 3
+    }
+  ],
+  "name": "slashblade:fox_white",
+  "properties": {
+    "attack_base": 5.0,
+    "max_damage": 70,
+    "sword_type": [
+      "bewitched"
+    ]
+  },
+  "render": {
+    "model": "slashblade:model/named/sange/sange.obj",
+    "texture": "slashblade:model/named/sange/white.png"
+  }
+}
