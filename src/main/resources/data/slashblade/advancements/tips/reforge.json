@@ -1,0 +1,21 @@
+{
+  "display": {
+    "title": {
+      "translate": "adv.slashblade.reforge"
+    },
+    "description": {
+      "translate": "adv.slashblade.reforge.desc"
+    },
+    "icon": {
+      "item": "minecraft:anvil",
+      "nbt": "{Crafting:\"slashblade:anvilcrafting/reforge\"}"
+    },
+    "frame": "task"
+  },
+  "parent": "slashblade:root",
+  "criteria": {
+    "customtrigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

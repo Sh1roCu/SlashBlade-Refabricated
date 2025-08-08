@@ -1,0 +1,11 @@
+{
+  "name": "slashblade:rodai_netherite",
+  "properties": {
+    "attack_base": 8.0,
+    "max_damage": 2031
+  },
+  "render": {
+    "carry_type": "default",
+    "texture": "slashblade:model/rodai_netherite.png"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "type": "slashblade:shaped_blade",
+  "blade": "slashblade:fox_white",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "item": "minecraft:blaze_powder"
+    },
+    "C": {
+      "type": "slashblade:blade",
+      "item": "slashblade:slashblade",
+      "request": {
+        "enchantments": [
+          {
+            "id": "minecraft:looting"
+          }
+        ],
+        "name": "slashblade:ruby"
+      }
+    },
+    "E": {
+      "tag": "c:obsidian"
+    },
+    "F": {
+      "tag": "c:feathers"
+    },
+    "Q": {
+      "tag": "c:storage_blocks/quartz"
+    },
+    "S": {
+      "item": "slashblade:proudsoul_crystal"
+    },
+    "W": {
+      "tag": "c:crops/wheat"
+    }
+  },
+  "pattern": [
+    " EF",
+    "BCS",
+    "WQ "
+  ],
+  "result": {
+    "item": "slashblade:slashblade"
+  },
+  "show_notification": true
+}

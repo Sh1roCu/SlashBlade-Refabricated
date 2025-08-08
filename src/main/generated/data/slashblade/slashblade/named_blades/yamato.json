@@ -1,0 +1,28 @@
+{
+  "enchantments": [
+    {
+      "id": "minecraft:soul_speed",
+      "lvl": 2
+    },
+    {
+      "id": "minecraft:power",
+      "lvl": 5
+    },
+    {
+      "id": "minecraft:feather_falling",
+      "lvl": 4
+    }
+  ],
+  "name": "slashblade:yamato",
+  "properties": {
+    "attack_base": 7.0,
+    "sword_type": [
+      "bewitched"
+    ]
+  },
+  "render": {
+    "carry_type": "default",
+    "model": "slashblade:model/named/yamato.obj",
+    "texture": "slashblade:model/named/yamato.png"
+  }
+}

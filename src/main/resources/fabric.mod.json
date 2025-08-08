@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "id": "slashblade",
+  "version": "${version}",
+  "name": "SlashBlade: Refabricated",
+  "description": "SlashBlade: Resharped unofficial Fabric port",
+  "authors": ["Sh1roCu"],
+  "contact": {},
+  "license": "MIT",
+  "icon": "slashblade.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "mods.flammpfeil.slashblade.data.DataGen"
+    ],
+    "client": [
+      "cn.sh1rocu.slashblade.client.SlashBladeFabricClient"
+    ],
+    "main": [
+      "cn.sh1rocu.slashblade.SlashBladeFabric"
+    ],
+    "cardinal-components-item": [
+      "mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade"
+    ],
+    "cardinal-components-entity": [
+      "mods.flammpfeil.slashblade.capability.inputstate.CapabilityInputState",
+      "mods.flammpfeil.slashblade.capability.concentrationrank.CapabilityConcentrationRank",
+      "mods.flammpfeil.slashblade.capability.mobeffect.CapabilityMobEffect"
+    ],
+    "jei_mod_plugin": [
+      "mods.flammpfeil.slashblade.compat.jei.JEICompat"
+    ]
+  },
+  "custom": {
+    "cardinal-components": [
+      "slashblade:blade_state",
+      "slashblade:input_state",
+      "slashblade:concentration",
+      "slashblade:mob_effect"
+    ]
+  },
+  "mixins": [
+    "slashblade.mixins.json",
+    "slashblade.fabric.mixins.json",
+    "slashblade.thetwilightforest.mixins.json"
+  ],
+  "accessWidener": "slashblade.accesswidener",
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": [
+      "1.20",
+      "1.20.1"
+    ],
+    "forgeconfigapiport": "*"
+  }
+}

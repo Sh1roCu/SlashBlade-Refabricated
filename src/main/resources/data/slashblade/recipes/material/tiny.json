@@ -1,0 +1,12 @@
+{
+    "type": "slashblade:proudsoul",
+    "ingredients": [
+        {
+            "item": "slashblade:proudsoul"
+        }
+    ],
+    "result": {
+        "item": "slashblade:proudsoul_tiny",
+        "count": 4
+    }
+}

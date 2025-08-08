@@ -1,0 +1,16 @@
+{
+  "package": "mods.flammpfeil.slashblade.thetwilightforest.mixin",
+  "plugin": "mods.flammpfeil.slashblade.thetwilightforest.mixin.TFMixinPlugin",
+  "compatibilityLevel": "JAVA_17",
+  "required": true,
+  "minVersion": "0.8",
+  "refmap": "slashblade.refmap.json",
+  "mixins": [
+    "UncraftingMenuMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

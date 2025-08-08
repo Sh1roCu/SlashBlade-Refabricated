@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_proudsoul_ingot": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "slashblade:proudsoul_ingot"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "slashblade:sabigatana"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_proudsoul_ingot",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "slashblade:sabigatana"
+    ]
+  },
+  "sends_telemetry_event": false
+}

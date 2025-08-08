@@ -1,0 +1,6 @@
+{
+  "blade": "slashblade:yasha",
+  "drop_rate": 0.05,
+  "entity_type": "twilightforest:minotaur",
+  "request_slashblade": true
+}

@@ -1,0 +1,29 @@
+{
+  "display": {
+    "title": {
+      "translate": "item.slashblade.slashblade"
+    },
+    "description": {
+      "translate": "item.slashblade.slashblade.desc"
+    },
+    "icon": {
+      "item": "slashblade:slashblade"
+    },
+    "frame": "task",
+    "hidden": true
+  },
+  "parent": "slashblade:blade/s_white",
+  "criteria": {
+    "crafting": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["slashblade:slashblade"],
+            "nbt": "{ShareTag:{translationKey:\"\"}}"
+          }
+        ]
+      }
+    }
+  }
+}

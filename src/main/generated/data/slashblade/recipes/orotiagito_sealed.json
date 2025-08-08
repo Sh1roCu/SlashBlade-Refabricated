@@ -1,0 +1,27 @@
+{
+  "type": "slashblade:shaped_blade",
+  "blade": "slashblade:orotiagito_sealed",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "type": "slashblade:blade",
+      "item": "slashblade:slashblade",
+      "request": {
+        "kill": 100,
+        "name": "slashblade:orotiagito_rust"
+      }
+    },
+    "S": {
+      "item": "slashblade:proudsoul"
+    }
+  },
+  "pattern": [
+    " S ",
+    "SBS",
+    " S "
+  ],
+  "result": {
+    "item": "slashblade:slashblade"
+  },
+  "show_notification": true
+}

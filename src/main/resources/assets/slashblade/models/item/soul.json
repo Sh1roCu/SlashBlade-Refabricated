@@ -1,0 +1,13 @@
+{
+  "loader": "porting_lib:obj",
+  "porting_lib:obj_marker": true,
+  "model": "slashblade:models/item/soul.obj",
+  "automaticCulling": true,
+  "shadeQuads": true,
+  "flipV": true,
+  "emissiveAmbient": true,
+  "textures": {
+    "soul": "slashblade:item/soul",
+    "particle": "slashblade:item/soul"
+  }
+}

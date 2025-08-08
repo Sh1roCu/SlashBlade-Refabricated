@@ -1,0 +1,37 @@
+{
+  "type": "slashblade:shaped_blade",
+  "blade": "slashblade:ruby",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "type": "slashblade:blade",
+      "item": "slashblade:slashblade_silverbamboo",
+      "request": {
+        "sword_type": [
+          "broken"
+        ]
+      }
+    },
+    "D": {
+      "tag": "c:dyes/red"
+    },
+    "I": {
+      "item": "slashblade:proudsoul"
+    },
+    "P": {
+      "item": "slashblade:proudsoul_ingot"
+    },
+    "S": {
+      "tag": "c:string"
+    }
+  },
+  "pattern": [
+    "DPI",
+    "PB ",
+    "S  "
+  ],
+  "result": {
+    "item": "slashblade:slashblade"
+  },
+  "show_notification": true
+}

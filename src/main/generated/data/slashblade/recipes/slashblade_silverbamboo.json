@@ -1,0 +1,33 @@
+{
+  "type": "slashblade:shaped_blade",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "item": "slashblade:slashblade_bamboo"
+    },
+    "D": {
+      "tag": "c:dyes/black"
+    },
+    "E": {
+      "item": "minecraft:egg"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "S": {
+      "tag": "c:string"
+    }
+  },
+  "pattern": [
+    " EI",
+    "SBD",
+    "PS "
+  ],
+  "result": {
+    "item": "slashblade:slashblade_silverbamboo"
+  },
+  "show_notification": true
+}

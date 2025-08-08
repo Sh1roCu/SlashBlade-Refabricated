@@ -1,0 +1,15 @@
+{
+  "package": "mods.flammpfeil.slashblade.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "required": true,
+  "minVersion": "0.8",
+  "refmap": "slashblade.refmap.json",
+  "mixins": [
+    "MixinBlockBehaviour"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

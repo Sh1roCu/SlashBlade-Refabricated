@@ -1,0 +1,11 @@
+{
+  "name": "slashblade:rodai_wooden",
+  "properties": {
+    "attack_base": 2.0,
+    "max_damage": 60
+  },
+  "render": {
+    "carry_type": "default",
+    "texture": "slashblade:model/rodai_wooden.png"
+  }
+}

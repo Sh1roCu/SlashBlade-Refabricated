@@ -1,0 +1,1 @@
+package mods.flammpfeil.slashblade.compat.ftbquests;

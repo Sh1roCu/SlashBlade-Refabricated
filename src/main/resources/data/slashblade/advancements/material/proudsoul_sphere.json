@@ -1,0 +1,31 @@
+{
+  "display": {
+    "title": {
+      "translate": "item.slashblade.proudsoul_sphere"
+    },
+    "description": {
+      "translate": "adv.slashblade.proudsoul_sphere"
+    },
+    "icon": {
+      "item": "slashblade:proudsoul_sphere",
+      "nbt": "{Crafting:\"slashblade:material/sphere_smelting\"}"
+    },
+    "frame": "task"
+  },
+  "parent": "slashblade:material/proudsoul_ingot",
+  "criteria": {
+    "BrokenBlade": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["slashblade:proudsoul_sphere"]
+          }
+        ]
+      }
+    }
+  },
+  "rewards": {
+    "recipes": ["slashblade:material/crystal_blasting"]
+  }
+}
