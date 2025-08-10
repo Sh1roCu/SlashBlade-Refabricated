@@ -4,6 +4,7 @@
   "category": "equipment",
   "key": {
     "B": {
+      "fabric:type": "slashblade:blade",
       "type": "slashblade:blade",
       "item": "slashblade:slashblade_silverbamboo",
       "request": {
@@ -13,7 +14,7 @@
       }
     },
     "D": {
-      "tag": "c:dyes/red"
+      "tag": "c:red_dyes"
     },
     "I": {
       "item": "slashblade:proudsoul"

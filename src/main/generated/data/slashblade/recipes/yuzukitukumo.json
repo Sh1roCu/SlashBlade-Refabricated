@@ -4,6 +4,7 @@
   "category": "equipment",
   "key": {
     "B": {
+      "fabric:type": "slashblade:blade",
       "type": "slashblade:blade",
       "item": "slashblade:slashblade",
       "request": {
@@ -15,22 +16,22 @@
       }
     },
     "D": {
-      "tag": "c:storage_blocks/diamond"
+      "tag": "c:diamond_blocks"
     },
     "E": {
-      "tag": "c:storage_blocks/emerald"
+      "tag": "c:emerald_blocks"
     },
     "G": {
-      "tag": "c:storage_blocks/gold"
+      "tag": "c:gold_blocks"
     },
     "I": {
-      "tag": "c:storage_blocks/iron"
+      "tag": "c:iron_blocks"
     },
     "L": {
-      "tag": "c:storage_blocks/lapis"
+      "tag": "c:lapis_blocks"
     },
     "R": {
-      "tag": "c:storage_blocks/redstone"
+      "tag": "c:redstone_blocks"
     },
     "S": {
       "item": "slashblade:proudsoul_sphere"

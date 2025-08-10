@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.ability;
 
 import cn.sh1rocu.slashblade.api.event.EntityJoinLevelEvent;
 import cn.sh1rocu.slashblade.api.event.LivingTickEvent;
+import cn.sh1rocu.slashblade.mixin.accessor.MobAccessor;
 import mods.flammpfeil.slashblade.capability.mobeffect.CapabilityMobEffect;
 import mods.flammpfeil.slashblade.capability.mobeffect.IMobEffectState;
 import mods.flammpfeil.slashblade.entity.ai.StunGoal;
@@ -26,7 +27,7 @@ public class StunManager {
             return;
         PathfinderMob entity = (PathfinderMob) event.getEntity();
 
-        entity.goalSelector.addGoal(-1, new StunGoal(entity));
+        ((MobAccessor) entity).sb$getGoalSelector().addGoal(-1, new StunGoal(entity));
     }
 
     public static void onEntityLivingUpdate(LivingTickEvent event) {

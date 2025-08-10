@@ -4,6 +4,7 @@
   "category": "equipment",
   "key": {
     "B": {
+      "fabric:type": "slashblade:blade",
       "type": "slashblade:blade",
       "item": "slashblade:slashblade_silverbamboo",
       "request": {

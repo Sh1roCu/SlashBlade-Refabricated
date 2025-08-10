@@ -25,7 +25,7 @@
       "tag": "c:feathers"
     },
     "Q": {
-      "tag": "c:storage_blocks/quartz"
+      "tag": "c:quartz_blocks"
     },
     "S": {
       "item": "slashblade:proudsoul_crystal"

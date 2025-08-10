@@ -6,13 +6,13 @@
       "item": "slashblade:slashblade_bamboo"
     },
     "D": {
-      "tag": "c:dyes/black"
+      "tag": "c:black_dyes"
     },
     "E": {
       "item": "minecraft:egg"
     },
     "I": {
-      "tag": "c:ingots/iron"
+      "tag": "c:iron_ingots"
     },
     "P": {
       "item": "minecraft:paper"
