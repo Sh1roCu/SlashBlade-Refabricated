@@ -8,8 +8,8 @@ import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.capability.slashblade.SlashBladeState;
-import mods.flammpfeil.slashblade.event.RefineProgressBaseEvent;
-import mods.flammpfeil.slashblade.event.RefineSettlementBaseEvent;
+import mods.flammpfeil.slashblade.event.RefineProgressEvent;
+import mods.flammpfeil.slashblade.event.RefineSettlementEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.util.AdvancementHelper;
 import net.minecraft.resources.ResourceLocation;
@@ -34,7 +34,7 @@ public class RefineHandler {
     public void register() {
         AnvilUpdateEvent.CALLBACK.register(this::onAnvilUpdateEvent);
         AnvilRepairEvent.CALLBACK.register(this::onAnvilRepairEvent);
-        RefineProgressBaseEvent.CALLBACK.register(this::refineLimitCheck);
+        RefineProgressEvent.CALLBACK.register(this::refineLimitCheck);
     }
 
     public void onAnvilUpdateEvent(AnvilUpdateEvent event) {
@@ -82,11 +82,11 @@ public class RefineHandler {
 
         while (materialCost < material.getCount()) {
 
-            RefineProgressBaseEvent e = new RefineProgressBaseEvent(result,
+            RefineProgressEvent e = new RefineProgressEvent(result,
                     CapabilitySlashBlade.BLADESTATE.maybeGet(result).orElse(new SlashBladeState(result)), materialCost + 1, levelCostBase,
                     costResult, refineResult.get(), event);
 
-            RefineProgressBaseEvent.CALLBACK.invoker().onRefineProgress(e);
+            RefineProgressEvent.CALLBACK.invoker().onRefineProgress(e);
             if (e.isCanceled()) {
                 break;
             }
@@ -103,10 +103,10 @@ public class RefineHandler {
 
         if (CapabilitySlashBlade.BLADESTATE.maybeGet(result).isPresent()) {
             ISlashBladeState state = CapabilitySlashBlade.BLADESTATE.maybeGet(result).orElse(new SlashBladeState(result));
-            RefineSettlementBaseEvent e2 = new RefineSettlementBaseEvent(result,
+            RefineSettlementEvent e2 = new RefineSettlementEvent(result,
                     state, materialCost, costResult, refineResult.get(), event);
 
-            RefineSettlementBaseEvent.CALLBACK.invoker().onRefineSettlement(e2);
+            RefineSettlementEvent.CALLBACK.invoker().onRefineSettlement(e2);
             if (e2.isCanceled()) {
                 return;
             }
@@ -127,7 +127,6 @@ public class RefineHandler {
             }
 
             result.setDamageValue(result.getDamageValue() - Math.max(result.getDamageValue(), materialCost * Math.max(1, level / 2)));
-            // result.getOrCreateTag().put("bladeState", state.serializeNBT());
         }
 
         event.setMaterialCost(materialCost);
@@ -135,7 +134,7 @@ public class RefineHandler {
         event.setOutput(result);
     }
 
-    public int getRefineProudsoulCount(int level, ISlashBladeState state, RefineSettlementBaseEvent e2) {
+    public int getRefineProudsoulCount(int level, ISlashBladeState state, RefineSettlementEvent e2) {
         return (e2.getRefineResult() - state.getRefine())
                 * Math.min(5000, level * 10);
     }
@@ -171,7 +170,7 @@ public class RefineHandler {
 
     }
 
-    public void refineLimitCheck(RefineProgressBaseEvent event) {
+    public void refineLimitCheck(RefineProgressEvent event) {
         AnvilUpdateEvent oriEvent = event.getOriginalEvent();
         if (oriEvent == null) {
             return;

@@ -26,6 +26,8 @@ public class RenderOverrideEvent extends BaseEvent implements ICancellableEvent 
     String originalTarget;
     ResourceLocation originalTexture;
 
+    int packedLightIn;
+
     public static final Event<Callback> CALLBACK = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
         for (Callback callback : callbacks) {
             callback.onRenderOverride(event);
@@ -80,12 +82,16 @@ public class RenderOverrideEvent extends BaseEvent implements ICancellableEvent 
         return buffer;
     }
 
+    public int getPackedLightIn() {
+        return packedLightIn;
+    }
+
     public interface Callback {
         void onRenderOverride(RenderOverrideEvent event);
     }
 
     public RenderOverrideEvent(ItemStack stack, WavefrontObject model, String target, ResourceLocation texture,
-                               PoseStack matrixStack, MultiBufferSource buffer) {
+                               PoseStack matrixStack, MultiBufferSource buffer, int packedLightIn) {
         this.stack = stack;
         this.originalModel = this.model = model;
         this.originalTarget = this.target = target;
@@ -93,11 +99,12 @@ public class RenderOverrideEvent extends BaseEvent implements ICancellableEvent 
 
         this.matrixStack = matrixStack;
         this.buffer = buffer;
+        this.packedLightIn = packedLightIn;
     }
 
     public static RenderOverrideEvent onRenderOverride(ItemStack stack, WavefrontObject model, String target,
-                                                       ResourceLocation texture, PoseStack matrixStack, MultiBufferSource buffer) {
-        RenderOverrideEvent event = new RenderOverrideEvent(stack, model, target, texture, matrixStack, buffer);
+                                                       ResourceLocation texture, PoseStack matrixStack, MultiBufferSource buffer, int packedLightIn) {
+        RenderOverrideEvent event = new RenderOverrideEvent(stack, model, target, texture, matrixStack, buffer, packedLightIn);
         CALLBACK.invoker().onRenderOverride(event);
         return event;
     }

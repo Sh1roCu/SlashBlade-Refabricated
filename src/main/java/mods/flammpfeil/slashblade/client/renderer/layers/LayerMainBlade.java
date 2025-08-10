@@ -12,6 +12,7 @@ import jp.nyatla.nymmd.MmdPmdModelMc;
 import jp.nyatla.nymmd.MmdVmdMotionMc;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
+import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.capability.slashblade.SlashBladeState;
 import mods.flammpfeil.slashblade.client.renderer.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.renderer.model.BladeMotionManager;
@@ -110,7 +111,7 @@ public class LayerMainBlade<T extends LivingEntity, M extends EntityModel<T>> ex
     }
 
     public void renderStandbyBlade(PoseStack matrixStack, MultiBufferSource bufferIn, int lightIn, ItemStack blade, T entity) {
-        Optional<SlashBladeState> state = CapabilitySlashBlade.BLADESTATE.maybeGet(blade);
+        Optional<ISlashBladeState> state = CapabilitySlashBlade.BLADESTATE.maybeGet(blade);
         state.ifPresent(s -> {
             double modelScaleBase = 0.0078125F; // 0.5^7
             double motionScale = 1.5 / 12.0;
@@ -200,7 +201,7 @@ public class LayerMainBlade<T extends LivingEntity, M extends EntityModel<T>> ex
         if (stack.isEmpty())
             return;
 
-        Optional<SlashBladeState> state = CapabilitySlashBlade.BLADESTATE.maybeGet(stack);
+        Optional<ISlashBladeState> state = CapabilitySlashBlade.BLADESTATE.maybeGet(stack);
         state.ifPresent(s -> {
 
             motionPlayer.ifPresent(mmp -> {

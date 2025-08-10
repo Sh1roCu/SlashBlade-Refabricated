@@ -1,6 +1,5 @@
 package cn.sh1rocu.slashblade.mixin.client;
 
-import mods.flammpfeil.slashblade.client.renderer.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.renderer.model.BladeMotionManager;
 import net.minecraft.client.renderer.texture.SpriteLoader;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -14,7 +13,7 @@ public abstract class TextureAtlasMixin {
     @Inject(method = "upload", at = @At("RETURN"))
     private void sb$postStitch(SpriteLoader.Preparations preparations, CallbackInfo ci) {
         TextureAtlas atlas = (TextureAtlas) (Object) this;
-        BladeModelManager.getInstance().reload(atlas);
+        // BladeModelManager.getInstance().reload(atlas);
         BladeMotionManager.getInstance().reload(atlas);
     }
 }

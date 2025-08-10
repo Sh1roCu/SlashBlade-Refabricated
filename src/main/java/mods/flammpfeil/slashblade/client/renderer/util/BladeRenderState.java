@@ -18,6 +18,8 @@ import net.minecraft.world.item.ItemStack;
 import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 public class BladeRenderState extends RenderStateShard {
@@ -88,7 +90,7 @@ public class BladeRenderState extends RenderStateShard {
                                        PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn,
                                        Function<ResourceLocation, RenderType> getRenderType, boolean enableEffect) {
         RenderOverrideEvent event = RenderOverrideEvent.onRenderOverride(stack, model, target, texture, matrixStackIn,
-                bufferIn);
+                bufferIn, packedLightIn);
 
         if (event.isCanceled())
             return;
@@ -118,33 +120,28 @@ public class BladeRenderState extends RenderStateShard {
         resetCol();
     }
 
-    public static RenderType getSlashBladeBlend(ResourceLocation p_228638_0_) {
+    private static final Map<ResourceLocation, RenderType> slashBladeBlendCache = new HashMap<>();
+    private static final Map<ResourceLocation, RenderType> slashBladeBlendColorWriteCache = new HashMap<>();
+    private static final Map<ResourceLocation, RenderType> slashBladeBlendLuminousCache = new HashMap<>();
+    private static final Map<ChargeEffectKey, RenderType> chargeEffectCache = new HashMap<>();
+    private static final Map<ResourceLocation, RenderType> luminousDepthWriteCache = new HashMap<>();
+    private static final Map<ResourceLocation, RenderType> reverseLuminousCache = new HashMap<>();
 
-        /*
-         * RenderType.CompositeState rendertype$compositestate =
-         * RenderType.CompositeState.builder()
-         * .setShaderState(POSITION_COLOR_TEX_LIGHTMAP_SHADER) .setTextureState(new
-         * RenderStateShard.TextureStateShard(p_173200_, false, false))
-         * .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-         * .setOutputState(ITEM_ENTITY_TARGET) .setLightmapState(LIGHTMAP)
-         * .setOverlayState(OVERLAY)
-         * .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
-         * .createCompositeState(true);
-         */
+    public static RenderType getSlashBladeBlend(ResourceLocation texture) {
+        return slashBladeBlendCache.computeIfAbsent(texture, t -> {
+            RenderType.CompositeState state = RenderType.CompositeState.builder()
+                    .setShaderState(RenderStateShard.RENDERTYPE_ITEM_ENTITY_TRANSLUCENT_CULL_SHADER)
+                    .setOutputState(RenderStateShard.ITEM_ENTITY_TARGET)
+                    .setTextureState(new RenderStateShard.TextureStateShard(t, false, true))
+                    .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+                    .setLightmapState(LIGHTMAP)
+                    .setOverlayState(OVERLAY)
+                    .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
+                    .createCompositeState(true);
 
-        RenderType.CompositeState state = RenderType.CompositeState.builder()
-                .setShaderState(RenderStateShard.RENDERTYPE_ITEM_ENTITY_TRANSLUCENT_CULL_SHADER)
-                .setOutputState(RenderStateShard.ITEM_ENTITY_TARGET)
-                .setTextureState(new RenderStateShard.TextureStateShard(p_228638_0_, false, true))
-                .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-
-                .setLightmapState(LIGHTMAP)
-                .setOverlayState(OVERLAY)
-                .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
-                .createCompositeState(true);
-
-        return RenderType.create("slashblade_blend", DefaultVertexFormat.NEW_ENTITY,
-                VertexFormat.Mode.TRIANGLES, 256, true, false, state);
+            return RenderType.create("slashblade_blend_" + t, DefaultVertexFormat.NEW_ENTITY,
+                    VertexFormat.Mode.TRIANGLES, 256, true, false, state);
+        });
     }
 
     public static final RenderType SLASHBLADE_GLINT = BladeRenderState.getSlashBladeGlint();
@@ -183,18 +180,21 @@ public class BladeRenderState extends RenderStateShard {
                 VertexFormat.Mode.TRIANGLES, 256, true, false, state);
     }
 
-    public static RenderType getSlashBladeBlendColorWrite(ResourceLocation p_228638_0_) {
-        RenderType.CompositeState state = RenderType.CompositeState.builder()
-                .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
-                .setOutputState(RenderStateShard.ITEM_ENTITY_TARGET)
-                .setTextureState(new RenderStateShard.TextureStateShard(p_228638_0_, false, true))
-                .setTransparencyState(LIGHTNING_ADDITIVE_TRANSPARENCY)
-                .setLightmapState(LIGHTMAP)
-                .setOverlayState(OVERLAY)
-                .setWriteMaskState(COLOR_WRITE)
-                .createCompositeState(false);
-        return RenderType.create("slashblade_blend_write_color", DefaultVertexFormat.NEW_ENTITY,
-                VertexFormat.Mode.TRIANGLES, 256, false, true, state);
+    public static RenderType getSlashBladeBlendColorWrite(ResourceLocation texture) {
+        return slashBladeBlendColorWriteCache.computeIfAbsent(texture, t -> {
+            RenderType.CompositeState state = RenderType.CompositeState.builder()
+                    .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
+                    .setOutputState(RenderStateShard.ITEM_ENTITY_TARGET)
+                    .setTextureState(new RenderStateShard.TextureStateShard(t, false, true))
+                    .setTransparencyState(LIGHTNING_ADDITIVE_TRANSPARENCY)
+                    .setLightmapState(LIGHTMAP)
+                    .setOverlayState(OVERLAY)
+                    .setWriteMaskState(COLOR_WRITE)
+                    .createCompositeState(false);
+
+            return RenderType.create("slashblade_blend_write_color_" + t, DefaultVertexFormat.NEW_ENTITY,
+                    VertexFormat.Mode.TRIANGLES, 256, false, true, state);
+        });
     }
 
     protected static final RenderStateShard.TransparencyStateShard LIGHTNING_ADDITIVE_TRANSPARENCY = new RenderStateShard.TransparencyStateShard(
@@ -207,53 +207,59 @@ public class BladeRenderState extends RenderStateShard {
         RenderSystem.defaultBlendFunc();
     });
 
-    public static RenderType getSlashBladeBlendLuminous(ResourceLocation p_228638_0_) {
-        RenderType.CompositeState state = RenderType.CompositeState.builder()
-                .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
-                .setOutputState(ITEM_ENTITY_TARGET)
-                .setCullState(RenderStateShard.NO_CULL)
-                .setTextureState(new RenderStateShard.TextureStateShard(p_228638_0_, true, true))
-                .setTransparencyState(LIGHTNING_ADDITIVE_TRANSPARENCY)
-                .setLightmapState(RenderStateShard.LIGHTMAP)
-                .setOverlayState(OVERLAY)
-                .setWriteMaskState(COLOR_WRITE)
+    public static RenderType getSlashBladeBlendLuminous(ResourceLocation texture) {
+        return slashBladeBlendLuminousCache.computeIfAbsent(texture, t -> {
+            RenderType.CompositeState state = RenderType.CompositeState.builder()
+                    .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
+                    .setOutputState(ITEM_ENTITY_TARGET)
+                    .setCullState(RenderStateShard.NO_CULL)
+                    .setTextureState(new RenderStateShard.TextureStateShard(t, true, true))
+                    .setTransparencyState(LIGHTNING_ADDITIVE_TRANSPARENCY)
+                    .setLightmapState(RenderStateShard.LIGHTMAP)
+                    .setOverlayState(OVERLAY)
+                    .setWriteMaskState(COLOR_WRITE)
+                    .createCompositeState(false);
 
-                .createCompositeState(false);
-        return RenderType.create("slashblade_blend_luminous", DefaultVertexFormat.NEW_ENTITY,
-                VertexFormat.Mode.TRIANGLES, 256, false, true, state);
+            return RenderType.create("slashblade_blend_luminous_" + t, DefaultVertexFormat.NEW_ENTITY,
+                    VertexFormat.Mode.TRIANGLES, 256, false, true, state);
+        });
     }
 
-    public static RenderType getChargeEffect(ResourceLocation p_228638_0_, float x, float y) {
-        RenderType.CompositeState state = RenderType.CompositeState.builder()
-                .setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER)
-                .setOutputState(ITEM_ENTITY_TARGET)
-                .setCullState(RenderStateShard.NO_CULL)
-                .setTextureState(new RenderStateShard.TextureStateShard(p_228638_0_, false, true))
-                .setTexturingState(new RenderStateShard.OffsetTexturingStateShard(x, y))
-                .setTransparencyState(LIGHTNING_ADDITIVE_TRANSPARENCY)
-                // .setDiffuseLightingState(RenderStateShard.NO_DIFFUSE_LIGHTING)
-                .setLightmapState(RenderStateShard.LIGHTMAP)
-                .setOverlayState(OVERLAY)
-                .setWriteMaskState(RenderStateShard.COLOR_WRITE)
+    public static RenderType getChargeEffect(ResourceLocation texture, float x, float y) {
+        ChargeEffectKey key = new ChargeEffectKey(texture, x, y);
+        return chargeEffectCache.computeIfAbsent(key, k -> {
+            RenderType.CompositeState state = RenderType.CompositeState.builder()
+                    .setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER)
+                    .setOutputState(ITEM_ENTITY_TARGET)
+                    .setCullState(RenderStateShard.NO_CULL)
+                    .setTextureState(new RenderStateShard.TextureStateShard(k.texture, false, true))
+                    .setTexturingState(new RenderStateShard.OffsetTexturingStateShard(k.x, k.y))
+                    .setTransparencyState(LIGHTNING_ADDITIVE_TRANSPARENCY)
+                    .setLightmapState(RenderStateShard.LIGHTMAP)
+                    .setOverlayState(OVERLAY)
+                    .setWriteMaskState(RenderStateShard.COLOR_WRITE)
+                    .createCompositeState(false);
 
-                .createCompositeState(false);
-        return RenderType.create("slashblade_charge_effect", DefaultVertexFormat.NEW_ENTITY,
-                VertexFormat.Mode.TRIANGLES, 256, false, true, state);
+            return RenderType.create("slashblade_charge_effect_" + k.texture + "_" + k.x + "_" + k.y,
+                    DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.TRIANGLES, 256, false, true, state);
+        });
     }
 
-    public static RenderType getSlashBladeBlendLuminousDepthWrite(ResourceLocation p_228638_0_) {
-        RenderType.CompositeState state = RenderType.CompositeState.builder()
-                .setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
-                .setOutputState(RenderStateShard.PARTICLES_TARGET)
-                .setTextureState(new RenderStateShard.TextureStateShard(p_228638_0_, true, true))
-                .setTransparencyState(LIGHTNING_ADDITIVE_TRANSPARENCY)
-                // .setDiffuseLightingState(RenderStateShard.NO_DIFFUSE_LIGHTING)
-                .setLightmapState(RenderStateShard.LIGHTMAP)
-                .setOverlayState(OVERLAY)
+    public static RenderType getSlashBladeBlendLuminousDepthWrite(ResourceLocation texture) {
+        return luminousDepthWriteCache.computeIfAbsent(texture, t -> {
+            RenderType.CompositeState state = RenderType.CompositeState.builder()
+                    .setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
+                    .setOutputState(RenderStateShard.PARTICLES_TARGET)
+                    .setTextureState(new RenderStateShard.TextureStateShard(t, true, true))
+                    .setTransparencyState(LIGHTNING_ADDITIVE_TRANSPARENCY)
+                    .setLightmapState(RenderStateShard.LIGHTMAP)
+                    .setOverlayState(OVERLAY)
+                    .setWriteMaskState(COLOR_DEPTH_WRITE)
+                    .createCompositeState(false);
 
-                .setWriteMaskState(COLOR_DEPTH_WRITE).createCompositeState(false);
-        return RenderType.create("slashblade_blend_luminous_depth_write", DefaultVertexFormat.NEW_ENTITY,
-                VertexFormat.Mode.TRIANGLES, 256, false, true, state);
+            return RenderType.create("slashblade_blend_luminous_depth_write_" + t,
+                    DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.TRIANGLES, 256, false, true, state);
+        });
     }
 
     protected static final RenderStateShard.TransparencyStateShard LIGHTNING_REVERSE_TRANSPARENCY = new RenderStateShard.TransparencyStateShard(
@@ -268,20 +274,50 @@ public class BladeRenderState extends RenderStateShard {
         RenderSystem.defaultBlendFunc();
     });
 
-    public static RenderType getSlashBladeBlendReverseLuminous(ResourceLocation p_228638_0_) {
-        RenderType.CompositeState state = RenderType.CompositeState.builder()
-                .setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
-                .setOutputState(RenderStateShard.ITEM_ENTITY_TARGET)
-                .setTextureState(new RenderStateShard.TextureStateShard(p_228638_0_, true, true))
-                .setTransparencyState(LIGHTNING_REVERSE_TRANSPARENCY)
-                // .setDiffuseLightingState(RenderStateShard.NO_DIFFUSE_LIGHTING)
-                .setLightmapState(RenderStateShard.LIGHTMAP)
-                .setOverlayState(OVERLAY)
-                .setWriteMaskState(COLOR_WRITE)
+    public static RenderType getSlashBladeBlendReverseLuminous(ResourceLocation texture) {
+        return reverseLuminousCache.computeIfAbsent(texture, t -> {
+            RenderType.CompositeState state = RenderType.CompositeState.builder()
+                    .setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
+                    .setOutputState(RenderStateShard.ITEM_ENTITY_TARGET)
+                    .setTextureState(new RenderStateShard.TextureStateShard(t, true, true))
+                    .setTransparencyState(LIGHTNING_REVERSE_TRANSPARENCY)
+                    .setLightmapState(RenderStateShard.LIGHTMAP)
+                    .setOverlayState(OVERLAY)
+                    .setWriteMaskState(COLOR_WRITE)
+                    .createCompositeState(false);
 
-                .createCompositeState(false);
-        return RenderType.create("slashblade_blend_reverse_luminous", DefaultVertexFormat.NEW_ENTITY,
-                VertexFormat.Mode.TRIANGLES, 256, false, true, state);
+            return RenderType.create("slashblade_blend_reverse_luminous_" + t,
+                    DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.TRIANGLES, 256, false, true, state);
+        });
     }
 
+    private static class ChargeEffectKey {
+        final ResourceLocation texture;
+        final float x;
+        final float y;
+
+        ChargeEffectKey(ResourceLocation texture, float x, float y) {
+            this.texture = texture;
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ChargeEffectKey that = (ChargeEffectKey) o;
+            return Float.compare(that.x, x) == 0 &&
+                    Float.compare(that.y, y) == 0 &&
+                    texture.equals(that.texture);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = texture.hashCode();
+            result = 31 * result + Float.floatToIntBits(x);
+            result = 31 * result + Float.floatToIntBits(y);
+            return result;
+        }
+    }
 }

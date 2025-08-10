@@ -3,6 +3,7 @@ package cn.sh1rocu.slashblade.client;
 import cn.sh1rocu.slashblade.api.event.EntityAddedLayerCallback;
 import mods.flammpfeil.slashblade.client.ClientHandler;
 import mods.flammpfeil.slashblade.client.renderer.entity.*;
+import mods.flammpfeil.slashblade.client.renderer.event.PreloadedModelEvent;
 import mods.flammpfeil.slashblade.event.handler.MoveInputHandler;
 import mods.flammpfeil.slashblade.init.SBEntityTypes;
 import mods.flammpfeil.slashblade.network.NetworkManager;
@@ -16,6 +17,7 @@ public class SlashBladeFabricClient implements ClientModInitializer, ModelLoadin
     @Override
     public void onInitializeClient() {
         ModelLoadingPlugin.register(this);
+        PreloadedModelEvent.registerResourceLoaders();
         NetworkManager.registerS2CPackets();
         regisetEntityRenderers();
         ClientHandler.doClientStuff();

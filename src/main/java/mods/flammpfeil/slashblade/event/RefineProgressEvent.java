@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
-public class RefineProgressBaseEvent extends SlashBladeBaseEvent implements ICancellableEvent {
+public class RefineProgressEvent extends SlashBladeEvent implements ICancellableEvent {
     private final AnvilUpdateEvent originalEvent;
     private int materialCost;
     private int levelCost;
@@ -21,8 +21,8 @@ public class RefineProgressBaseEvent extends SlashBladeBaseEvent implements ICan
         }
     });
 
-    public RefineProgressBaseEvent(ItemStack blade, ISlashBladeState state, int materialCost,
-                                   int levelCost, int costResult, int refineResult, AnvilUpdateEvent originalEvent) {
+    public RefineProgressEvent(ItemStack blade, ISlashBladeState state, int materialCost,
+                               int levelCost, int costResult, int refineResult, AnvilUpdateEvent originalEvent) {
         super(blade, state);
         this.materialCost = materialCost;
         this.levelCost = levelCost;
@@ -67,6 +67,6 @@ public class RefineProgressBaseEvent extends SlashBladeBaseEvent implements ICan
     }
 
     public interface Callback {
-        void onRefineProgress(RefineProgressBaseEvent e);
+        void onRefineProgress(RefineProgressEvent e);
     }
 }

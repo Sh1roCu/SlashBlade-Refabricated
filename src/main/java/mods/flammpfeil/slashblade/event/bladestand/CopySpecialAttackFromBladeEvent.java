@@ -1,7 +1,7 @@
 package mods.flammpfeil.slashblade.event.bladestand;
 
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
-import mods.flammpfeil.slashblade.event.SlashBladeBaseEvent;
+import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.resources.ResourceLocation;
@@ -10,9 +10,9 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
-public class CopySpecialAttackFromBladeBaseEvent extends SlashBladeBaseEvent {
+public class CopySpecialAttackFromBladeEvent extends SlashBladeEvent {
     private final ResourceLocation SAKey;
-    private final BladeStandAttackBaseEvent originalEvent;
+    private final BladeStandAttackEvent originalEvent;
     private final ItemStack orb;
     private final ItemEntity itemEntity;
     public static final Event<Callback> CALLBACK = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
@@ -21,9 +21,9 @@ public class CopySpecialAttackFromBladeBaseEvent extends SlashBladeBaseEvent {
         }
     });
 
-    public CopySpecialAttackFromBladeBaseEvent(ItemStack blade, ISlashBladeState state, ResourceLocation SAKey,
-                                               BladeStandAttackBaseEvent originalEvent,
-                                               ItemStack orb, ItemEntity itemEntity) {
+    public CopySpecialAttackFromBladeEvent(ItemStack blade, ISlashBladeState state, ResourceLocation SAKey,
+                                           BladeStandAttackEvent originalEvent,
+                                           ItemStack orb, ItemEntity itemEntity) {
         super(blade, state);
         this.SAKey = SAKey;
         this.originalEvent = originalEvent;
@@ -31,8 +31,8 @@ public class CopySpecialAttackFromBladeBaseEvent extends SlashBladeBaseEvent {
         this.itemEntity = itemEntity;
     }
 
-    public CopySpecialAttackFromBladeBaseEvent(PreCopySpecialAttackFromBladeBaseEvent pe, ItemStack orb,
-                                               ItemEntity itemEntity) {
+    public CopySpecialAttackFromBladeEvent(PreCopySpecialAttackFromBladeEvent pe, ItemStack orb,
+                                           ItemEntity itemEntity) {
         this(pe.getBlade(), pe.getSlashBladeState(), pe.getSAKey(), pe.getOriginalEvent(), orb, itemEntity);
     }
 
@@ -40,7 +40,7 @@ public class CopySpecialAttackFromBladeBaseEvent extends SlashBladeBaseEvent {
         return SAKey;
     }
 
-    public @Nullable BladeStandAttackBaseEvent getOriginalEvent() {
+    public @Nullable BladeStandAttackEvent getOriginalEvent() {
         return originalEvent;
     }
 
@@ -53,6 +53,6 @@ public class CopySpecialAttackFromBladeBaseEvent extends SlashBladeBaseEvent {
     }
 
     public interface Callback {
-        void onCopySpecialAttack(CopySpecialAttackFromBladeBaseEvent event);
+        void onCopySpecialAttack(CopySpecialAttackFromBladeEvent event);
     }
 }

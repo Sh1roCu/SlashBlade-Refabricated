@@ -138,8 +138,6 @@ public class RequestDefinition {
                 }
             }
         });
-
-        // blade.getOrCreateTag().put("bladeState", state.serializeNBT());
     }
 
 

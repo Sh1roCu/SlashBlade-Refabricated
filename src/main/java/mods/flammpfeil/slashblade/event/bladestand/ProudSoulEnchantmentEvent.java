@@ -2,7 +2,7 @@ package mods.flammpfeil.slashblade.event.bladestand;
 
 import cn.sh1rocu.slashblade.api.event.ICancellableEvent;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
-import mods.flammpfeil.slashblade.event.SlashBladeBaseEvent;
+import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.item.ItemStack;
@@ -10,22 +10,22 @@ import net.minecraft.world.item.enchantment.Enchantment;
 
 import javax.annotation.Nullable;
 
-public class ProudSoulEnchantmentBaseEvent extends SlashBladeBaseEvent implements ICancellableEvent {
+public class ProudSoulEnchantmentEvent extends SlashBladeEvent implements ICancellableEvent {
     private int totalShrinkCount;
     private float probability;
     private Enchantment enchantment;
     private int enchantLevel;
     private boolean tryNextEnchant;
-    private final BladeStandAttackBaseEvent originalEvent;
+    private final BladeStandAttackEvent originalEvent;
     public static final Event<Callback> CALLBACK = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
         for (Callback callback : callbacks) {
             callback.onProudSoulEnchantment(event);
         }
     });
 
-    public ProudSoulEnchantmentBaseEvent(ItemStack blade, ISlashBladeState state,
-                                         Enchantment enchantment, int enchantLevel, boolean tryNextEnchant, float probability,
-                                         int totalShrinkCount, BladeStandAttackBaseEvent originalEvent) {
+    public ProudSoulEnchantmentEvent(ItemStack blade, ISlashBladeState state,
+                                     Enchantment enchantment, int enchantLevel, boolean tryNextEnchant, float probability,
+                                     int totalShrinkCount, BladeStandAttackEvent originalEvent) {
         super(blade, state);
         this.enchantment = enchantment;
         this.enchantLevel = enchantLevel;
@@ -80,11 +80,11 @@ public class ProudSoulEnchantmentBaseEvent extends SlashBladeBaseEvent implement
         return this.probability;
     }
 
-    public @Nullable BladeStandAttackBaseEvent getOriginalEvent() {
+    public @Nullable BladeStandAttackEvent getOriginalEvent() {
         return originalEvent;
     }
 
     public interface Callback {
-        void onProudSoulEnchantment(ProudSoulEnchantmentBaseEvent event);
+        void onProudSoulEnchantment(ProudSoulEnchantmentEvent event);
     }
 }

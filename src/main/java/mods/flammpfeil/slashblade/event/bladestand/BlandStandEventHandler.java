@@ -5,7 +5,7 @@ import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.data.builtin.SlashBladeBuiltInRegistry;
 import mods.flammpfeil.slashblade.data.tag.SlashBladeItemTags;
 import mods.flammpfeil.slashblade.entity.BladeStandEntity;
-import mods.flammpfeil.slashblade.event.SlashBladeBaseEvent;
+import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.init.SBItems;
 import mods.flammpfeil.slashblade.recipe.RequestDefinition;
 import mods.flammpfeil.slashblade.recipe.SlashBladeIngredient;
@@ -40,19 +40,19 @@ public class BlandStandEventHandler {
     private static final ResourceLocation LOWEST = SlashBlade.prefix("lowest_priority");
 
     public static void init() {
-        SlashBladeBaseEvent.BLADE_STAND_ATTACK.addPhaseOrdering(Event.DEFAULT_PHASE, LOWEST);
+        SlashBladeEvent.BLADE_STAND_ATTACK.addPhaseOrdering(Event.DEFAULT_PHASE, LOWEST);
 
-        SlashBladeBaseEvent.BLADE_STAND_ATTACK.register(BlandStandEventHandler::eventKoseki);
-        SlashBladeBaseEvent.BLADE_STAND_ATTACK.register(BlandStandEventHandler::eventChangeSE);
-        SlashBladeBaseEvent.BLADE_STAND_ATTACK.register(BlandStandEventHandler::eventChangeSA);
-        SlashBladeBaseEvent.BLADE_STAND_ATTACK.register(BlandStandEventHandler::eventCopySE);
-        SlashBladeBaseEvent.BLADE_STAND_ATTACK.register(BlandStandEventHandler::eventCopySA);
-        SlashBladeBaseEvent.BLADE_STAND_ATTACK.register(LOWEST, BlandStandEventHandler::eventProudSoulEnchantment);
-        PreCopySpecialAttackFromBladeBaseEvent.CALLBACK.register(BlandStandEventHandler::copySAEnchantmentCheck);
-        ProudSoulEnchantmentBaseEvent.CALLBACK.register(BlandStandEventHandler::proudSoulEnchantmentProbabilityCheck);
+        SlashBladeEvent.BLADE_STAND_ATTACK.register(BlandStandEventHandler::eventKoseki);
+        SlashBladeEvent.BLADE_STAND_ATTACK.register(BlandStandEventHandler::eventChangeSE);
+        SlashBladeEvent.BLADE_STAND_ATTACK.register(BlandStandEventHandler::eventChangeSA);
+        SlashBladeEvent.BLADE_STAND_ATTACK.register(BlandStandEventHandler::eventCopySE);
+        SlashBladeEvent.BLADE_STAND_ATTACK.register(BlandStandEventHandler::eventCopySA);
+        SlashBladeEvent.BLADE_STAND_ATTACK.register(LOWEST, BlandStandEventHandler::eventProudSoulEnchantment);
+        PreCopySpecialAttackFromBladeEvent.CALLBACK.register(BlandStandEventHandler::copySAEnchantmentCheck);
+        ProudSoulEnchantmentEvent.CALLBACK.register(BlandStandEventHandler::proudSoulEnchantmentProbabilityCheck);
     }
 
-    public static void eventKoseki(SlashBladeBaseEvent.BladeStandAttackBaseEvent event) {
+    public static void eventKoseki(SlashBladeEvent.BladeStandAttackEvent event) {
         var slashBladeDefinitionRegistry = SlashBlade.getSlashBladeDefinitionRegistry(event.getBladeStand().level());
         if (!slashBladeDefinitionRegistry.containsKey(SlashBladeBuiltInRegistry.KOSEKI.location())) {
             return;
@@ -70,7 +70,7 @@ public class BlandStandEventHandler {
         event.getBladeStand().setItem(Objects.requireNonNull(slashBladeDefinitionRegistry.get(SlashBladeBuiltInRegistry.KOSEKI)).getBlade());
     }
 
-    public static void eventChangeSE(SlashBladeBaseEvent.BladeStandAttackBaseEvent event) {
+    public static void eventChangeSE(SlashBladeEvent.BladeStandAttackEvent event) {
         if (!(event.getDamageSource().getEntity() instanceof ServerPlayer player)) {
             return;
         }
@@ -100,14 +100,14 @@ public class BlandStandEventHandler {
                 return;
             }
 
-            BladeChangeSpecialEffectBaseEvent e = new BladeChangeSpecialEffectBaseEvent(
+            BladeChangeSpecialEffectEvent e = new BladeChangeSpecialEffectEvent(
                     blade, state, SEKey, event);
 
             if (!player.isCreative()) {
                 e.setShrinkCount(1);
             }
 
-            BladeChangeSpecialEffectBaseEvent.CALLBACK.invoker().onChangeSpecialEffect(e);
+            BladeChangeSpecialEffectEvent.CALLBACK.invoker().onChangeSpecialEffect(e);
             if (e.isCanceled()) {
                 return;
             }
@@ -128,7 +128,7 @@ public class BlandStandEventHandler {
         }
     }
 
-    public static void eventChangeSA(SlashBladeBaseEvent.BladeStandAttackBaseEvent event) {
+    public static void eventChangeSA(SlashBladeEvent.BladeStandAttackEvent event) {
         if (!(event.getDamageSource().getEntity() instanceof ServerPlayer player)) {
             return;
         }
@@ -149,14 +149,14 @@ public class BlandStandEventHandler {
         CapabilitySlashBlade.BLADESTATE.maybeGet(blade).ifPresent(state -> {
             if (!SAKey.equals(state.getSlashArtsKey())) {
 
-                BladeChangeSpecialAttackBaseEvent e = new BladeChangeSpecialAttackBaseEvent(
+                BladeChangeSpecialAttackEvent e = new BladeChangeSpecialAttackEvent(
                         blade, state, SAKey, event);
 
                 if (!player.isCreative()) {
                     e.setShrinkCount(1);
                 }
 
-                BladeChangeSpecialAttackBaseEvent.CALLBACK.invoker().onChangeSpecialAttack(e);
+                BladeChangeSpecialAttackEvent.CALLBACK.invoker().onChangeSpecialAttack(e);
                 if (e.isCanceled()) {
                     return;
                 }
@@ -178,7 +178,7 @@ public class BlandStandEventHandler {
         event.setCanceled(true);
     }
 
-    public static void eventCopySE(SlashBladeBaseEvent.BladeStandAttackBaseEvent event) {
+    public static void eventCopySE(SlashBladeEvent.BladeStandAttackEvent event) {
         if (!(event.getDamageSource().getEntity() instanceof ServerPlayer player)) {
             return;
         }
@@ -206,7 +206,7 @@ public class BlandStandEventHandler {
                 continue;
             }
 
-            PreCopySpecialEffectFromBladeBaseEvent pe = new PreCopySpecialEffectFromBladeBaseEvent(
+            PreCopySpecialEffectFromBladeEvent pe = new PreCopySpecialEffectFromBladeEvent(
                     blade, state, se, event, Objects.requireNonNull(SpecialEffectsRegistry.SPECIAL_EFFECT.get(se)).isRemovable(),
                     Objects.requireNonNull(SpecialEffectsRegistry.SPECIAL_EFFECT.get(se)).isCopiable());
 
@@ -214,7 +214,7 @@ public class BlandStandEventHandler {
                 pe.setShrinkCount(1);
             }
 
-            PreCopySpecialEffectFromBladeBaseEvent.CALLBACK.invoker().onPreCopySpecialEffect(pe);
+            PreCopySpecialEffectFromBladeEvent.CALLBACK.invoker().onPreCopySpecialEffect(pe);
             if (pe.isCanceled()) {
                 return;
             }
@@ -244,17 +244,17 @@ public class BlandStandEventHandler {
                 state.removeSpecialEffect(se);
             }
 
-            CopySpecialEffectFromBladeBaseEvent e = new CopySpecialEffectFromBladeBaseEvent(
+            CopySpecialEffectFromBladeEvent e = new CopySpecialEffectFromBladeEvent(
                     pe, orb, itemEntity);
 
-            CopySpecialEffectFromBladeBaseEvent.CALLBACK.invoker().onCopySpecialEffect(e);
+            CopySpecialEffectFromBladeEvent.CALLBACK.invoker().onCopySpecialEffect(e);
 
             event.setCanceled(true);
             return;
         }
     }
 
-    public static void eventCopySA(SlashBladeBaseEvent.BladeStandAttackBaseEvent event) {
+    public static void eventCopySA(SlashBladeEvent.BladeStandAttackEvent event) {
         if (!(event.getDamageSource().getEntity() instanceof Player player)) {
             return;
         }
@@ -272,14 +272,14 @@ public class BlandStandEventHandler {
         ResourceLocation SA = state.getSlashArtsKey();
         if (SA != null && !SA.equals(SlashArtsRegistry.SLASH_ARTS.getKey(SlashArtsRegistry.NONE))) {
 
-            PreCopySpecialAttackFromBladeBaseEvent pe = new PreCopySpecialAttackFromBladeBaseEvent(
+            PreCopySpecialAttackFromBladeEvent pe = new PreCopySpecialAttackFromBladeEvent(
                     blade, state, SA, event);
 
             if (!player.isCreative()) {
                 pe.setShrinkCount(1);
             }
 
-            PreCopySpecialAttackFromBladeBaseEvent.CALLBACK.invoker().onPreCopySpecialAttack(pe);
+            PreCopySpecialAttackFromBladeEvent.CALLBACK.invoker().onPreCopySpecialAttack(pe);
             if (pe.isCanceled()) {
                 return;
             }
@@ -301,16 +301,16 @@ public class BlandStandEventHandler {
 
             ItemEntity itemEntity = player.drop(orb, true);
 
-            CopySpecialAttackFromBladeBaseEvent e = new CopySpecialAttackFromBladeBaseEvent(
+            CopySpecialAttackFromBladeEvent e = new CopySpecialAttackFromBladeEvent(
                     pe, orb, itemEntity);
 
-            CopySpecialAttackFromBladeBaseEvent.CALLBACK.invoker().onCopySpecialAttack(e);
+            CopySpecialAttackFromBladeEvent.CALLBACK.invoker().onCopySpecialAttack(e);
 
             event.setCanceled(true);
         }
     }
 
-    public static void eventProudSoulEnchantment(SlashBladeBaseEvent.BladeStandAttackBaseEvent event) {
+    public static void eventProudSoulEnchantment(SlashBladeEvent.BladeStandAttackEvent event) {
         if (!(event.getDamageSource().getEntity() instanceof Player player)) {
             return;
         }
@@ -362,11 +362,11 @@ public class BlandStandEventHandler {
             int enchantLevel = Math.min(enchantment.getMaxLevel(),
                     EnchantmentHelper.getItemEnchantmentLevel(enchantment, blade) + 1);
 
-            ProudSoulEnchantmentBaseEvent e = new ProudSoulEnchantmentBaseEvent(
+            ProudSoulEnchantmentEvent e = new ProudSoulEnchantmentEvent(
                     blade, event.getSlashBladeState(), enchantment, enchantLevel, false, probability,
                     totalShrinkCount.get(), event);
 
-            ProudSoulEnchantmentBaseEvent.CALLBACK.invoker().onProudSoulEnchantment(e);
+            ProudSoulEnchantmentEvent.CALLBACK.invoker().onProudSoulEnchantment(e);
             if (e.isCanceled()) {
                 return;
             }
@@ -396,8 +396,8 @@ public class BlandStandEventHandler {
     }
 
 
-    public static void copySAEnchantmentCheck(PreCopySpecialAttackFromBladeBaseEvent event) {
-        SlashBladeBaseEvent.BladeStandAttackBaseEvent oriEvent = event.getOriginalEvent();
+    public static void copySAEnchantmentCheck(PreCopySpecialAttackFromBladeEvent event) {
+        SlashBladeEvent.BladeStandAttackEvent oriEvent = event.getOriginalEvent();
         if (oriEvent == null) {
             return;
         }
@@ -419,8 +419,8 @@ public class BlandStandEventHandler {
         }
     }
 
-    public static void proudSoulEnchantmentProbabilityCheck(ProudSoulEnchantmentBaseEvent event) {
-        SlashBladeBaseEvent.BladeStandAttackBaseEvent oriEvent = event.getOriginalEvent();
+    public static void proudSoulEnchantmentProbabilityCheck(ProudSoulEnchantmentEvent event) {
+        SlashBladeEvent.BladeStandAttackEvent oriEvent = event.getOriginalEvent();
         if (oriEvent == null) {
             return;
         }

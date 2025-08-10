@@ -72,7 +72,6 @@ public class SlashBladeShapedRecipe extends ShapedRecipe {
             resultState.setProudSoulCount(resultState.getProudSoulCount() + ingredientState.getProudSoulCount());
             resultState.setKillCount(resultState.getKillCount() + ingredientState.getKillCount());
             resultState.setRefine(resultState.getRefine() + ingredientState.getRefine());
-            // result.getOrCreateTag().put("bladeState", resultState.serializeNBT());
             updateEnchantment(result, stack);
         }
 

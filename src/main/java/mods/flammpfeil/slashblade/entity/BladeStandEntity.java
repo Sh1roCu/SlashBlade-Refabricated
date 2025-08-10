@@ -4,7 +4,7 @@ import cn.sh1rocu.slashblade.api.extension.IEntityAdditionalSpawnData;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.data.tag.SlashBladeItemTags;
-import mods.flammpfeil.slashblade.event.SlashBladeBaseEvent;
+import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.init.SBEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -115,8 +115,8 @@ public class BladeStandEntity extends ItemFrame implements IEntityAdditionalSpaw
 
         ISlashBladeState state = CapabilitySlashBlade.BLADESTATE.maybeGet(blade).orElseThrow(NullPointerException::new);
 
-        SlashBladeBaseEvent.BladeStandAttackBaseEvent event = new SlashBladeBaseEvent.BladeStandAttackBaseEvent(blade, state, this, damageSource);
-        SlashBladeBaseEvent.BLADE_STAND_ATTACK.invoker().onBladeStandAttack(event);
+        SlashBladeEvent.BladeStandAttackEvent event = new SlashBladeEvent.BladeStandAttackEvent(blade, state, this, damageSource);
+        SlashBladeEvent.BLADE_STAND_ATTACK.invoker().onBladeStandAttack(event);
         if (event.isCanceled())
             return false;
 

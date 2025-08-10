@@ -9,11 +9,10 @@ import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.inputstate.CapabilityInputState;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
-import mods.flammpfeil.slashblade.capability.slashblade.SlashBladeState;
 import mods.flammpfeil.slashblade.client.renderer.SlashBladeTEISR;
 import mods.flammpfeil.slashblade.data.tag.SlashBladeItemTags;
 import mods.flammpfeil.slashblade.entity.BladeItemEntity;
-import mods.flammpfeil.slashblade.event.SlashBladeBaseEvent;
+import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.init.DefaultResources;
 import mods.flammpfeil.slashblade.init.SBEntityTypes;
 import mods.flammpfeil.slashblade.init.SBItems;
@@ -72,8 +71,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
     protected static final UUID PLAYER_REACH_AMPLIFIER = UUID.fromString("2D988C13-595B-4E58-B254-39BB6FA077FE");
 
     public static final List<Enchantment> exEnchantment = List.of(Enchantments.SOUL_SPEED, Enchantments.POWER_ARROWS,
-            Enchantments.FALL_PROTECTION, Enchantments.FIRE_PROTECTION,
-            /*BuiltInRegistries.ENCHANTMENT.get(new ResourceLocation("minecraft", "feather_falling")), BuiltInRegistries.ENCHANTMENT.get(new ResourceLocation("minecraft", "fire_protection")),*/ Enchantments.THORNS);
+            Enchantments.FALL_PROTECTION, Enchantments.FIRE_PROTECTION, Enchantments.THORNS);
 
     public ItemSlashBlade(Tier tier, int attackDamageIn, float attackSpeedIn, Properties builder) {
         super(tier, attackDamageIn, attackSpeedIn, builder);
@@ -95,7 +93,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
         result.putAll(Attributes.ATTACK_SPEED, def.get(Attributes.ATTACK_SPEED));
 
         if (slot == EquipmentSlot.MAINHAND) {
-            Optional<SlashBladeState> state = CapabilitySlashBlade.BLADESTATE.maybeGet(stack);
+            Optional<ISlashBladeState> state = CapabilitySlashBlade.BLADESTATE.maybeGet(stack);
             state.ifPresent(s -> {
                 // 刀的状态
                 var swordType = SwordType.from(stack);
@@ -116,8 +114,8 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
 
                 double damage = (double) baseAttackModifier + attackAmplifier - 1F;
 
-                var event = new SlashBladeBaseEvent.UpdateAttackBaseEvent(stack, s, damage);
-                SlashBladeBaseEvent.UPDATE_ATTACK.invoker().onUpdateAttack(event);
+                var event = new SlashBladeEvent.UpdateAttackEvent(stack, s, damage);
+                SlashBladeEvent.UPDATE_ATTACK.invoker().onUpdateAttack(event);
 
                 AttributeModifier attack = new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier",
                         event.getNewDamage(), AttributeModifier.Operation.ADDITION);
@@ -175,7 +173,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
 
     @Override
     public boolean onLeftClickEntity(ItemStack itemstack, Player playerIn, Entity entity) {
-        Optional<SlashBladeState> stateHolder = CapabilitySlashBlade.BLADESTATE.maybeGet(itemstack)
+        Optional<ISlashBladeState> stateHolder = CapabilitySlashBlade.BLADESTATE.maybeGet(itemstack)
                 .filter((state) -> !state.onClick());
 
         stateHolder.ifPresent((state) -> {
@@ -216,8 +214,8 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
         if (stack.getDamageValue() + amount >= stack.getMaxDamage()) {
             amount = 0;
             stack.setDamageValue(stack.getMaxDamage() - 1);
-            SlashBladeBaseEvent.BreakBaseEvent event = new SlashBladeBaseEvent.BreakBaseEvent(stack, cap);
-            SlashBladeBaseEvent.BREAK.invoker().onBreak(event);
+            SlashBladeEvent.BreakEvent event = new SlashBladeEvent.BreakEvent(stack, cap);
+            SlashBladeEvent.BREAK.invoker().onBreak(event);
             cap.setBroken(!event.isCanceled());
         }
 
@@ -326,8 +324,8 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
                     ? ComboStateRegistry.COMBO_STATE.get(loc)
                     : ComboStateRegistry.NONE;
 
-            SlashBladeBaseEvent.HitBaseEvent event = new SlashBladeBaseEvent.HitBaseEvent(stack, state, target, attacker);
-            SlashBladeBaseEvent.HIT.invoker().onHit(event);
+            SlashBladeEvent.HitEvent event = new SlashBladeEvent.HitEvent(stack, state, target, attacker);
+            SlashBladeEvent.HIT.invoker().onHit(event);
             if (event.isCanceled())
                 return;
 
@@ -415,8 +413,8 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
             return;
 
         CapabilitySlashBlade.BLADESTATE.maybeGet(stack).ifPresent((state) -> {
-            SlashBladeBaseEvent.UpdateBaseEvent event = new SlashBladeBaseEvent.UpdateBaseEvent(stack, state, worldIn, entityIn, itemSlot, isSelected);
-            SlashBladeBaseEvent.UPDATE.invoker().onUpdate(event);
+            SlashBladeEvent.UpdateEvent event = new SlashBladeEvent.UpdateEvent(stack, state, worldIn, entityIn, itemSlot, isSelected);
+            SlashBladeEvent.UPDATE.invoker().onUpdate(event);
             if (event.isCanceled())
                 return;
 

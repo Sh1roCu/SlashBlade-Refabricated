@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
-public class RefineSettlementBaseEvent extends SlashBladeBaseEvent implements ICancellableEvent {
+public class RefineSettlementEvent extends SlashBladeEvent implements ICancellableEvent {
     private final AnvilUpdateEvent originalEvent;
     private int materialCost;
     private int costResult;
@@ -20,8 +20,8 @@ public class RefineSettlementBaseEvent extends SlashBladeBaseEvent implements IC
         }
     });
 
-    public RefineSettlementBaseEvent(ItemStack blade, ISlashBladeState state, int materialCost, int costResult,
-                                     int refineResult, AnvilUpdateEvent originalEvent) {
+    public RefineSettlementEvent(ItemStack blade, ISlashBladeState state, int materialCost, int costResult,
+                                 int refineResult, AnvilUpdateEvent originalEvent) {
         super(blade, state);
         this.materialCost = materialCost;
         this.costResult = costResult;
@@ -61,6 +61,6 @@ public class RefineSettlementBaseEvent extends SlashBladeBaseEvent implements IC
     }
 
     public interface Callback {
-        void onRefineSettlement(RefineSettlementBaseEvent event);
+        void onRefineSettlement(RefineSettlementEvent event);
     }
 }
