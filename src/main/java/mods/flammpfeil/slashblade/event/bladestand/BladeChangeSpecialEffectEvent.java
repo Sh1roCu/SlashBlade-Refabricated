@@ -2,7 +2,7 @@ package mods.flammpfeil.slashblade.event.bladestand;
 
 import cn.sh1rocu.slashblade.api.event.ICancellableEvent;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
-import mods.flammpfeil.slashblade.event.SlashBladeBaseEvent;
+import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.resources.ResourceLocation;
@@ -10,24 +10,20 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
-public class PreCopySpecialEffectFromBladeBaseEvent extends SlashBladeBaseEvent implements ICancellableEvent {
+public class BladeChangeSpecialEffectEvent extends SlashBladeEvent implements ICancellableEvent {
     private ResourceLocation SEKey;
     private int shrinkCount = 0;
-    private boolean isRemovable;
-    private boolean isCopiable;
-    private final BladeStandAttackBaseEvent originalEvent;
+    private final BladeStandAttackEvent originalEvent;
     public static final Event<Callback> CALLBACK = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
         for (Callback callback : callbacks) {
-            callback.onPreCopySpecialEffect(event);
+            callback.onChangeSpecialEffect(event);
         }
     });
 
-    public PreCopySpecialEffectFromBladeBaseEvent(ItemStack blade, ISlashBladeState state, ResourceLocation SEKey,
-                                                  BladeStandAttackBaseEvent originalEvent, boolean isRemovable, boolean isCopiable) {
+    public BladeChangeSpecialEffectEvent(ItemStack blade, ISlashBladeState state, ResourceLocation SEKey,
+                                         BladeStandAttackEvent originalEvent) {
         super(blade, state);
         this.SEKey = SEKey;
-        this.isRemovable = isRemovable;
-        this.isCopiable = isCopiable;
         this.originalEvent = originalEvent;
     }
 
@@ -49,29 +45,11 @@ public class PreCopySpecialEffectFromBladeBaseEvent extends SlashBladeBaseEvent 
         return this.shrinkCount;
     }
 
-    public @Nullable BladeStandAttackBaseEvent getOriginalEvent() {
+    public @Nullable BladeStandAttackEvent getOriginalEvent() {
         return originalEvent;
     }
 
-    public boolean isRemovable() {
-        return isRemovable;
-    }
-
-    public boolean setRemovable(boolean isRemovable) {
-        this.isRemovable = isRemovable;
-        return isRemovable;
-    }
-
-    public boolean isCopiable() {
-        return isCopiable;
-    }
-
-    public boolean setCopiable(boolean isCopiable) {
-        this.isCopiable = isCopiable;
-        return isCopiable;
-    }
-
     public interface Callback {
-        void onPreCopySpecialEffect(PreCopySpecialEffectFromBladeBaseEvent event);
+        void onChangeSpecialEffect(BladeChangeSpecialEffectEvent event);
     }
 }

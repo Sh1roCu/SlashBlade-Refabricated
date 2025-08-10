@@ -4,6 +4,7 @@ import cn.sh1rocu.slashblade.api.event.BaseEvent;
 import cn.sh1rocu.slashblade.api.event.ICancellableEvent;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.entity.BladeStandEntity;
+import mods.flammpfeil.slashblade.entity.EntityAbstractSummonedSword;
 import mods.flammpfeil.slashblade.slasharts.SlashArts;
 import mods.flammpfeil.slashblade.util.KnockBacks;
 import net.fabricmc.fabric.api.event.Event;
@@ -15,7 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public abstract class SlashBladeBaseEvent extends BaseEvent {
+public abstract class SlashBladeEvent extends BaseEvent {
     private final ItemStack blade;
     private final ISlashBladeState state;
 
@@ -59,8 +60,13 @@ public abstract class SlashBladeBaseEvent extends BaseEvent {
             callback.onChargeAction(event);
         }
     });
+    public static final Event<SummonedSwordOnHitEntity> SUMMONEDSWORD_ONHIT_ENTITY = EventFactory.createArrayBacked(SummonedSwordOnHitEntity.class, callbacks -> event -> {
+        for (SummonedSwordOnHitEntity callback : callbacks) {
+            callback.onSummonedSwordOnHitEntity(event);
+        }
+    });
 
-    public SlashBladeBaseEvent(ItemStack blade, ISlashBladeState state) {
+    public SlashBladeEvent(ItemStack blade, ISlashBladeState state) {
         this.blade = blade;
         this.state = state;
     }
@@ -74,48 +80,52 @@ public abstract class SlashBladeBaseEvent extends BaseEvent {
     }
 
     public interface Break {
-        void onBreak(BreakBaseEvent event);
+        void onBreak(BreakEvent event);
     }
 
     public interface PowerBlade {
-        void onPower(PowerBladeBaseEvent event);
+        void onPower(PowerBladeEvent event);
     }
 
     public interface UpdateAttack {
-        void onUpdateAttack(UpdateAttackBaseEvent event);
+        void onUpdateAttack(UpdateAttackEvent event);
     }
 
     public interface BladeStandAttack {
-        void onBladeStandAttack(BladeStandAttackBaseEvent event);
+        void onBladeStandAttack(BladeStandAttackEvent event);
     }
 
     public interface Hit {
-        void onHit(HitBaseEvent event);
+        void onHit(HitEvent event);
     }
 
     public interface Update {
-        void onUpdate(UpdateBaseEvent event);
+        void onUpdate(UpdateEvent event);
     }
 
     public interface DoSlash {
-        void onDoSlash(DoSlashBaseEvent event);
+        void onDoSlash(DoSlashEvent event);
     }
 
     public interface ChargeAction {
         void onChargeAction(ChargeActionBaseEvent event);
     }
 
-    public static class BreakBaseEvent extends SlashBladeBaseEvent implements ICancellableEvent {
-        public BreakBaseEvent(ItemStack blade, ISlashBladeState state) {
+    public interface SummonedSwordOnHitEntity {
+        void onSummonedSwordOnHitEntity(SummonedSwordOnHitEntityEvent event);
+    }
+
+    public static class BreakEvent extends SlashBladeEvent implements ICancellableEvent {
+        public BreakEvent(ItemStack blade, ISlashBladeState state) {
             super(blade, state);
         }
     }
 
-    public static class PowerBladeBaseEvent extends SlashBladeBaseEvent {
+    public static class PowerBladeEvent extends SlashBladeEvent {
         private final LivingEntity user;
         private boolean isPowered;
 
-        public PowerBladeBaseEvent(ItemStack blade, ISlashBladeState state, LivingEntity user, boolean isPowered) {
+        public PowerBladeEvent(ItemStack blade, ISlashBladeState state, LivingEntity user, boolean isPowered) {
             super(blade, state);
             this.user = user;
             this.setPowered(isPowered);
@@ -135,11 +145,11 @@ public abstract class SlashBladeBaseEvent extends BaseEvent {
 
     }
 
-    public static class UpdateAttackBaseEvent extends SlashBladeBaseEvent {
+    public static class UpdateAttackEvent extends SlashBladeEvent {
         private final double originDamage;
         private double newDamage;
 
-        public UpdateAttackBaseEvent(ItemStack blade, ISlashBladeState state, double damage) {
+        public UpdateAttackEvent(ItemStack blade, ISlashBladeState state, double damage) {
             super(blade, state);
             this.originDamage = damage;
             this.newDamage = damage;
@@ -158,11 +168,11 @@ public abstract class SlashBladeBaseEvent extends BaseEvent {
         }
     }
 
-    public static class BladeStandAttackBaseEvent extends SlashBladeBaseEvent implements ICancellableEvent {
+    public static class BladeStandAttackEvent extends SlashBladeEvent implements ICancellableEvent {
         private final BladeStandEntity bladeStand;
         private final DamageSource damageSource;
 
-        public BladeStandAttackBaseEvent(ItemStack blade, ISlashBladeState state, BladeStandEntity bladeStand, DamageSource damageSource) {
+        public BladeStandAttackEvent(ItemStack blade, ISlashBladeState state, BladeStandEntity bladeStand, DamageSource damageSource) {
             super(blade, state);
             this.bladeStand = bladeStand;
             this.damageSource = damageSource;
@@ -178,11 +188,11 @@ public abstract class SlashBladeBaseEvent extends BaseEvent {
 
     }
 
-    public static class HitBaseEvent extends SlashBladeBaseEvent implements ICancellableEvent {
+    public static class HitEvent extends SlashBladeEvent implements ICancellableEvent {
         private final LivingEntity target;
         private final LivingEntity user;
 
-        public HitBaseEvent(ItemStack blade, ISlashBladeState state, LivingEntity target, LivingEntity user) {
+        public HitEvent(ItemStack blade, ISlashBladeState state, LivingEntity target, LivingEntity user) {
             super(blade, state);
             this.target = target;
             this.user = user;
@@ -198,14 +208,14 @@ public abstract class SlashBladeBaseEvent extends BaseEvent {
 
     }
 
-    public static class UpdateBaseEvent extends SlashBladeBaseEvent implements ICancellableEvent {
+    public static class UpdateEvent extends SlashBladeEvent implements ICancellableEvent {
         private final Level level;
         private final Entity entity;
         private final int itemSlot;
         private final boolean isSelected;
 
-        public UpdateBaseEvent(ItemStack blade, ISlashBladeState state,
-                               Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+        public UpdateEvent(ItemStack blade, ISlashBladeState state,
+                           Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
             super(blade, state);
             this.level = worldIn;
             this.entity = entityIn;
@@ -231,15 +241,15 @@ public abstract class SlashBladeBaseEvent extends BaseEvent {
 
     }
 
-    public static class DoSlashBaseEvent extends SlashBladeBaseEvent implements ICancellableEvent {
+    public static class DoSlashEvent extends SlashBladeEvent implements ICancellableEvent {
         private final LivingEntity user;
         private float roll;
         private boolean critical;
         private double damage;
         private KnockBacks knockback;
 
-        public DoSlashBaseEvent(ItemStack blade, ISlashBladeState state, LivingEntity user,
-                                float roll, boolean critical, double damage, KnockBacks knockback) {
+        public DoSlashEvent(ItemStack blade, ISlashBladeState state, LivingEntity user,
+                            float roll, boolean critical, double damage, KnockBacks knockback) {
             super(blade, state);
             this.user = user;
             this.roll = roll;
@@ -324,6 +334,24 @@ public abstract class SlashBladeBaseEvent extends BaseEvent {
 
         public SlashArts.ArtsType getType() {
             return type;
+        }
+    }
+
+    public static class SummonedSwordOnHitEntityEvent extends BaseEvent {
+        private final EntityAbstractSummonedSword summonedSword;
+        private final Entity target;
+
+        public SummonedSwordOnHitEntityEvent(EntityAbstractSummonedSword summonedSword, Entity target) {
+            this.summonedSword = summonedSword;
+            this.target = target;
+        }
+
+        public EntityAbstractSummonedSword getSummonedSword() {
+            return summonedSword;
+        }
+
+        public Entity getTarget() {
+            return target;
         }
     }
 }

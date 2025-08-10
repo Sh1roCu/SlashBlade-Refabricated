@@ -2,7 +2,7 @@ package mods.flammpfeil.slashblade.event.bladestand;
 
 import cn.sh1rocu.slashblade.api.event.ICancellableEvent;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
-import mods.flammpfeil.slashblade.event.SlashBladeBaseEvent;
+import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.resources.ResourceLocation;
@@ -10,18 +10,18 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
-public class PreCopySpecialAttackFromBladeBaseEvent extends SlashBladeBaseEvent implements ICancellableEvent {
+public class PreCopySpecialAttackFromBladeEvent extends SlashBladeEvent implements ICancellableEvent {
     private ResourceLocation SAKey;
     private int shrinkCount = 0;
-    private final BladeStandAttackBaseEvent originalEvent;
+    private final BladeStandAttackEvent originalEvent;
     public static final Event<Callback> CALLBACK = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
         for (Callback callback : callbacks) {
             callback.onPreCopySpecialAttack(event);
         }
     });
 
-    public PreCopySpecialAttackFromBladeBaseEvent(ItemStack blade, ISlashBladeState state, ResourceLocation SAKey,
-                                                  BladeStandAttackBaseEvent originalEvent) {
+    public PreCopySpecialAttackFromBladeEvent(ItemStack blade, ISlashBladeState state, ResourceLocation SAKey,
+                                              BladeStandAttackEvent originalEvent) {
         super(blade, state);
         this.SAKey = SAKey;
         this.originalEvent = originalEvent;
@@ -45,11 +45,11 @@ public class PreCopySpecialAttackFromBladeBaseEvent extends SlashBladeBaseEvent 
         return this.shrinkCount;
     }
 
-    public @Nullable BladeStandAttackBaseEvent getOriginalEvent() {
+    public @Nullable BladeStandAttackEvent getOriginalEvent() {
         return originalEvent;
     }
 
     public interface Callback {
-        void onPreCopySpecialAttack(PreCopySpecialAttackFromBladeBaseEvent event);
+        void onPreCopySpecialAttack(PreCopySpecialAttackFromBladeEvent event);
     }
 }

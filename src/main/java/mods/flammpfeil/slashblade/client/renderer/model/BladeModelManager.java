@@ -34,9 +34,9 @@ public class BladeModelManager {
                 .registryOrThrow(SlashBladeDefinition.REGISTRY_KEY);
     }
 
-    WavefrontObject defaultModel;
+    public WavefrontObject defaultModel;
 
-    LoadingCache<ResourceLocation, WavefrontObject> cache;
+    public LoadingCache<ResourceLocation, WavefrontObject> cache;
 
     private BladeModelManager() {
         defaultModel = new WavefrontObject(DefaultResources.resourceDefaultModel);
@@ -55,11 +55,11 @@ public class BladeModelManager {
                 }, Executors.newCachedThreadPool()));
     }
 
-    public void reload(TextureAtlas atlas) {
-        cache.invalidateAll();
-
-        defaultModel = new WavefrontObject(DefaultResources.resourceDefaultModel);
-    }
+//    public void reload(TextureAtlas atlas) {
+//        cache.invalidateAll();
+//
+//        defaultModel = new WavefrontObject(DefaultResources.resourceDefaultModel);
+//    }
 
     public WavefrontObject getModel(ResourceLocation loc) {
         if (loc != null) {

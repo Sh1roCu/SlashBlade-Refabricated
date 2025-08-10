@@ -1,7 +1,7 @@
 package mods.flammpfeil.slashblade.event.bladestand;
 
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
-import mods.flammpfeil.slashblade.event.SlashBladeBaseEvent;
+import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.resources.ResourceLocation;
@@ -10,11 +10,11 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
-public class CopySpecialEffectFromBladeBaseEvent extends SlashBladeBaseEvent {
+public class CopySpecialEffectFromBladeEvent extends SlashBladeEvent {
     private final ResourceLocation SEKey;
     private final boolean isRemovable;
     private final boolean isCopiable;
-    private final BladeStandAttackBaseEvent originalEvent;
+    private final BladeStandAttackEvent originalEvent;
     private final ItemStack orb;
     private final ItemEntity itemEntity;
     public static final Event<Callback> CALLBACK = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
@@ -23,9 +23,9 @@ public class CopySpecialEffectFromBladeBaseEvent extends SlashBladeBaseEvent {
         }
     });
 
-    public CopySpecialEffectFromBladeBaseEvent(ItemStack blade, ISlashBladeState state, ResourceLocation SEKey,
-                                               BladeStandAttackBaseEvent originalEvent, boolean isRemovable, boolean isCopiable,
-                                               ItemStack orb, ItemEntity itemEntity) {
+    public CopySpecialEffectFromBladeEvent(ItemStack blade, ISlashBladeState state, ResourceLocation SEKey,
+                                           BladeStandAttackEvent originalEvent, boolean isRemovable, boolean isCopiable,
+                                           ItemStack orb, ItemEntity itemEntity) {
         super(blade, state);
         this.SEKey = SEKey;
         this.isRemovable = isRemovable;
@@ -35,8 +35,8 @@ public class CopySpecialEffectFromBladeBaseEvent extends SlashBladeBaseEvent {
         this.itemEntity = itemEntity;
     }
 
-    public CopySpecialEffectFromBladeBaseEvent(PreCopySpecialEffectFromBladeBaseEvent pe, ItemStack orb,
-                                               ItemEntity itemEntity) {
+    public CopySpecialEffectFromBladeEvent(PreCopySpecialEffectFromBladeEvent pe, ItemStack orb,
+                                           ItemEntity itemEntity) {
         this(pe.getBlade(), pe.getSlashBladeState(), pe.getSEKey(), pe.getOriginalEvent(), pe.isRemovable(),
                 pe.isCopiable(), orb, itemEntity);
     }
@@ -45,7 +45,7 @@ public class CopySpecialEffectFromBladeBaseEvent extends SlashBladeBaseEvent {
         return SEKey;
     }
 
-    public @Nullable BladeStandAttackBaseEvent getOriginalEvent() {
+    public @Nullable BladeStandAttackEvent getOriginalEvent() {
         return originalEvent;
     }
 
@@ -66,6 +66,6 @@ public class CopySpecialEffectFromBladeBaseEvent extends SlashBladeBaseEvent {
     }
 
     public interface Callback {
-        void onCopySpecialEffect(CopySpecialEffectFromBladeBaseEvent event);
+        void onCopySpecialEffect(CopySpecialEffectFromBladeEvent event);
     }
 }

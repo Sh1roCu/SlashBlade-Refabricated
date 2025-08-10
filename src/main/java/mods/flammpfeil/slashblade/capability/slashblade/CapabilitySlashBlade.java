@@ -10,7 +10,7 @@ import mods.flammpfeil.slashblade.item.ItemSlashBladeDetune;
 
 @SuppressWarnings("UnstableApiUsage")
 public class CapabilitySlashBlade implements ItemComponentInitializer {
-    public static final ComponentKey<SlashBladeState> BLADESTATE = ComponentRegistry.getOrCreate(SlashBlade.prefix("blade_state"), SlashBladeState.class);
+    public static final ComponentKey<ISlashBladeState> BLADESTATE = ComponentRegistry.getOrCreate(SlashBlade.prefix("blade_state"), ISlashBladeState.class);
 
     @Override
     public void registerItemComponentFactories(ItemComponentFactoryRegistry registry) {

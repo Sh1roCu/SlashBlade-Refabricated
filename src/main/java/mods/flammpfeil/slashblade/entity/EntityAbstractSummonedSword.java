@@ -4,6 +4,7 @@ import cn.sh1rocu.slashblade.api.extension.EntityExtension;
 import cn.sh1rocu.slashblade.api.extension.IEntityAdditionalSpawnData;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import mods.flammpfeil.slashblade.ability.StunManager;
+import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.util.AttackManager;
 import mods.flammpfeil.slashblade.util.EnumSetConverter;
 import mods.flammpfeil.slashblade.util.NBTHelper;
@@ -473,6 +474,8 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
 
     protected void onHitEntity(EntityHitResult entityHitResult) {
         Entity targetEntity = entityHitResult.getEntity();
+        SlashBladeEvent.SummonedSwordOnHitEntityEvent event = new SlashBladeEvent.SummonedSwordOnHitEntityEvent(this, targetEntity);
+        SlashBladeEvent.SUMMONEDSWORD_ONHIT_ENTITY.invoker().onSummonedSwordOnHitEntity(event);
         int i = Mth.ceil(this.getDamage());
         if (this.getPierce() > 0) {
             if (this.alreadyHits == null) {
@@ -597,7 +600,7 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
     protected EntityHitResult getRayTrace(Vec3 p_213866_1_, Vec3 p_213866_2_) {
         return ProjectileUtil.getEntityHitResult(this.level(), this, p_213866_1_, p_213866_2_,
                 this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0D), (entity) -> {
-                    return !entity.isSpectator() && entity.canBeHitByProjectile()
+                    return entity.canBeHitByProjectile() && !entity.isSpectator()
                             && (entity != this.getShooter() || this.ticksInAir >= 5)
                             && (this.alreadyHits == null || !this.alreadyHits.contains(entity.getId()));
                 });

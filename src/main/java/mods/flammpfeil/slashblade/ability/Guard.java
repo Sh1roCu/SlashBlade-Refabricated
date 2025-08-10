@@ -60,7 +60,7 @@ public class Guard {
         // begin executable check -----------------
         // item check
         ItemStack stack = victim.getMainHandItem();
-        Optional<SlashBladeState> slashBlade = CapabilitySlashBlade.BLADESTATE.maybeGet(stack);
+        Optional<ISlashBladeState> slashBlade = CapabilitySlashBlade.BLADESTATE.maybeGet(stack);
         if (slashBlade.isEmpty())
             return;
         if (slashBlade.filter(ISlashBladeState::isBroken).isPresent())

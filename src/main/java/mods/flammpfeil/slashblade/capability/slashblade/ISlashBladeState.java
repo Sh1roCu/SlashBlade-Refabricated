@@ -3,9 +3,10 @@ package mods.flammpfeil.slashblade.capability.slashblade;
 import com.google.common.collect.ImmutableRangeMap;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeMap;
+import dev.onyxstudios.cca.api.v3.component.Component;
 import mods.flammpfeil.slashblade.client.renderer.CarryType;
 import mods.flammpfeil.slashblade.event.BladeMotionEvent;
-import mods.flammpfeil.slashblade.event.SlashBladeBaseEvent;
+import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.item.SwordType;
 import mods.flammpfeil.slashblade.registry.ComboStateRegistry;
@@ -13,12 +14,8 @@ import mods.flammpfeil.slashblade.registry.SlashArtsRegistry;
 import mods.flammpfeil.slashblade.registry.combo.ComboState;
 import mods.flammpfeil.slashblade.slasharts.SlashArts;
 import mods.flammpfeil.slashblade.util.AdvancementHelper;
-import mods.flammpfeil.slashblade.util.EnumSetConverter;
-import mods.flammpfeil.slashblade.util.NBTHelper;
 import mods.flammpfeil.slashblade.util.TimeValueHelper;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public interface ISlashBladeState {
+public interface ISlashBladeState extends Component {
     // action state
     String LAST_ACTION_TIME = "lastActionTime";
     String TARGET_ENTITY = "TargetEntity";
@@ -69,112 +66,6 @@ public interface ISlashBladeState {
 
     String COMBO_ROOT = "ComboRoot";
     String SPECIAL_EFFECTS = "SpecialEffects";
-
-    default CompoundTag serializeNBT() {
-        CompoundTag tag = new CompoundTag();
-        // action state
-        tag.putLong("lastActionTime", this.getLastActionTime());
-        tag.putInt("TargetEntity", this.getTargetEntityId());
-        tag.putBoolean("_onClick", this.onClick());
-        tag.putFloat("fallDecreaseRate", this.getFallDecreaseRate());
-        tag.putFloat("AttackAmplifier", this.getAttackAmplifier());
-        tag.putString("currentCombo", this.getComboSeq().toString());
-        tag.putInt("Damage", this.getDamage());
-        tag.putInt("maxDamage", this.getMaxDamage());
-        tag.putInt("proudSoul", this.getProudSoulCount());
-        tag.putBoolean("isBroken", this.isBroken());
-
-        // passive state
-        tag.putBoolean("isSealed", this.isSealed());
-
-        tag.putFloat("baseAttackModifier", this.getBaseAttackModifier());
-
-        tag.putInt("killCount", this.getKillCount());
-        tag.putInt("RepairCounter", this.getRefine());
-
-        // performance setting
-
-        tag.putString("SpecialAttackType",
-                Optional.ofNullable(this.getSlashArtsKey()).orElse(SlashArtsRegistry.SLASH_ARTS.getKey(SlashArtsRegistry.JUDGEMENT_CUT)).toString());
-        tag.putBoolean("isDefaultBewitched", this.isDefaultBewitched());
-        tag.putString("translationKey", this.getTranslationKey());
-
-        // render info
-        tag.putByte("StandbyRenderType", (byte) this.getCarryType().ordinal());
-        tag.putInt("SummonedSwordColor", this.getColorCode());
-        tag.putBoolean("SummonedSwordColorInverse", this.isEffectColorInverse());
-        tag.put("adjustXYZ", NBTHelper.newDoubleNBTList(this.getAdjust()));
-
-        this.getTexture().ifPresent(loc -> tag.putString("TextureName", loc.toString()));
-        this.getModel().ifPresent(loc -> tag.putString("ModelName", loc.toString()));
-
-        tag.putString("ComboRoot",
-                Optional.ofNullable(this.getComboRoot()).orElse(ComboStateRegistry.getId(ComboStateRegistry.STANDBY)).toString());
-
-        if (this.getSpecialEffects() != null && !this.getSpecialEffects().isEmpty()) {
-            ListTag seList = new ListTag();
-            this.getSpecialEffects().forEach(se -> seList.add(StringTag.valueOf(se.toString())));
-            tag.put("SpecialEffects", seList);
-        }
-
-        return tag;
-    }
-
-    default void deserializeNBT(CompoundTag tag) {
-        if (tag == null)
-            return;
-        this.setNonEmpty();
-        // action state
-        this.setLastActionTime(tag.getLong("lastActionTime"));
-        this.setTargetEntityId(tag.getInt("TargetEntity"));
-        this.setOnClick(tag.getBoolean("_onClick"));
-        this.setFallDecreaseRate(tag.getFloat("fallDecreaseRate"));
-        this.setAttackAmplifier(tag.getFloat("AttackAmplifier"));
-        this.setComboSeq(ResourceLocation.tryParse(tag.getString("currentCombo")));
-        this.setDamage(tag.getInt("Damage"));
-        this.setMaxDamage(tag.getInt("maxDamage"));
-        this.setProudSoulCount(tag.getInt("proudSoul"));
-        this.setBroken(tag.getBoolean("isBroken"));
-
-        // passive state
-        this.setSealed(tag.getBoolean("isSealed"));
-
-        this.setBaseAttackModifier(tag.getFloat("baseAttackModifier"));
-
-        this.setKillCount(tag.getInt("killCount"));
-        this.setRefine(tag.getInt("RepairCounter"));
-
-        // performance setting
-
-        this.setSlashArtsKey(ResourceLocation.tryParse(tag.getString("SpecialAttackType")));
-        this.setDefaultBewitched(tag.getBoolean("isDefaultBewitched"));
-
-        this.setTranslationKey(tag.getString("translationKey"));
-
-        // render info
-        this.setCarryType(
-                EnumSetConverter.fromOrdinal(CarryType.values(), tag.getByte("StandbyRenderType"), CarryType.PSO2));
-        this.setColorCode(tag.getInt("SummonedSwordColor"));
-        this.setEffectColorInverse(tag.getBoolean("SummonedSwordColorInverse"));
-        this.setAdjust(NBTHelper.getVector3d(tag, "adjustXYZ"));
-
-        if (tag.contains("TextureName"))
-            this.setTexture(new ResourceLocation(tag.getString("TextureName")));
-        else
-            this.setTexture(null);
-
-        if (tag.contains("ModelName"))
-            this.setModel(new ResourceLocation(tag.getString("ModelName")));
-        else
-            this.setModel(null);
-
-        this.setComboRoot(ResourceLocation.tryParse(tag.getString("ComboRoot")));
-        if (tag.contains("SpecialEffects")) {
-            ListTag list = tag.getList("SpecialEffects", 8);
-            this.setSpecialEffects(list);
-        }
-
-    }
 
     long getLastActionTime();
 
@@ -393,9 +284,9 @@ public interface ISlashBladeState {
 
         ResourceLocation csloc = this.getSlashArts().doArts(type, user);
 
-        SlashBladeBaseEvent.ChargeActionBaseEvent event = new SlashBladeBaseEvent.ChargeActionBaseEvent(user, elapsed, this, csloc,
+        SlashBladeEvent.ChargeActionBaseEvent event = new SlashBladeEvent.ChargeActionBaseEvent(user, elapsed, this, csloc,
                 type);
-        SlashBladeBaseEvent.CHARGE_ACTION.invoker().onChargeAction(event);
+        SlashBladeEvent.CHARGE_ACTION.invoker().onChargeAction(event);
         if (event.isCanceled()) {
             return ComboStateRegistry.getId(ComboStateRegistry.NONE);
         }

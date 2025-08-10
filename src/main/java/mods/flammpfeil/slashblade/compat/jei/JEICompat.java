@@ -26,7 +26,6 @@ public class JEICompat implements IModPlugin {
 
     public static String syncSlashBlade(ItemStack stack, UidContext context) {
         // 同步nbt到Cap
-        // CCA自动同步
 //        CapabilitySlashBlade.BLADESTATE.maybeGet(stack).ifPresent(cap -> {
 //            if (stack.getOrCreateTag().contains("bladeState"))
 //                cap.deserializeNBT(stack.getOrCreateTag().getCompound("bladeState"));

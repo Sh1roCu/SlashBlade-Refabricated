@@ -121,8 +121,6 @@ public class SlashBladeDefinition {
         if (!this.getName().equals(SlashBlade.prefix("none")))
             state.setTranslationKey(this.getTranslationKey());
 
-        // result.getOrCreateTag().put("bladeState", state.serializeNBT());
-
         for (var instance : this.enchantments) {
             var enchantment = BuiltInRegistries.ENCHANTMENT.get(instance.getEnchantmentID());
             result.enchant(enchantment, instance.getEnchantmentLevel());

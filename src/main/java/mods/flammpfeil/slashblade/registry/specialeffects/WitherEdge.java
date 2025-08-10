@@ -1,7 +1,7 @@
 package mods.flammpfeil.slashblade.registry.specialeffects;
 
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
-import mods.flammpfeil.slashblade.event.SlashBladeBaseEvent;
+import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.registry.SpecialEffectsRegistry;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -13,7 +13,7 @@ public class WitherEdge extends SpecialEffect {
         super(20, true, true);
     }
 
-    public static void onSlashBladeUpdate(SlashBladeBaseEvent.UpdateBaseEvent event) {
+    public static void onSlashBladeUpdate(SlashBladeEvent.UpdateEvent event) {
         ISlashBladeState state = event.getSlashBladeState();
         if (state.hasSpecialEffect(SpecialEffectsRegistry.SPECIAL_EFFECT.getKey(SpecialEffectsRegistry.WITHER_EDGE))) {
             if (!(event.getEntity() instanceof Player)) {
@@ -32,7 +32,7 @@ public class WitherEdge extends SpecialEffect {
         }
     }
 
-    public static void onSlashBladeHit(SlashBladeBaseEvent.HitBaseEvent event) {
+    public static void onSlashBladeHit(SlashBladeEvent.HitEvent event) {
         ISlashBladeState state = event.getSlashBladeState();
         if (state.hasSpecialEffect(SpecialEffectsRegistry.SPECIAL_EFFECT.getKey(SpecialEffectsRegistry.WITHER_EDGE))) {
             if (!(event.getUser() instanceof Player)) {
