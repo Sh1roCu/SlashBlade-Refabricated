@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 
+@Environment(EnvType.CLIENT)
 public class BlockPickCanceller {
     private static final class SingletonHolder {
         private static final BlockPickCanceller instance = new BlockPickCanceller();
@@ -18,14 +19,10 @@ public class BlockPickCanceller {
         return SingletonHolder.instance;
     }
 
-    private BlockPickCanceller() {
-    }
-
     public void register() {
         InputEvent.InteractionKeyMappingTriggered.CLICK_INPUT_CALLBACK.register(this::onBlockPick);
     }
 
-    @Environment(EnvType.CLIENT)
     public void onBlockPick(InputEvent.InteractionKeyMappingTriggered event) {
         if (!event.isPickBlock())
             return;

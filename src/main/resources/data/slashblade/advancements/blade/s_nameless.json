@@ -19,8 +19,7 @@
       "conditions": {
         "items": [
           {
-            "items": ["slashblade:slashblade"],
-            "nbt": "{ShareTag:{translationKey:\"\"}}"
+            "items": ["slashblade:slashblade"]
           }
         ]
       }

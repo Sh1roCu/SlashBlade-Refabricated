@@ -1,9 +1,12 @@
 package cn.sh1rocu.slashblade.client;
 
 import cn.sh1rocu.slashblade.api.event.EntityAddedLayerCallback;
+import cn.sh1rocu.slashblade.api.event.RenderTickEvent;
+import mods.flammpfeil.slashblade.ability.LockOnManager;
 import mods.flammpfeil.slashblade.client.ClientHandler;
 import mods.flammpfeil.slashblade.client.renderer.entity.*;
 import mods.flammpfeil.slashblade.client.renderer.event.PreloadedModelEvent;
+import mods.flammpfeil.slashblade.event.handler.BlockPickCanceller;
 import mods.flammpfeil.slashblade.event.handler.MoveInputHandler;
 import mods.flammpfeil.slashblade.init.SBEntityTypes;
 import mods.flammpfeil.slashblade.network.NetworkManager;
@@ -23,6 +26,8 @@ public class SlashBladeFabricClient implements ClientModInitializer, ModelLoadin
         ClientHandler.doClientStuff();
         EntityAddedLayerCallback.EVENT.register(ClientHandler::addLayers);
         ClientTickEvents.END_CLIENT_TICK.register(MoveInputHandler::onPlayerPostTick);
+        RenderTickEvent.START.register(LockOnManager.Client::onEntityUpdate);
+        BlockPickCanceller.getInstance().register();
     }
 
     @Override

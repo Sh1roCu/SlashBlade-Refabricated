@@ -3,6 +3,7 @@
   "category": "equipment",
   "key": {
     "B": {
+      "fabric:type": "slashblade:blade",
       "type": "slashblade:blade",
       "item": "slashblade:slashblade_white",
       "request": {
@@ -12,16 +13,16 @@
       }
     },
     "D": {
-      "tag": "c:storage_blocks/coal"
+      "tag": "c:coal_blocks"
     },
     "E": {
-      "tag": "c:rods/blaze"
+      "tag": "c:blaze_rods"
     },
     "I": {
-      "tag": "c:ingots/gold"
+      "tag": "c:gold_ingots"
     },
     "P": {
-      "tag": "c:dyes/blue"
+      "tag": "c:blue_dyes"
     },
     "S": {
       "tag": "c:string"

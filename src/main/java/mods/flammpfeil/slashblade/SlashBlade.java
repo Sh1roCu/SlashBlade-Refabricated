@@ -76,7 +76,6 @@ public class SlashBlade {
         KillCounter.getInstance().register();
         RankPointHandler.getInstance().register();
         AllowFlightOverrwrite.getInstance().register();
-        BlockPickCanceller.getInstance().register();
         BladeMotionEventBroadcaster.getInstance().register();
 
         InputCommandEvent.CALLBACK.register(TargetSelector::onInputChange);

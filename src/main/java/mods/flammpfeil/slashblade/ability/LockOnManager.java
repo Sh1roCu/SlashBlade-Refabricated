@@ -39,7 +39,6 @@ public class LockOnManager {
 
     public void register() {
         InputCommandEvent.CALLBACK.register(this::onInputChange);
-        RenderTickEvent.START.register(this::onEntityUpdate);
     }
 
     public void onInputChange(InputCommandEvent event) {
@@ -100,63 +99,64 @@ public class LockOnManager {
     }
 
     @Environment(EnvType.CLIENT)
-    public void onEntityUpdate(RenderTickEvent.Pre event) {
-        final Minecraft mcinstance = Minecraft.getInstance();
-        if (mcinstance.player == null)
-            return;
-
-        LocalPlayer player = mcinstance.player;
-
-        ItemStack stack = player.getMainHandItem();
-        if (stack.isEmpty())
-            return;
-
-        CapabilitySlashBlade.BLADESTATE.maybeGet(stack).ifPresent(s -> {
-
-            Entity target = s.getTargetEntity(player.level());
-
-            if (target == null)
-                return;
-            if (!target.isAlive())
+    public static class Client {
+        public static void onEntityUpdate(RenderTickEvent.Pre event) {
+            final Minecraft mcinstance = Minecraft.getInstance();
+            if (mcinstance.player == null)
                 return;
 
-            LivingEntity entity = player;
+            LocalPlayer player = mcinstance.player;
 
-            if (!entity.level().isClientSide())
-                return;
-            if (CapabilityInputState.INPUT_STATE.maybeGet(entity)
-                    .filter(input -> input.getCommands().contains(InputCommand.SNEAK)).isEmpty())
+            ItemStack stack = player.getMainHandItem();
+            if (stack.isEmpty())
                 return;
 
-            float partialTicks = mcinstance.getFrameTime();
+            CapabilitySlashBlade.BLADESTATE.maybeGet(stack).ifPresent(s -> {
 
-            float oldYawHead = entity.yHeadRot;
-            float oldYawOffset = entity.yBodyRot;
-            float oldPitch = entity.getXRot();
-            float oldYaw = entity.getYRot();
+                Entity target = s.getTargetEntity(player.level());
 
-            float prevYawHead = entity.yHeadRotO;
-            float prevYawOffset = entity.yBodyRotO;
-            float prevYaw = entity.yRotO;
-            float prevPitch = entity.xRotO;
+                if (target == null)
+                    return;
+                if (!target.isAlive())
+                    return;
 
-            entity.lookAt(EntityAnchorArgument.Anchor.EYES, target.position().add(0, target.getEyeHeight() / 2.0, 0));
+                LivingEntity entity = player;
 
-            float step = 0.125f * partialTicks;
+                if (!entity.level().isClientSide())
+                    return;
+                if (CapabilityInputState.INPUT_STATE.maybeGet(entity)
+                        .filter(input -> input.getCommands().contains(InputCommand.SNEAK)).isEmpty())
+                    return;
 
-            step *= Math.min(1.0f, Math.abs(Mth.wrapDegrees(oldYaw - entity.yHeadRot) * 0.5f));
+                float partialTicks = mcinstance.getFrameTime();
 
-            entity.setXRot(Mth.rotLerp(step, oldPitch, entity.getXRot()));
-            entity.setYRot(Mth.rotLerp(step, oldYaw, entity.getYRot()));
-            entity.setYHeadRot(Mth.rotLerp(step, oldYawHead, entity.getYHeadRot()));
+                float oldYawHead = entity.yHeadRot;
+                float oldYawOffset = entity.yBodyRot;
+                float oldPitch = entity.getXRot();
+                float oldYaw = entity.getYRot();
 
-            entity.yBodyRot = oldYawOffset;
+                float prevYawHead = entity.yHeadRotO;
+                float prevYawOffset = entity.yBodyRotO;
+                float prevYaw = entity.yRotO;
+                float prevPitch = entity.xRotO;
 
-            entity.yBodyRotO = prevYawOffset;
-            entity.yHeadRotO = prevYawHead;
-            entity.yRotO = prevYaw;
-            entity.xRotO = prevPitch;
-        });
+                entity.lookAt(EntityAnchorArgument.Anchor.EYES, target.position().add(0, target.getEyeHeight() / 2.0, 0));
+
+                float step = 0.125f * partialTicks;
+
+                step *= Math.min(1.0f, Math.abs(Mth.wrapDegrees(oldYaw - entity.yHeadRot) * 0.5f));
+
+                entity.setXRot(Mth.rotLerp(step, oldPitch, entity.getXRot()));
+                entity.setYRot(Mth.rotLerp(step, oldYaw, entity.getYRot()));
+                entity.setYHeadRot(Mth.rotLerp(step, oldYawHead, entity.getYHeadRot()));
+
+                entity.yBodyRot = oldYawOffset;
+
+                entity.yBodyRotO = prevYawOffset;
+                entity.yHeadRotO = prevYawHead;
+                entity.yRotO = prevYaw;
+                entity.xRotO = prevPitch;
+            });
+        }
     }
-
 }
