@@ -108,7 +108,7 @@ public abstract class SlashBladeEvent extends BaseEvent {
     }
 
     public interface ChargeAction {
-        void onChargeAction(ChargeActionBaseEvent event);
+        void onChargeAction(ChargeActionEvent event);
     }
 
     public interface SummonedSwordOnHitEntity {
@@ -297,14 +297,14 @@ public abstract class SlashBladeEvent extends BaseEvent {
     }
 
 
-    public static class ChargeActionBaseEvent extends BaseEvent implements ICancellableEvent {
+    public static class ChargeActionEvent extends BaseEvent implements ICancellableEvent {
         private final LivingEntity entityLiving;
         private final int elapsed;
         private final ISlashBladeState state;
         private ResourceLocation comboState;
         private final SlashArts.ArtsType type;
 
-        public ChargeActionBaseEvent(LivingEntity entityLiving, int elapsed, ISlashBladeState state, ResourceLocation comboState, SlashArts.ArtsType type) {
+        public ChargeActionEvent(LivingEntity entityLiving, int elapsed, ISlashBladeState state, ResourceLocation comboState, SlashArts.ArtsType type) {
             this.entityLiving = entityLiving;
             this.elapsed = elapsed;
             this.state = state;
