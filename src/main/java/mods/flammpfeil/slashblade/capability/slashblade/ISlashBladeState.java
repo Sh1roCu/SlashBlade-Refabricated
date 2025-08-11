@@ -284,7 +284,7 @@ public interface ISlashBladeState extends Component {
 
         ResourceLocation csloc = this.getSlashArts().doArts(type, user);
 
-        SlashBladeEvent.ChargeActionBaseEvent event = new SlashBladeEvent.ChargeActionBaseEvent(user, elapsed, this, csloc,
+        SlashBladeEvent.ChargeActionEvent event = new SlashBladeEvent.ChargeActionEvent(user, elapsed, this, csloc,
                 type);
         SlashBladeEvent.CHARGE_ACTION.invoker().onChargeAction(event);
         if (event.isCanceled()) {
