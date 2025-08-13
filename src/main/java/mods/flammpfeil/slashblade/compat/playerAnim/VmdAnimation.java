@@ -28,9 +28,6 @@ import java.util.Map;
 public class VmdAnimation implements IAnimation {
     static final LazyOptional<MmdPmdModelMc> alex = LazyOptional.of(() -> {
         try {
-            // FIXME
-            // I don't know why everything is fine in dev environment while throwing BufferUnderflowException in production environment.
-            // 开发环境中正常加载，但是使用启动器进入游戏会抛出BufferUnderflowException异常
             return new MmdPmdModelMc(new ResourceLocation(SlashBlade.MODID, "model/pa/alex.pmd"));
         } catch (MmdException | IOException e) {
             e.printStackTrace();

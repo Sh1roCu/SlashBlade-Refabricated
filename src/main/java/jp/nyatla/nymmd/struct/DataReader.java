@@ -1,31 +1,31 @@
-/* 
+/*
  * PROJECT: NyMmd
  * --------------------------------------------------------------------------------
  * The MMD for Java is Java version MMD Motion player class library.
  * NyMmd is modules which removed the ARToolKit origin codes from ARTK_MMD,
- * and was ported to Java. 
+ * and was ported to Java.
  *
  * This is based on the ARTK_MMD v0.1 by PY.
  * http://ppyy.if.land.to/artk_mmd.html
  * py1024<at>gmail.com
  * http://www.nicovideo.jp/watch/sm7398691
  *
- * 
+ *
  * The MIT License
  * Copyright (C)2008-2012 nyatla
  * nyatla39<at>gmail.com
  * http://nyatla.jp
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -33,12 +33,13 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  */
 package jp.nyatla.nymmd.struct;
 
 import jp.nyatla.nymmd.MmdException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -49,13 +50,26 @@ public class DataReader {
     public DataReader(InputStream i_stream) throws MmdException {
         try {
             // コレなんとかしよう。C#のBinaryReaderみたいに振舞うように。
+//            int file_len = i_stream.available();
+//            if (file_len < 1) {
+//                file_len = 2 * 1024 * 1024;
+//            }
+//            byte[] buf = new byte[file_len];
+//            int buf_len = i_stream.read(buf, 0, file_len);
+//            this._buf = ByteBuffer.wrap(buf, 0, buf_len);
+
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             int file_len = i_stream.available();
             if (file_len < 1) {
                 file_len = 2 * 1024 * 1024;
             }
             byte[] buf = new byte[file_len];
-            int buf_len = i_stream.read(buf, 0, file_len);
-            this._buf = ByteBuffer.wrap(buf, 0, buf_len);
+            int buf_len;
+            while ((buf_len = i_stream.read(buf)) != -1) {
+                buffer.write(buf, 0, buf_len);
+            }
+            this._buf = ByteBuffer.wrap(buffer.toByteArray());
+
             this._buf.order(ByteOrder.LITTLE_ENDIAN);
             return;
         } catch (Exception e) {
