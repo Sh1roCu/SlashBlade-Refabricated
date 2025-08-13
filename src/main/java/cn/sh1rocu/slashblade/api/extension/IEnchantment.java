@@ -5,6 +5,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 
 public interface IEnchantment {
     default boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return enchantment.category.canEnchant(stack.getItem());
+        return enchantment.canEnchant(stack);
     }
 }
