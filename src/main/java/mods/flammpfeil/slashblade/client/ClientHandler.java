@@ -14,6 +14,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -112,20 +115,24 @@ public class ClientHandler {
         addPlayerLayer(skinMap, "default");
         addPlayerLayer(skinMap, "slim");
 
-        addEntityLayer(renderers, EntityType.ZOMBIE);
-        addEntityLayer(renderers, EntityType.HUSK);
-        addEntityLayer(renderers, EntityType.ZOMBIE_VILLAGER);
+        for (EntityType<?> type : BuiltInRegistries.ENTITY_TYPE) {
+            addEntityLayer(renderers, type);
+        }
 
-        addEntityLayer(renderers, EntityType.WITHER_SKELETON);
-        addEntityLayer(renderers, EntityType.SKELETON);
-        addEntityLayer(renderers, EntityType.STRAY);
-
-        addEntityLayer(renderers, EntityType.PIGLIN);
-        addEntityLayer(renderers, EntityType.PIGLIN_BRUTE);
-        addEntityLayer(renderers, EntityType.ZOMBIFIED_PIGLIN);
+//        addEntityLayer(renderers, EntityType.ZOMBIE);
+//        addEntityLayer(renderers, EntityType.HUSK);
+//        addEntityLayer(renderers, EntityType.ZOMBIE_VILLAGER);
+//
+//        addEntityLayer(renderers, EntityType.WITHER_SKELETON);
+//        addEntityLayer(renderers, EntityType.SKELETON);
+//        addEntityLayer(renderers, EntityType.STRAY);
+//
+//        addEntityLayer(renderers, EntityType.PIGLIN);
+//        addEntityLayer(renderers, EntityType.PIGLIN_BRUTE);
+//        addEntityLayer(renderers, EntityType.ZOMBIFIED_PIGLIN);
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static void addPlayerLayer(Map<String, EntityRenderer<? extends Player>> skinMap, String skin) {
         EntityRenderer<? extends Player> renderer = skinMap.get(skin);
 
