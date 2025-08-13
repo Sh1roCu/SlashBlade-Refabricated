@@ -16,7 +16,6 @@ import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 
 public class SlashBladeFabricClient implements ClientModInitializer, ModelLoadingPlugin {
-
     @Override
     public void onInitializeClient() {
         ModelLoadingPlugin.register(this);

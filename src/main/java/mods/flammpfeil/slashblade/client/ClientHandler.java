@@ -1,12 +1,10 @@
 package mods.flammpfeil.slashblade.client;
 
 import cn.sh1rocu.slashblade.mixin.accessor.LivingEntityRendererAccessor;
-import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.client.renderer.LockonCircleRender;
 import mods.flammpfeil.slashblade.client.renderer.gui.RankRenderer;
 import mods.flammpfeil.slashblade.client.renderer.layers.LayerMainBlade;
 import mods.flammpfeil.slashblade.client.renderer.model.BladeModel;
-import mods.flammpfeil.slashblade.compat.playerAnim.PlayerAnimationOverrider;
 import mods.flammpfeil.slashblade.event.client.AdvancementsRecipeRenderer;
 import mods.flammpfeil.slashblade.event.client.SneakingMotionCanceller;
 import mods.flammpfeil.slashblade.event.client.UserPoseOverrider;
@@ -26,7 +24,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import org.apache.logging.log4j.util.LoaderUtil;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -37,11 +34,11 @@ public class ClientHandler {
     public static void doClientStuff() {
         SneakingMotionCanceller.getInstance().register();
 
-        if (LoaderUtil.isClassAvailable("dev.kosmx.playerAnim.api.layered.AnimationStack")) {
-            PlayerAnimationOverrider.getInstance().register();
-        } else {
-            UserPoseOverrider.getInstance().register();
-        }
+        // if (LoaderUtil.isClassAvailable("dev.kosmx.playerAnim.api.layered.AnimationStack")) {
+        //     PlayerAnimationOverrider.getInstance().register();
+        // } else {
+        UserPoseOverrider.getInstance().register();
+        // }
         LockonCircleRender.getInstance().register();
         AdvancementsRecipeRenderer.getInstance().register();
 

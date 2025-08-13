@@ -1,5 +1,6 @@
 package cn.sh1rocu.slashblade.util;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.logging.log4j.Level;
@@ -8,41 +9,28 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class LazyOptional<T> {
-    @FunctionalInterface
-    public interface NonNullSupplier<T> {
-        @NotNull T get();
-    }
-
-    @FunctionalInterface
-    public interface NonNullConsumer<T> {
-        void accept(@NotNull T var1);
-    }
-
-    @FunctionalInterface
-    public interface NonNullFunction<T, R> {
-        @NotNull R apply(@NotNull T var1);
-    }
-
-    @FunctionalInterface
-    public interface NonNullPredicate<T> {
-        boolean test(@NotNull T var1);
-    }
-
     private final NonNullSupplier<T> supplier;
     private final Object lock = new Object();
+    // null -> not resolved yet
+    // non-null and contains non-null value -> resolved
+    // non-null and contains null -> resolved, but supplier returned null (contract violation)
     private Mutable<T> resolved;
     private final Set<NonNullConsumer<LazyOptional<T>>> listeners = new HashSet<>();
     private boolean isValid = true;
+
     private static final @NotNull LazyOptional<Void> EMPTY = new LazyOptional<>(null);
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static <T> LazyOptional<T> of(@Nullable NonNullSupplier<T> instanceSupplier) {
+    public static <T> LazyOptional<T> of(final @Nullable NonNullSupplier<T> instanceSupplier) {
         return instanceSupplier == null ? empty() : new LazyOptional<>(instanceSupplier);
     }
 
@@ -50,6 +38,7 @@ public class LazyOptional<T> {
         return EMPTY.cast();
     }
 
+    @SuppressWarnings("unchecked")
     public <X> LazyOptional<X> cast() {
         return (LazyOptional<X>) this;
     }
@@ -59,94 +48,82 @@ public class LazyOptional<T> {
     }
 
     private @Nullable T getValue() {
-        if (this.isValid && this.supplier != null) {
-            if (this.resolved == null) {
-                synchronized (this.lock) {
-                    if (this.resolved == null) {
-                        T temp = this.supplier.get();
-                        if (temp == null) {
-                            LOGGER.catching(Level.WARN, new NullPointerException("Supplier should not return null value"));
-                        }
-
-                        this.resolved = new MutableObject<>(temp);
-                    }
+        if (!isValid || supplier == null)
+            return null;
+        if (resolved == null) {
+            synchronized (lock) {
+                // resolved == null: Double checked locking to prevent two threads from resolving
+                if (resolved == null) {
+                    T temp = supplier.get();
+                    if (temp == null)
+                        LOGGER.catching(Level.WARN, new NullPointerException("Supplier should not return null value"));
+                    resolved = new MutableObject<>(temp);
                 }
             }
-
-            return this.resolved.getValue();
-        } else {
-            return null;
         }
+        return resolved.getValue();
     }
 
     private T getValueUnsafe() {
-        T ret = this.getValue();
-        if (ret == null) {
+        T ret = getValue();
+        if (ret == null)
             throw new IllegalStateException("LazyOptional is empty or otherwise returned null from getValue() unexpectedly");
-        } else {
-            return ret;
-        }
+        return ret;
     }
 
     public boolean isPresent() {
-        return this.supplier != null && this.isValid;
+        return supplier != null && isValid;
     }
 
     public void ifPresent(NonNullConsumer<? super T> consumer) {
         Objects.requireNonNull(consumer);
-        T val = (T) this.getValue();
-        if (this.isValid && val != null) {
+        T val = getValue();
+        if (isValid && val != null)
             consumer.accept(val);
-        }
-
     }
 
     public <U> LazyOptional<U> lazyMap(NonNullFunction<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
-        return this.isPresent() ? of(() -> mapper.apply(this.getValueUnsafe())) : empty();
+        return isPresent() ? of(() -> mapper.apply(getValueUnsafe())) : empty();
     }
 
     public <U> Optional<U> map(NonNullFunction<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
-        return this.isPresent() ? Optional.of(mapper.apply(this.getValueUnsafe())) : Optional.empty();
+        return isPresent() ? Optional.of(mapper.apply(getValueUnsafe())) : Optional.empty();
     }
 
     public Optional<T> filter(NonNullPredicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
-        T value = (T) this.getValue();
+        final T value = getValue(); // To keep the non-null contract we have to evaluate right now. Should we allow this function at all?
         return value != null && predicate.test(value) ? Optional.of(value) : Optional.empty();
     }
 
     public Optional<T> resolve() {
-        return this.isPresent() ? Optional.of(this.getValueUnsafe()) : Optional.empty();
+        return isPresent() ? Optional.of(getValueUnsafe()) : Optional.empty();
     }
 
     public T orElse(T other) {
-        T val = this.getValue();
+        T val = getValue();
         return val != null ? val : other;
     }
 
     public T orElseGet(NonNullSupplier<? extends T> other) {
-        T val = this.getValue();
+        T val = getValue();
         return val != null ? val : other.get();
     }
 
     public <X extends Throwable> T orElseThrow(NonNullSupplier<? extends X> exceptionSupplier) throws X {
-        T val = this.getValue();
-        if (val != null) {
+        T val = getValue();
+        if (val != null)
             return val;
-        } else {
-            throw exceptionSupplier.get();
-        }
+        throw exceptionSupplier.get();
     }
 
     public void addListener(NonNullConsumer<LazyOptional<T>> listener) {
-        if (this.isPresent()) {
+        if (isPresent())
             this.listeners.add(listener);
-        } else {
+        else
             listener.accept(this);
-        }
-
     }
 
     public void removeListener(NonNullConsumer<LazyOptional<T>> listener) {
@@ -156,10 +133,8 @@ public class LazyOptional<T> {
     public void invalidate() {
         if (this.isValid) {
             this.isValid = false;
-            this.listeners.forEach((e) -> e.accept(this));
+            this.listeners.forEach(e -> e.accept(this));
             this.listeners.clear();
         }
-
     }
 }
-
