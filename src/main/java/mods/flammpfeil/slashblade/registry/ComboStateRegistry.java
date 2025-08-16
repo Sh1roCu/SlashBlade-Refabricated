@@ -58,7 +58,7 @@ public class ComboStateRegistry {
             .next(ComboState.TimeoutNext.buildFromFrame(5, entity -> SlashBlade.prefix("combo_a2")))
             .nextOfTimeout(entity -> SlashBlade.prefix("combo_a1_end"))
             .clickAction(entity -> AttackManager.doSlash(entity, -10, true, false, 0.44f))
-            .addTickAction(entity -> UserPoseOverrider.resetRot(entity)).addHitEffect(StunManager::setStun).build());
+            .addTickAction(UserPoseOverrider::resetRot).addHitEffect(StunManager::setStun).build());
 
     public static final ComboState COMBO_A1_END = Registry.register(COMBO_STATE, SlashBlade.prefix("combo_a1_end"),
             ComboState.Builder.newInstance().startAndEnd(10, 21).priority(100)
@@ -151,7 +151,7 @@ public class ComboStateRegistry {
                             .put(8 + 2, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(8 + 3, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(8 + 4, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
-                            .put(8 + 5, (entityIn) -> UserPoseOverrider.resetRot(entityIn)).build())
+                            .put(8 + 5, UserPoseOverrider::resetRot).build())
                     .clickAction(a -> AdvancementHelper.grantCriterion(a, AdvancementHelper.ADVANCEMENT_COMBO_A))
                     .addHitEffect(StunManager::setStun).build());
     public static final ComboState COMBO_A4_END = Registry.register(COMBO_STATE, SlashBlade.prefix("combo_a4_end"),
@@ -199,7 +199,7 @@ public class ComboStateRegistry {
                             .put(13 + 2, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(13 + 3, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(13 + 4, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
-                            .put(13 + 5, (entityIn) -> UserPoseOverrider.resetRot(entityIn)).build())
+                            .put(13 + 5, UserPoseOverrider::resetRot).build())
                     .clickAction(a -> AdvancementHelper.grantCriterion(a, AdvancementHelper.ADVANCEMENT_COMBO_A_EX))
                     .addHitEffect(StunManager::setStun).build());
     public static final ComboState COMBO_A5_END = Registry.register(COMBO_STATE, SlashBlade.prefix("combo_a5ex_end"),
@@ -270,7 +270,7 @@ public class ComboStateRegistry {
                             .put(12 - 3 + 2, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(12 - 3 + 3, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(12 - 3 + 4, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
-                            .put(12 - 3 + 5, (entityIn) -> UserPoseOverrider.resetRot(entityIn)).build())
+                            .put(12 - 3 + 5, UserPoseOverrider::resetRot).build())
                     .addHitEffect(StunManager::setStun).build());
     public static final ComboState COMBO_B1_END2 = Registry.register(COMBO_STATE, SlashBlade.prefix("combo_b1_end2"),
             ComboState.Builder.newInstance().startAndEnd(743, 764).priority(100)
@@ -515,7 +515,7 @@ public class ComboStateRegistry {
                                             KnockBacks.smash))
                             .build())
                     .addTickAction(FallHandler::fallDecrease).addHitEffect(StunManager::setStun)
-                    .addTickAction((entityIn) -> UserPoseOverrider.resetRot(entityIn)).clickAction(
+                    .addTickAction(UserPoseOverrider::resetRot).clickAction(
                             a -> AdvancementHelper.grantCriterion(a, AdvancementHelper.ADVANCEMENT_AERIAL_A)).build());
     public static final ComboState AERIAL_RAVE_A3_END = Registry.register(COMBO_STATE, SlashBlade.prefix("aerial_rave_a3_end"),
             ComboState.Builder.newInstance().startAndEnd(1328, 1338).priority(80)
@@ -982,7 +982,7 @@ public class ComboStateRegistry {
                                     a -> AdvancementHelper.grantCriterion(a, AdvancementHelper.ADVANCEMENT_JUDGEMENT_CUT))
                             .build())
                     .addTickAction(FallHandler::fallResist)
-                    .addTickAction((entityIn) -> UserPoseOverrider.resetRot(entityIn))
+                    .addTickAction(UserPoseOverrider::resetRot)
                     .addHitEffect(StunManager::setStun).build());
 
     public static final ComboState JUDGEMENT_CUT_SHEATH_AIR = Registry.register(COMBO_STATE, SlashBlade.prefix(

@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade.capability.inputstate;
 
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.onyxstudios.cca.api.v3.component.Component;
 import mods.flammpfeil.slashblade.event.Scheduler;
 import mods.flammpfeil.slashblade.util.InputCommand;
 import net.minecraft.world.entity.LivingEntity;
@@ -8,7 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import java.util.EnumMap;
 import java.util.EnumSet;
 
-public interface IInputState extends AutoSyncedComponent {
+public interface IInputState extends Component {
     EnumSet<InputCommand> getCommands();
 
     Scheduler getScheduler();

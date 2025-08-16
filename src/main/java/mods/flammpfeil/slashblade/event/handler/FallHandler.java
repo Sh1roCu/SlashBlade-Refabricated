@@ -107,7 +107,7 @@ public class FallHandler {
                 state.setFallDecreaseRate(newDecRatio);
 
                 return decRatio;
-            }).orElseGet(() -> 1.0f);
+            }).orElse(1.0f);
 
             double gravityReductionFactor = 0.85f;
 
@@ -118,8 +118,11 @@ public class FallHandler {
             }
 
             // TODO
-            //AttributeInstance gravity = user.getAttribute(ForgeMod.ENTITY_GRAVITY.get());
-            double g = /*gravity.getValue() **/ gravityReductionFactor;
+            // AttributeInstance gravity = user.getAttribute(ForgeMod.ENTITY_GRAVITY.get());
+            // double g = gravity.getValue() * gravityReductionFactor;
+
+            // gravity.getValue()默认值为0.08
+            double g = 0.08 * gravityReductionFactor;
 
             Vec3 motion = user.getDeltaMovement();
             if (motion.y < 0)
@@ -133,8 +136,11 @@ public class FallHandler {
 
             Vec3 motion = user.getDeltaMovement();
             // TODO
-            //AttributeInstance gravity = user.getAttribute(ForgeMod.ENTITY_GRAVITY.get());
-            double g = /*gravity.getValue()*/ 1.0;
+            // AttributeInstance gravity = user.getAttribute(ForgeMod.ENTITY_GRAVITY.get());
+            // double g = gravity.getValue();
+
+            // gravity.getValue()默认值为0.08
+            double g = 0.08;
             if (motion.y < 0)
                 user.setDeltaMovement(motion.x, (motion.y + g + 0.002f), motion.z);
         }

@@ -34,6 +34,7 @@ public class InputState implements IInputState {
 
     @Override
     public void readFromNbt(@NotNull CompoundTag tag) {
+        getCommands().clear();
         getCommands().addAll(EnumSetConverter.convertToEnumSet(InputCommand.class, tag.getInt(KEY)));
     }
 
