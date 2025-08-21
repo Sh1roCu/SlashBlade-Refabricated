@@ -5,9 +5,8 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "slashblade:slashblade"
-            ]
+            "type": "slashblade:slashblade",
+            "requestBlade": {}
           }
         ]
       },

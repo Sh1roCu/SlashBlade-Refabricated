@@ -4,17 +4,30 @@ import mods.flammpfeil.slashblade.capability.concentrationrank.CapabilityConcent
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.entity.EntitySlashEffect;
+import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.init.SBEntityTypes;
 import mods.flammpfeil.slashblade.util.KnockBacks;
 import mods.flammpfeil.slashblade.util.VectorHelper;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 public class CircleSlash {
     public static void doCircleSlashAttack(LivingEntity living, float yRot) {
         if (living.level().isClientSide())
+            return;
+
+        ItemStack blade = living.getMainHandItem();
+        if (CapabilitySlashBlade.BLADESTATE.maybeGet(blade).isEmpty())
+            return;
+        SlashBladeEvent.DoSlashEvent event = new SlashBladeEvent.DoSlashEvent(blade,
+                CapabilitySlashBlade.BLADESTATE.maybeGet(blade).orElseThrow(NullPointerException::new),
+                living, 0, true, 0.325D, KnockBacks.cancel);
+        event.setYRot(yRot);
+        SlashBladeEvent.DoSlashEvent.DO_SLASH.invoker().onDoSlash(event);
+        if (event.isCanceled())
             return;
 
         Vec3 pos = living.position().add(0.0D, (double) living.getEyeHeight() * 0.75D, 0.0D)

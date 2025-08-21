@@ -5,18 +5,18 @@ import mods.flammpfeil.slashblade.client.renderer.LockonCircleRender;
 import mods.flammpfeil.slashblade.client.renderer.gui.RankRenderer;
 import mods.flammpfeil.slashblade.client.renderer.layers.LayerMainBlade;
 import mods.flammpfeil.slashblade.client.renderer.model.BladeModel;
+import mods.flammpfeil.slashblade.client.renderer.model.BladeModelManager;
 import mods.flammpfeil.slashblade.compat.playerAnim.PlayerAnimationOverrider;
 import mods.flammpfeil.slashblade.event.client.AdvancementsRecipeRenderer;
 import mods.flammpfeil.slashblade.event.client.SneakingMotionCanceller;
 import mods.flammpfeil.slashblade.event.client.UserPoseOverrider;
 import mods.flammpfeil.slashblade.init.SBItems;
+import mods.flammpfeil.slashblade.registry.slashblade.SlashBladeDefinition;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.minecraft.client.Minecraft;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -27,11 +27,13 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import org.apache.logging.log4j.util.LoaderUtil;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 @Environment(EnvType.CLIENT)
@@ -82,6 +84,17 @@ public class ClientHandler {
 
 
         registerKeyMapping();
+    }
+
+    public static void onCreativeTagBuilding(CreativeModeTab group, FabricItemGroupEntries entries) {
+        BladeModelManager.getClientSlashBladeRegistry().holders()
+                .sorted(SlashBladeDefinition.COMPARATOR).forEach(entry -> {
+                    if (!Objects.equals(BuiltInRegistries.CREATIVE_MODE_TAB.getKey(group), entry.value().getCreativeGroup()))
+                        return;
+
+                    if (!entry.value().getBlade().isEmpty())
+                        entries.accept(entry.value().getBlade());
+                });
     }
 
     public static void registerKeyMapping() {

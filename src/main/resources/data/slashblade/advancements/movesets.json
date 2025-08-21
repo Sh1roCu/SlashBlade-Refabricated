@@ -14,11 +14,13 @@
   "parent": "slashblade:root",
   "criteria": {
     "crafting": {
-      "trigger": "inventory_changed",
+      "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "item": "slashblade:slashblade"
+            "items": [
+              "slashblade:slashblade"
+            ]
           }
         ]
       }

@@ -124,13 +124,6 @@ dependencies {
 
     //modCompileOnly "dev.emi:emi-fabric:${emi_version}:api")
     //modRuntimeOnly "dev.emi:emi-fabric:${emi_version}")
-
-    //FTB Quests
-    modImplementation "curse.maven:architectury-api-419699:5137936"
-    modImplementation "curse.maven:ftb-quests-fabric-438496:6431736"
-    modImplementation "curse.maven:ftb-library-fabric-438495:6807422"
-    modImplementation "curse.maven:ftb-teams-fabric-438497:6130783"
-    modImplementation "curse.maven:item-filters-309674:4838265"
 }
 
 processResources {

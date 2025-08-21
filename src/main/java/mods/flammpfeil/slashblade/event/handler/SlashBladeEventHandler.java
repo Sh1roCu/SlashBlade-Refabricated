@@ -28,4 +28,9 @@ public class SlashBladeEventHandler {
         if (!BuiltInRegistries.ITEM.containsKey(event.getSlashBladeDefinition().getItemName()))
             event.setCanceled(true);
     }
+
+//    @SubscribeEvent
+//    public static void name(ItemCraftedEvent event) {
+//
+//    }
 }

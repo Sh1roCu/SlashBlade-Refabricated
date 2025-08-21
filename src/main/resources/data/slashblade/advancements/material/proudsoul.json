@@ -15,7 +15,7 @@
   "parent": "slashblade:material/proudsoul_tiny",
   "criteria": {
     "BrokenBlade": {
-      "trigger": "minecraft:consume_item",
+      "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {

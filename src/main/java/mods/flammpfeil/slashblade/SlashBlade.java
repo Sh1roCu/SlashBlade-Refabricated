@@ -1,9 +1,11 @@
 package mods.flammpfeil.slashblade;
 
 import cn.sh1rocu.slashblade.api.event.LivingKnockBackEvent;
+import cn.sh1rocu.slashblade.util.ItemPredicateRegistry;
 import com.google.common.base.CaseFormat;
 import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
 import mods.flammpfeil.slashblade.ability.*;
+import mods.flammpfeil.slashblade.advancement.SlashBladeItemPredicate;
 import mods.flammpfeil.slashblade.client.renderer.model.BladeModelManager;
 import mods.flammpfeil.slashblade.entity.*;
 import mods.flammpfeil.slashblade.event.BladeMotionEventBroadcaster;
@@ -59,7 +61,7 @@ public class SlashBlade {
 
         SpecialEffectsRegistry.init();
 
-
+        ItemPredicateRegistry.register(SlashBlade.prefix("slashblade"), SlashBladeItemPredicate::new);
     }
 
     private static void setup() {

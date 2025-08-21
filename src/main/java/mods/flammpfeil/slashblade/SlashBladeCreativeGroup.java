@@ -50,7 +50,7 @@ public class SlashBladeCreativeGroup {
                 output.accept(SBItems.slashblade_white);
                 output.accept(SBItems.slashblade);
 
-                fillBlades(features, output);
+                // fillBlades(features, output);
             }).build();
 
     public static final CreativeModeTab SLASHBLADE_GROUP = Registry.register(
@@ -59,6 +59,8 @@ public class SlashBladeCreativeGroup {
             SLASHBLADE
     );
 
+    @SuppressWarnings("unused")
+    @Deprecated
     private static void fillBlades(CreativeModeTab.ItemDisplayParameters features, CreativeModeTab.Output output) {
         SlashBlade.getSlashBladeDefinitionRegistry(features.holders()).listElements()
                 .sorted(SlashBladeDefinition.COMPARATOR).forEach(entry -> {

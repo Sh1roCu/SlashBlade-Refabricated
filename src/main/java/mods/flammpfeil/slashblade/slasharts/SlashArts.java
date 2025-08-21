@@ -87,8 +87,9 @@ public class SlashArts {
         return costSoul;
     }
 
-    public void setProudSoulCost(int costSoul) {
+    public SlashArts setProudSoulCost(int costSoul) {
         this.costSoul = costSoul;
+        return this;
     }
 
     public Component getDescription() {

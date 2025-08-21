@@ -5,9 +5,14 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "slashblade:proudsoul_sphere"
-            ]
+            "type": "slashblade:slashblade",
+            "requestBlade": {
+              "name": "slashblade:yamato",
+              "sword_type": [
+                "broken",
+                "sealed"
+              ]
+            }
           }
         ]
       },

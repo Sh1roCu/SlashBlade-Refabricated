@@ -10,6 +10,8 @@ public class RecipeSerializerRegistry {
 
     public static final RecipeSerializer<?> PROUDSOUL_RECIPE = register("proudsoul", ProudsoulShapelessRecipe.SERIALIZER);
 
+    public static final RecipeSerializer<?> SLASHBLADE_SMITHING = register("slashblade_smithing", SlashBladeSmithingRecipe.SERIALIZER);
+
     private static RecipeSerializer<?> register(String name, RecipeSerializer<?> serializer) {
         return Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, SlashBlade.prefix(name), serializer);
     }

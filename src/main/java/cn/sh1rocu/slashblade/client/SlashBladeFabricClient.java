@@ -14,6 +14,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 
 public class SlashBladeFabricClient implements ClientModInitializer, ModelLoadingPlugin {
     @Override
@@ -23,6 +24,7 @@ public class SlashBladeFabricClient implements ClientModInitializer, ModelLoadin
         NetworkManager.registerS2CPackets();
         regisetEntityRenderers();
         ClientHandler.doClientStuff();
+        ItemGroupEvents.MODIFY_ENTRIES_ALL.register(ClientHandler::onCreativeTagBuilding);
         EntityAddedLayerCallback.EVENT.register(ClientHandler::addLayers);
         ClientTickEvents.END_CLIENT_TICK.register(MoveInputHandler::onPlayerPostTick);
         RenderTickEvent.START.register(LockOnManager.Client::onEntityUpdate);

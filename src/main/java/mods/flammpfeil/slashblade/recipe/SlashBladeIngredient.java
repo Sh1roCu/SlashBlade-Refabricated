@@ -42,6 +42,20 @@ public class SlashBladeIngredient implements CustomIngredient {
         return new SlashBladeIngredient(Set.of(SBItems.slashblade), request);
     }
 
+    public static SlashBladeIngredient of(ItemLike item, ResourceLocation request) {
+        return new SlashBladeIngredient(Set.of(item.asItem()),
+                RequestDefinition.Builder.newInstance().name(request).build());
+    }
+
+    public static SlashBladeIngredient of(ResourceLocation request) {
+        return new SlashBladeIngredient(Set.of(SBItems.slashblade),
+                RequestDefinition.Builder.newInstance().name(request).build());
+    }
+
+    public static SlashBladeIngredient blankNameless() {
+        return of(RequestDefinition.Builder.newInstance().build());
+    }
+
     @Override
     public boolean test(ItemStack input) {
         if (input == null)
