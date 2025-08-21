@@ -120,7 +120,11 @@ public class SlashBladeState extends ItemComponent implements ISlashBladeState {
 
     @Override
     public float getBaseAttackModifier() {
-        return getBladeState().getFloat(BASE_ATTACK_MODIFIER);
+        CompoundTag bladeState = getBladeState();
+        if (bladeState.contains(BASE_ATTACK_MODIFIER))
+            return bladeState.getFloat(BASE_ATTACK_MODIFIER);
+        // 默认值
+        return 4F;
     }
 
     @Override
@@ -292,7 +296,11 @@ public class SlashBladeState extends ItemComponent implements ISlashBladeState {
 
     @Override
     public int getMaxDamage() {
-        return getBladeState().getInt(MAX_DAMAGE);
+        CompoundTag bladeState = getBladeState();
+        if (bladeState.contains(MAX_DAMAGE))
+            return bladeState.getInt(MAX_DAMAGE);
+        // 默认值
+        return 40;
     }
 
     @Override
@@ -363,7 +371,11 @@ public class SlashBladeState extends ItemComponent implements ISlashBladeState {
 
     @Override
     public boolean isEmpty() {
-        return getBladeState().getBoolean(IS_EMPTY);
+        CompoundTag bladeState = getBladeState();
+        if (bladeState.contains(IS_EMPTY))
+            return bladeState.getBoolean(IS_EMPTY);
+        // 默认值
+        return true;
     }
 
     @Override

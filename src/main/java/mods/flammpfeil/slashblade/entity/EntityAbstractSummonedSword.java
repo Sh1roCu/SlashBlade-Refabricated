@@ -474,6 +474,10 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
 
     protected void onHitEntity(EntityHitResult entityHitResult) {
         Entity targetEntity = entityHitResult.getEntity();
+
+//        if (targetEntity.getType().is(SlashBladeEntityTypeTagProvider.EntityTypeTags.ATTACKABLE_BLACKLIST))
+//            return;
+
         SlashBladeEvent.SummonedSwordOnHitEntityEvent event = new SlashBladeEvent.SummonedSwordOnHitEntityEvent(this, targetEntity);
         SlashBladeEvent.SUMMONEDSWORD_ONHIT_ENTITY.invoker().onSummonedSwordOnHitEntity(event);
         int i = Mth.ceil(this.getDamage());
