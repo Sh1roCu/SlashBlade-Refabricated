@@ -4,10 +4,12 @@ import mods.flammpfeil.slashblade.capability.concentrationrank.CapabilityConcent
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.entity.EntitySlashEffect;
+import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.init.SBEntityTypes;
 import mods.flammpfeil.slashblade.util.KnockBacks;
 import mods.flammpfeil.slashblade.util.VectorHelper;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 public class SakuraEnd {
@@ -31,6 +33,17 @@ public class SakuraEnd {
         if (playerIn.level().isClientSide())
             return null;
 
+        ItemStack blade = playerIn.getMainHandItem();
+        if (CapabilitySlashBlade.BLADESTATE.maybeGet(blade).isEmpty())
+            return null;
+        SlashBladeEvent.DoSlashEvent event = new SlashBladeEvent.DoSlashEvent(blade,
+                CapabilitySlashBlade.BLADESTATE.maybeGet(blade).orElseThrow(NullPointerException::new),
+                playerIn, roll, critical, damage, knockback);
+
+        SlashBladeEvent.DO_SLASH.invoker().onDoSlash(event);
+        if (event.isCanceled())
+            return null;
+
         Vec3 pos = playerIn.position().add(0.0D, (double) playerIn.getEyeHeight() * 0.75D, 0.0D)
                 .add(playerIn.getLookAngle().scale(0.3f));
 
@@ -41,19 +54,19 @@ public class SakuraEnd {
         EntitySlashEffect jc = new EntitySlashEffect(SBEntityTypes.SlashEffect, playerIn.level());
 
         jc.setPos(pos.x, pos.y, pos.z);
-        jc.setOwner(playerIn);
-        jc.setRotationRoll(roll);
+        jc.setOwner(event.getUser());
+        jc.setRotationRoll(event.getRoll());
         jc.setYRot(playerIn.getYRot());
         jc.setXRot(0);
 
         jc.setColor(colorCode);
 
         jc.setMute(mute);
-        jc.setIsCritical(critical);
+        jc.setIsCritical(event.isCritical());
 
-        jc.setDamage(damage);
+        jc.setDamage(event.getDamage());
 
-        jc.setKnockBack(knockback);
+        jc.setKnockBack(event.getKnockback());
 
         if (playerIn != null)
             CapabilityConcentrationRank.RANK_POINT.maybeGet(playerIn)

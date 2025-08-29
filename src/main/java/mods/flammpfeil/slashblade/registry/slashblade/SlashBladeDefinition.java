@@ -146,6 +146,8 @@ public class SlashBladeDefinition {
             result.enchant(enchantment, instance.getEnchantmentLevel());
 
         }
+        if (this.stateDefinition.isUnbreakable())
+            result.getOrCreateTag().putBoolean("Unbreakable", true);
         var postRegistry = new SlashBladeRegistryEvent.Post(this, result);
         SlashBladeRegistryEvent.POST.invoker().onPost(postRegistry);
         return postRegistry.getBlade();

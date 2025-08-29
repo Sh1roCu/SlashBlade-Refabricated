@@ -84,6 +84,7 @@ public class SimpleSlashBladeState extends SlashBladeState {
 
     @Override
     public void setMaxDamage(int damage) {
+        super.setMaxDamage(damage);
         this.damage = damage;
     }
 }

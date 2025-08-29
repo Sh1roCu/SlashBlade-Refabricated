@@ -21,10 +21,15 @@ public class SlashBladeEntityTypeTagProvider extends FabricTagProvider.EntityTyp
         this.getOrCreateTagBuilder(EntityTypeTags.ATTACKABLE_BLACKLIST)
                 .add(EntityType.VILLAGER)
                 .addOptional(new ResourceLocation("touhou_little_maid", "maid"));
+
+        this.getOrCreateTagBuilder(EntityTypeTags.RENDER_LAYER_BLACKLIST)
+                .addOptional(new ResourceLocation("touhou_little_maid", "maid"));
     }
 
     public static class EntityTypeTags {
         public static final TagKey<EntityType<?>> ATTACKABLE_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE,
                 SlashBlade.prefix("blacklist/attackable"));
+        public static final TagKey<EntityType<?>> RENDER_LAYER_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE,
+                SlashBlade.prefix("blacklist/render_layer"));
     }
 }

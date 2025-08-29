@@ -192,6 +192,8 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
     @Override
     public void setDamage(ItemStack stack, int damage) {
         int maxDamage = stack.getMaxDamage();
+        if (maxDamage < 0)
+            return;
         var state = CapabilitySlashBlade.BLADESTATE.maybeGet(stack).orElseThrow(NullPointerException::new);
         if (state.isBroken()) {
             if (damage <= 0 && !state.isSealed()) {
@@ -205,6 +207,9 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
 
     @Override
     public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
+        if (stack.getMaxDamage() <= 0)
+            return 0;
+
         if (amount <= 0)
             return 0;
 

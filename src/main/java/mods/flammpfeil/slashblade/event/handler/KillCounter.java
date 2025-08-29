@@ -5,6 +5,7 @@ import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.concentrationrank.CapabilityConcentrationRank;
 import mods.flammpfeil.slashblade.capability.concentrationrank.IConcentrationRank;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
+import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -41,8 +42,11 @@ public class KillCounter {
         if (CapabilitySlashBlade.BLADESTATE.maybeGet(stack).isEmpty())
             return;
 
-        CapabilitySlashBlade.BLADESTATE.maybeGet(stack).ifPresent(state ->
-                state.setKillCount(state.getKillCount() + 1));
+        CapabilitySlashBlade.BLADESTATE.maybeGet(stack).ifPresent(state -> {
+            var killCountEvent = new SlashBladeEvent.AddKillCountEvent(stack, state, 1);
+            SlashBladeEvent.ADD_KILL_COUNT.invoker().onAddAddKillCount(killCountEvent);
+            state.setKillCount(state.getKillCount() + killCountEvent.getNewCount());
+        });
     }
 
     public void onXPDropping(LivingExperienceDropEvent event) {
@@ -60,9 +64,11 @@ public class KillCounter {
                 .orElse(IConcentrationRank.ConcentrationRanks.NONE);
         int souls = (int) Math.floor(event.getDroppedExperience() * (1.0F + (rankBonus.level * 0.1F)));
 
-        CapabilitySlashBlade.BLADESTATE.maybeGet(stack).ifPresent(
-                state -> state.setProudSoulCount(
-                        state.getProudSoulCount() + Math.min(SlashBladeConfig.MAX_PROUD_SOUL_GOT.get(), souls)
-                ));
+        CapabilitySlashBlade.BLADESTATE.maybeGet(stack).ifPresent(state -> {
+            var killCountEvent = new SlashBladeEvent.AddProudSoulEvent(stack, state, Math.min(SlashBladeConfig.MAX_PROUD_SOUL_GOT.get(), souls));
+            SlashBladeEvent.ADD_PROUD_SOUL.invoker().onAddProudSoul(killCountEvent);
+            state.setProudSoulCount(
+                    state.getProudSoulCount() + killCountEvent.getNewCount());
+        });
     }
 }

@@ -106,19 +106,19 @@ public class AttackManager {
 
         EntitySlashEffect jc = new EntitySlashEffect(SBEntityTypes.SlashEffect, playerIn.level());
         jc.setPos(pos.x, pos.y, pos.z);
-        jc.setOwner(playerIn);
-        jc.setRotationRoll(roll);
+        jc.setOwner(event.getUser());
+        jc.setRotationRoll(event.getRoll());
         jc.setYRot(playerIn.getYRot());
         jc.setXRot(0);
 
         jc.setColor(colorCode);
 
         jc.setMute(mute);
-        jc.setIsCritical(critical);
+        jc.setIsCritical(event.isCritical());
 
-        jc.setDamage(comboRatio);
+        jc.setDamage(event.getDamage());
 
-        jc.setKnockBack(knockback);
+        jc.setKnockBack(event.getKnockback());
 
         CapabilityConcentrationRank.RANK_POINT.maybeGet(playerIn)
                 .ifPresent(rank -> jc.setRank(rank.getRankLevel(playerIn.level().getGameTime())));

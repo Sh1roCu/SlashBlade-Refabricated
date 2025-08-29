@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.event.drop;
 
 import cn.sh1rocu.slashblade.api.event.LivingDropsEvent;
 import mods.flammpfeil.slashblade.SlashBlade;
+import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.entity.BladeItemEntity;
 import mods.flammpfeil.slashblade.init.SBEntityTypes;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
@@ -9,6 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.item.ItemStack;
 
 public class EntityDropEvent {
@@ -26,8 +28,11 @@ public class EntityDropEvent {
 
             LivingEntity attacker = (LivingEntity) event.getSource().getEntity();
 
-            if (entry.isRequestSlashBladeKill() && !(attacker.getMainHandItem().getItem() instanceof ItemSlashBlade))
-                return;
+            if(SlashBladeConfig.FRIENDLY_ENABLE.get() || (entity instanceof Enemy)) {
+                if (entry.isRequestSlashBladeKill()
+                        && !(attacker.getMainHandItem().getItem() instanceof ItemSlashBlade))
+                    return ;
+            }
 
             float resultRate = Math.min(1F, entry.getDropRate() + event.getLootingLevel() * 0.1F);
 

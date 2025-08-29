@@ -18,6 +18,7 @@ import mods.flammpfeil.slashblade.client.renderer.model.BladeMotionManager;
 import mods.flammpfeil.slashblade.client.renderer.model.obj.WavefrontObject;
 import mods.flammpfeil.slashblade.client.renderer.util.BladeRenderState;
 import mods.flammpfeil.slashblade.client.renderer.util.MSAutoCloser;
+import mods.flammpfeil.slashblade.data.tag.SlashBladeEntityTypeTagProvider;
 import mods.flammpfeil.slashblade.event.client.UserPoseOverrider;
 import mods.flammpfeil.slashblade.init.DefaultResources;
 import mods.flammpfeil.slashblade.registry.ComboStateRegistry;
@@ -198,6 +199,9 @@ public class LayerMainBlade<T extends LivingEntity, M extends EntityModel<T>> ex
         ItemStack stack = entity.getItemInHand(InteractionHand.MAIN_HAND);
 
         if (stack.isEmpty())
+            return;
+
+        if (entity.getType().is(SlashBladeEntityTypeTagProvider.EntityTypeTags.RENDER_LAYER_BLACKLIST))
             return;
 
         Optional<ISlashBladeState> state = CapabilitySlashBlade.BLADESTATE.maybeGet(stack);

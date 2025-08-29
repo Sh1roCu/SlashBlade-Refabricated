@@ -4,7 +4,9 @@
   "version": "${version}",
   "name": "SlashBlade: Refabricated",
   "description": "SlashBlade: Resharped unofficial Fabric port",
-  "authors": ["Sh1roCu"],
+  "authors": [
+    "Sh1roCu"
+  ],
   "contact": {},
   "license": "MIT",
   "icon": "slashblade.png",
@@ -42,7 +44,8 @@
   "mixins": [
     "slashblade.mixins.json",
     "slashblade.fabric.mixins.json",
-    "slashblade.thetwilightforest.mixins.json"
+    "slashblade.thetwilightforest.mixins.json",
+    "slashblade.patchouli.mixins.json"
   ],
   "accessWidener": "slashblade.accesswidener",
   "depends": {

@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.EnumSet;
 
 public enum SwordType {
-    NONE, EDGEFRAGMENT, BROKEN, ENCHANTED, BEWITCHED, FIERCEREDGE, NOSCABBARD, SEALED,
+    NONE, EDGEFRAGMENT, BROKEN, ENCHANTED, BEWITCHED, FIERCEREDGE, NOSCABBARD, SEALED, UNBREAKABLE,
     ;
 
     public static final Codec<SwordType> CODEC = Codec.STRING.xmap(string -> SwordType.valueOf(string.toUpperCase()),
@@ -42,6 +42,9 @@ public enum SwordType {
             types.remove(SwordType.ENCHANTED);
             types.remove(SwordType.BEWITCHED);
         }
+
+        if(itemStackIn.getOrCreateTag().getBoolean("Unbreakable"))
+            types.remove(SwordType.BROKEN);
 
         return types;
     }

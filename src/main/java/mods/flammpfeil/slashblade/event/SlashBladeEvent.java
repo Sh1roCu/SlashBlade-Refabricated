@@ -30,6 +30,16 @@ public abstract class SlashBladeEvent extends BaseEvent {
             callback.onPower(event);
         }
     });
+    public static final Event<AddProudSoul> ADD_PROUD_SOUL = EventFactory.createArrayBacked(AddProudSoul.class, callbacks -> event -> {
+        for (AddProudSoul callback : callbacks) {
+            callback.onAddProudSoul(event);
+        }
+    });
+    public static final Event<AddKillCount> ADD_KILL_COUNT = EventFactory.createArrayBacked(AddKillCount.class, callbacks -> event -> {
+        for (AddKillCount callback : callbacks) {
+            callback.onAddAddKillCount(event);
+        }
+    });
     public static final Event<UpdateAttack> UPDATE_ATTACK = EventFactory.createArrayBacked(UpdateAttack.class, callbacks -> event -> {
         for (UpdateAttack callback : callbacks) {
             callback.onUpdateAttack(event);
@@ -79,42 +89,6 @@ public abstract class SlashBladeEvent extends BaseEvent {
         return state;
     }
 
-    public interface Break {
-        void onBreak(BreakEvent event);
-    }
-
-    public interface PowerBlade {
-        void onPower(PowerBladeEvent event);
-    }
-
-    public interface UpdateAttack {
-        void onUpdateAttack(UpdateAttackEvent event);
-    }
-
-    public interface BladeStandAttack {
-        void onBladeStandAttack(BladeStandAttackEvent event);
-    }
-
-    public interface Hit {
-        void onHit(HitEvent event);
-    }
-
-    public interface Update {
-        void onUpdate(UpdateEvent event);
-    }
-
-    public interface DoSlash {
-        void onDoSlash(DoSlashEvent event);
-    }
-
-    public interface ChargeAction {
-        void onChargeAction(ChargeActionEvent event);
-    }
-
-    public interface SummonedSwordOnHitEntity {
-        void onSummonedSwordOnHitEntity(SummonedSwordOnHitEntityEvent event);
-    }
-
     public static class BreakEvent extends SlashBladeEvent implements ICancellableEvent {
         public BreakEvent(ItemStack blade, ISlashBladeState state) {
             super(blade, state);
@@ -141,6 +115,52 @@ public abstract class SlashBladeEvent extends BaseEvent {
 
         public LivingEntity getUser() {
             return user;
+        }
+    }
+
+    public static class AddProudSoulEvent extends SlashBladeEvent {
+        private final int originCount;
+        private int newCount;
+
+        public AddProudSoulEvent(ItemStack blade, ISlashBladeState state, int count) {
+            super(blade, state);
+            this.originCount = count;
+            this.setNewCount(count);
+        }
+
+        public int getOriginCount() {
+            return originCount;
+        }
+
+        public int getNewCount() {
+            return newCount;
+        }
+
+        public void setNewCount(int newCount) {
+            this.newCount = newCount;
+        }
+    }
+
+    public static class AddKillCountEvent extends SlashBladeEvent {
+        private final int originCount;
+        private int newCount;
+
+        public AddKillCountEvent(ItemStack blade, ISlashBladeState state, int count) {
+            super(blade, state);
+            this.originCount = count;
+            this.setNewCount(count);
+        }
+
+        public int getOriginCount() {
+            return originCount;
+        }
+
+        public int getNewCount() {
+            return newCount;
+        }
+
+        public void setNewCount(int newCount) {
+            this.newCount = newCount;
         }
 
     }
@@ -362,5 +382,49 @@ public abstract class SlashBladeEvent extends BaseEvent {
         public Entity getTarget() {
             return target;
         }
+    }
+
+    public interface Break {
+        void onBreak(BreakEvent event);
+    }
+
+    public interface AddProudSoul {
+        void onAddProudSoul(AddProudSoulEvent event);
+    }
+
+    public interface AddKillCount {
+        void onAddAddKillCount(AddKillCountEvent event);
+    }
+
+    public interface PowerBlade {
+        void onPower(PowerBladeEvent event);
+    }
+
+    public interface UpdateAttack {
+        void onUpdateAttack(UpdateAttackEvent event);
+    }
+
+    public interface BladeStandAttack {
+        void onBladeStandAttack(BladeStandAttackEvent event);
+    }
+
+    public interface Hit {
+        void onHit(HitEvent event);
+    }
+
+    public interface Update {
+        void onUpdate(UpdateEvent event);
+    }
+
+    public interface DoSlash {
+        void onDoSlash(DoSlashEvent event);
+    }
+
+    public interface ChargeAction {
+        void onChargeAction(ChargeActionEvent event);
+    }
+
+    public interface SummonedSwordOnHitEntity {
+        void onSummonedSwordOnHitEntity(SummonedSwordOnHitEntityEvent event);
     }
 }
