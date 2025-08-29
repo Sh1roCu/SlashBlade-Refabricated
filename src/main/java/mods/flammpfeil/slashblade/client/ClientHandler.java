@@ -1,11 +1,11 @@
 package mods.flammpfeil.slashblade.client;
 
 import cn.sh1rocu.slashblade.mixin.accessor.LivingEntityRendererAccessor;
+import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.client.renderer.LockonCircleRender;
 import mods.flammpfeil.slashblade.client.renderer.gui.RankRenderer;
 import mods.flammpfeil.slashblade.client.renderer.layers.LayerMainBlade;
 import mods.flammpfeil.slashblade.client.renderer.model.BladeModel;
-import mods.flammpfeil.slashblade.client.renderer.model.BladeModelManager;
 import mods.flammpfeil.slashblade.compat.playerAnim.PlayerAnimationOverrider;
 import mods.flammpfeil.slashblade.event.client.AdvancementsRecipeRenderer;
 import mods.flammpfeil.slashblade.event.client.SneakingMotionCanceller;
@@ -87,7 +87,8 @@ public class ClientHandler {
     }
 
     public static void onCreativeTagBuilding(CreativeModeTab group, FabricItemGroupEntries entries) {
-        BladeModelManager.getClientSlashBladeRegistry().holders()
+        SlashBlade.getSlashBladeDefinitionRegistry(entries.getContext().holders())
+                .listElements()
                 .sorted(SlashBladeDefinition.COMPARATOR).forEach(entry -> {
                     if (!Objects.equals(BuiltInRegistries.CREATIVE_MODE_TAB.getKey(group), entry.value().getCreativeGroup()))
                         return;

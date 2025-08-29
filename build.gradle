@@ -66,6 +66,8 @@ repositories {
         }
     }
     maven { url = "https://mvn.devos.one/releases/" }
+    // Patchouli
+    maven { url = 'https://maven.blamejared.com' }
 }
 
 dependencies {
@@ -121,6 +123,9 @@ dependencies {
     modApi('teamreborn:energy:3.0.0') {
         exclude(group: "net.fabricmc.fabric-api")
     }
+
+    modCompileOnly("vazkii.patchouli:Patchouli:1.20.1-83-FABRIC")
+    modRuntimeOnly("vazkii.patchouli:Patchouli:1.20.1-83-FABRIC")
 
     //modCompileOnly "dev.emi:emi-fabric:${emi_version}:api")
     //modRuntimeOnly "dev.emi:emi-fabric:${emi_version}")

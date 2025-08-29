@@ -45,7 +45,7 @@ public class CircleSlash {
             }
         };
         jc.setPos(pos.x, pos.y, pos.z);
-        jc.setOwner(living);
+        jc.setOwner(event.getUser());
 
         jc.setRotationRoll(0);
         jc.setYRot(living.getYRot() - 22.5F + yRot);
@@ -56,11 +56,11 @@ public class CircleSlash {
         jc.setColor(colorCode);
 
         jc.setMute(false);
-        jc.setIsCritical(true);
+        jc.setIsCritical(event.isCritical());
 
-        jc.setDamage(0.325D);
+        jc.setDamage(event.getDamage());
 
-        jc.setKnockBack(KnockBacks.cancel);
+        jc.setKnockBack(event.getKnockback());
 
         if (living != null)
             CapabilityConcentrationRank.RANK_POINT.maybeGet(living)

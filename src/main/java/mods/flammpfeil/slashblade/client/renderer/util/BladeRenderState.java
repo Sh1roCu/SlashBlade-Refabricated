@@ -90,22 +90,22 @@ public class BladeRenderState extends RenderStateShard {
                                        PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn,
                                        Function<ResourceLocation, RenderType> getRenderType, boolean enableEffect) {
         RenderOverrideEvent event = RenderOverrideEvent.onRenderOverride(stack, model, target, texture, matrixStackIn,
-                bufferIn, packedLightIn);
+                bufferIn, packedLightIn, getRenderType, enableEffect);
 
         if (event.isCanceled())
             return;
 
         ResourceLocation loc = event.getTexture();
 
-        RenderType rt = getRenderType.apply(loc);// getSlashBladeBlendLuminous(event.getTexture());
+        RenderType rt = event.getGetRenderType().apply(loc);// getSlashBladeBlendLuminous(event.getTexture());
         VertexConsumer vb = bufferIn.getBuffer(rt);
 
         Face.setCol(col);
-        Face.setLightMap(packedLightIn);
+        Face.setLightMap(event.getPackedLightIn());
         Face.setMatrix(matrixStackIn);
         event.getModel().tessellateOnly(vb, event.getTarget());
 
-        if (stack.hasFoil() && enableEffect) {
+        if (stack.hasFoil() && event.isEnableEffect()) {
             vb = bufferIn.getBuffer(target.startsWith("item_") ? BladeRenderState.SLASHBLADE_ITEM_GLINT : BladeRenderState.SLASHBLADE_GLINT);
             event.getModel().tessellateOnly(vb, event.getTarget());
         }

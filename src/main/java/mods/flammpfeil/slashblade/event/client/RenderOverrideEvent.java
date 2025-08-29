@@ -9,8 +9,11 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.function.Function;
 
 @Environment(EnvType.CLIENT)
 public class RenderOverrideEvent extends BaseEvent implements ICancellableEvent {
@@ -27,6 +30,8 @@ public class RenderOverrideEvent extends BaseEvent implements ICancellableEvent 
     ResourceLocation originalTexture;
 
     int packedLightIn;
+    Function<ResourceLocation, RenderType> getRenderType;
+    boolean enableEffect;
 
     public static final Event<Callback> CALLBACK = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
         for (Callback callback : callbacks) {
@@ -86,12 +91,32 @@ public class RenderOverrideEvent extends BaseEvent implements ICancellableEvent 
         return packedLightIn;
     }
 
+    public void setPackedLightIn(int packedLightIn) {
+        this.packedLightIn = packedLightIn;
+    }
+
+    public Function<ResourceLocation, RenderType> getGetRenderType() {
+        return getRenderType;
+    }
+
+    public void setGetRenderType(Function<ResourceLocation, RenderType> getRenderType) {
+        this.getRenderType = getRenderType;
+    }
+
+    public boolean isEnableEffect() {
+        return enableEffect;
+    }
+
+    public void setEnableEffect(boolean enableEffect) {
+        this.enableEffect = enableEffect;
+    }
+
     public interface Callback {
         void onRenderOverride(RenderOverrideEvent event);
     }
 
     public RenderOverrideEvent(ItemStack stack, WavefrontObject model, String target, ResourceLocation texture,
-                               PoseStack matrixStack, MultiBufferSource buffer, int packedLightIn) {
+                               PoseStack matrixStack, MultiBufferSource buffer, int packedLightIn, Function<ResourceLocation, RenderType> getRenderType, boolean enableEffect) {
         this.stack = stack;
         this.originalModel = this.model = model;
         this.originalTarget = this.target = target;
@@ -100,11 +125,13 @@ public class RenderOverrideEvent extends BaseEvent implements ICancellableEvent 
         this.matrixStack = matrixStack;
         this.buffer = buffer;
         this.packedLightIn = packedLightIn;
+        this.getRenderType = getRenderType;
+        this.enableEffect = enableEffect;
     }
 
     public static RenderOverrideEvent onRenderOverride(ItemStack stack, WavefrontObject model, String target,
-                                                       ResourceLocation texture, PoseStack matrixStack, MultiBufferSource buffer, int packedLightIn) {
-        RenderOverrideEvent event = new RenderOverrideEvent(stack, model, target, texture, matrixStack, buffer, packedLightIn);
+                                                       ResourceLocation texture, PoseStack matrixStack, MultiBufferSource buffer, int packedLightIn, Function<ResourceLocation, RenderType> getRenderType, boolean enableEffect) {
+        RenderOverrideEvent event = new RenderOverrideEvent(stack, model, target, texture, matrixStack, buffer, packedLightIn, getRenderType, enableEffect);
         CALLBACK.invoker().onRenderOverride(event);
         return event;
     }

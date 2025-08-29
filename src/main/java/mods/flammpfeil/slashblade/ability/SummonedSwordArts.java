@@ -287,7 +287,6 @@ public class SummonedSwordArts {
                     });
                 });
 
-                // BlisteringSwords command
                 input.getScheduler().schedule("HeavyRainSwords", pressTime + 10, (rawEntity, queue, now) -> {
                     if (!(rawEntity instanceof ServerPlayer))
                         return;

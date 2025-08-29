@@ -29,10 +29,11 @@ import java.util.Optional;
  * <p>
  */
 public class SlashBladeState extends ItemComponent implements ISlashBladeState {
-    private static final String IS_EMPTY = "isEmpty";
+    protected boolean isEmpty = true;
 
     public SlashBladeState(ItemStack blade) {
         super(blade);
+        setNonEmpty();
     }
 
     private CompoundTag getBladeState() {
@@ -227,7 +228,7 @@ public class SlashBladeState extends ItemComponent implements ISlashBladeState {
     @Override
     public @NotNull Vec3 getAdjust() {
         if (getBladeState().contains(ADJUST_XYZ))
-            return NBTHelper.getVector3d(getOrCreateRootTag(), ADJUST_XYZ);
+            return NBTHelper.getVector3d(getBladeState(), ADJUST_XYZ);
         return Vec3.ZERO;
     }
 
@@ -371,15 +372,11 @@ public class SlashBladeState extends ItemComponent implements ISlashBladeState {
 
     @Override
     public boolean isEmpty() {
-        CompoundTag bladeState = getBladeState();
-        if (bladeState.contains(IS_EMPTY))
-            return bladeState.getBoolean(IS_EMPTY);
-        // 默认值
-        return true;
+        return isEmpty;
     }
 
     @Override
     public void setNonEmpty() {
-        getBladeState().putBoolean(IS_EMPTY, false);
+        this.isEmpty = false;
     }
 }

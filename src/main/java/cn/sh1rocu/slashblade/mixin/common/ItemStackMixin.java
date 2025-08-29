@@ -21,7 +21,7 @@ public abstract class ItemStackMixin {
     public abstract Item getItem();
 
     @Inject(method = "setDamageValue", at = @At("HEAD"), cancellable = true)
-    public void psb$itemSetDamage(int damage, CallbackInfo ci) {
+    public void sb$itemSetDamage(int damage, CallbackInfo ci) {
         if (getItem() instanceof ItemSlashBladeExtension blade) {
             blade.setDamage((ItemStack) (Object) this, damage);
             ci.cancel();
@@ -29,7 +29,7 @@ public abstract class ItemStackMixin {
     }
 
     @ModifyArg(method = "hurtAndBreak", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;hurt(ILnet/minecraft/util/RandomSource;Lnet/minecraft/server/level/ServerPlayer;)Z"))
-    public <T extends LivingEntity> int am$modifyBreakAmount(int amount, @Local(argsOnly = true) T entity, @Local(argsOnly = true) Consumer<T> onBroken) {
+    public <T extends LivingEntity> int sb$modifyBreakAmount(int amount, @Local T entity, @Local Consumer<T> onBroken) {
         if (this.getItem() instanceof ItemSlashBladeExtension blade) {
             return blade.damageItem((ItemStack) (Object) this, amount, entity, onBroken);
         }
