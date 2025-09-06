@@ -36,7 +36,6 @@
     "client.ClientLevelMixin",
     "client.EntityRenderDispatcherMixin",
     "client.ItemEntityRendererMixin",
-    "client.ItemRendererMixin",
     "client.LivingEntityRendererMixin",
     "client.LocalPlayerMixin",
     "client.MinecraftMixin",
