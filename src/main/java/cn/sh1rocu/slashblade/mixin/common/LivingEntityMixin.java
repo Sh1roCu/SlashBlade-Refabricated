@@ -146,6 +146,15 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
             ci.cancel();
     }
 
+    @ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 5), index = 2)
+    private float sb$livingDamageEvent(float value, DamageSource pDamageSource) {
+        LivingDamageEvent event = new LivingDamageEvent((LivingEntity) (Object) this, pDamageSource, value);
+        LivingDamageEvent.CALLBACK.invoker().onLivingDamage(event);
+        if (event.isCanceled())
+            return 0;
+        return event.getAmount();
+    }
+
     @Inject(method = "jumpFromGround", at = @At("TAIL"))
     public void sb$onJump(CallbackInfo ci) {
         LivingJumpEvent.CALLBACK.invoker().onLivingEntityJump(new LivingJumpEvent((LivingEntity) (Object) this));

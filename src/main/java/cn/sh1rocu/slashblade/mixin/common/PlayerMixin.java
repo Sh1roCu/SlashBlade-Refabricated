@@ -1,9 +1,6 @@
 package cn.sh1rocu.slashblade.mixin.common;
 
-import cn.sh1rocu.slashblade.api.event.LivingAttackEvent;
-import cn.sh1rocu.slashblade.api.event.LivingHurtEvent;
-import cn.sh1rocu.slashblade.api.event.PlayerFlyableFallEvent;
-import cn.sh1rocu.slashblade.api.event.PlayerTickEvent;
+import cn.sh1rocu.slashblade.api.event.*;
 import cn.sh1rocu.slashblade.api.extension.ItemSlashBladeExtension;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Share;
@@ -84,5 +81,14 @@ public abstract class PlayerMixin extends LivingEntity {
     private void sb$shouldCancelHurt(DamageSource damageSource, float f, CallbackInfo ci, @Share("hurt") LocalRef<LivingHurtEvent> eventRef) {
         if (eventRef.get().getAmount() <= 0)
             ci.cancel();
+    }
+
+    @ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 6), index = 2)
+    private float sb$livingDamageEvent(float value, DamageSource pDamageSource) {
+        LivingDamageEvent event = new LivingDamageEvent(this, pDamageSource, value);
+        LivingDamageEvent.CALLBACK.invoker().onLivingDamage(event);
+        if (event.isCanceled())
+            return 0;
+        return event.getAmount();
     }
 }
