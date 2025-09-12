@@ -1,10 +1,13 @@
 package cn.sh1rocu.slashblade.mixin.common;
 
 import cn.sh1rocu.slashblade.api.event.LivingAttackEvent;
+import cn.sh1rocu.slashblade.api.event.LivingHurtEvent;
 import cn.sh1rocu.slashblade.api.event.PlayerFlyableFallEvent;
 import cn.sh1rocu.slashblade.api.event.PlayerTickEvent;
 import cn.sh1rocu.slashblade.api.extension.ItemSlashBladeExtension;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import mods.flammpfeil.slashblade.registry.ModAttributes;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -17,6 +20,7 @@ import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -64,5 +68,21 @@ public abstract class PlayerMixin extends LivingEntity {
             if (blade.onLeftClickEntity(getMainHandItem(), (Player) (Object) this, targetEntity))
                 ci.cancel();
         }
+    }
+
+    @ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 0), index = 2)
+    private float sb$livingHurtEvent(float value, DamageSource pDamageSource, @Share("hurt") LocalRef<LivingHurtEvent> eventRef) {
+        LivingHurtEvent event = new LivingHurtEvent((LivingEntity) (Object) this, pDamageSource, value);
+        eventRef.set(event);
+        LivingHurtEvent.CALLBACK.invoker().onLivingHurt(event);
+        if (event.isCanceled())
+            return 0;
+        return event.getAmount();
+    }
+
+    @Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getDamageAfterMagicAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"), cancellable = true)
+    private void sb$shouldCancelHurt(DamageSource damageSource, float f, CallbackInfo ci, @Share("hurt") LocalRef<LivingHurtEvent> eventRef) {
+        if (eventRef.get().getAmount() <= 0)
+            ci.cancel();
     }
 }

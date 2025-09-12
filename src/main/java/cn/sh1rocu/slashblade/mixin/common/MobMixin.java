@@ -22,7 +22,8 @@ public class MobMixin {
         MobSpawnEvent.FINALIZE_SPAWN.invoker().onFinalizeSpawn(event);
         if (event.isCanceled()) {
             cir.setReturnValue(null);
-            cir.cancel();
+        } else {
+            cir.setReturnValue(event.getSpawnData());
         }
     }
 }
