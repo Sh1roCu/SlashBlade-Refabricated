@@ -117,14 +117,8 @@ public class BladeStandEntity extends ItemFrame implements IEntityAdditionalSpaw
 
         SlashBladeEvent.BladeStandAttackEvent event = new SlashBladeEvent.BladeStandAttackEvent(blade, state, this, damageSource);
         SlashBladeEvent.BLADE_STAND_ATTACK.invoker().onBladeStandAttack(event);
-        if (event.isCanceled())
-            return false;
-
-        if (damageSource.getEntity() instanceof Player player) {
-            ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
-            if (stack.is(SlashBladeItemTags.PROUD_SOULS)) {
-                return false;
-            }
+        if (event.isCanceled()) {
+            return true;
         }
 
         return super.hurt(damageSource, cat);

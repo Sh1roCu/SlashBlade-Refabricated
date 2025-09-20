@@ -31,6 +31,9 @@
     ],
     "jei_mod_plugin": [
       "mods.flammpfeil.slashblade.compat.jei.JEICompat"
+    ],
+    "emi": [
+      "mods.flammpfeil.slashblade.compat.emi.EMICompat"
     ]
   },
   "custom": {
@@ -45,7 +48,8 @@
     "slashblade.mixins.json",
     "slashblade.fabric.mixins.json",
     "slashblade.thetwilightforest.mixins.json",
-    "slashblade.patchouli.mixins.json"
+    "slashblade.patchouli.mixins.json",
+    "slashblade.emi.mixins.json"
   ],
   "accessWidener": "slashblade.accesswidener",
   "depends": {

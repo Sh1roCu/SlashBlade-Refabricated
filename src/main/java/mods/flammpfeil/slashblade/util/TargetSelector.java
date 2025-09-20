@@ -1,7 +1,7 @@
 package mods.flammpfeil.slashblade.util;
 
 import com.google.common.collect.Lists;
-import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
+import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
 import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.data.tag.SlashBladeEntityTypeTagProvider.EntityTypeTags;
@@ -229,7 +229,7 @@ public class TargetSelector {
 
     public static double getResolvedReach(LivingEntity user) {
         double reach = 4.0D; /* 4 block */
-        AttributeInstance attrib = user.getAttribute(ReachEntityAttributes.REACH);
+        AttributeInstance attrib = user.getAttribute(PortingLibAttributes.ENTITY_REACH);
         if (attrib != null) {
             reach = attrib.getValue() - 1;
         }

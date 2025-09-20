@@ -80,13 +80,11 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modApi(include("io.github.fabricators_of_create.Porting-Lib:obj_loader:2.3.8+1.20.1"))
+    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:obj_loader:2.3.8+1.20.1"))
+    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:attributes:2.3.8+1.20.1"))
 
     modCompileOnly 'com.google.code.findbugs:jsr305:3.0.2'
     annotationProcessor 'com.google.code.findbugs:jsr305:3.0.2'
-
-    // 触及距离/攻击范围
-    modImplementation(include("com.jamieswhiteshirt:reach-entity-attributes:2.4.0"))
 
     // CCA
     modImplementation(include("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cca_version}"))
@@ -118,7 +116,6 @@ dependencies {
     //modRuntimeOnly "curse.maven:epic-fight-mod-"
 
     //暮色森林
-    //modCompileOnly "curse.maven:the-twilight-forest-unofficial-1111023:6010673"
     modCompileOnly "libs:twilightforest-fabric-1.20.1:1.4.7"
     modApi('teamreborn:energy:3.0.0') {
         exclude(group: "net.fabricmc.fabric-api")
@@ -127,8 +124,9 @@ dependencies {
     modCompileOnly("vazkii.patchouli:Patchouli:1.20.1-83-FABRIC")
     modRuntimeOnly("vazkii.patchouli:Patchouli:1.20.1-83-FABRIC")
 
-    //modCompileOnly "dev.emi:emi-fabric:${emi_version}:api")
-    //modRuntimeOnly "dev.emi:emi-fabric:${emi_version}")
+    modImplementation("curse.maven:emi-580555:6420944")
+    modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
+    modLocalRuntime "dev.emi:emi-fabric:${emi_version}"
 }
 
 processResources {
@@ -175,5 +173,6 @@ publishing {
     }
 
     repositories {
+
     }
 }

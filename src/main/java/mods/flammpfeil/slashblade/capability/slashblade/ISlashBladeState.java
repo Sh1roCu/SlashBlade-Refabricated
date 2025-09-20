@@ -15,6 +15,7 @@ import mods.flammpfeil.slashblade.registry.combo.ComboState;
 import mods.flammpfeil.slashblade.slasharts.SlashArts;
 import mods.flammpfeil.slashblade.util.AdvancementHelper;
 import mods.flammpfeil.slashblade.util.TimeValueHelper;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -66,6 +67,8 @@ public interface ISlashBladeState extends Component {
 
     String COMBO_ROOT = "ComboRoot";
     String SPECIAL_EFFECTS = "SpecialEffects";
+
+    CompoundTag getBladeState();
 
     long getLastActionTime();
 

@@ -1,13 +1,7 @@
 package mods.flammpfeil.slashblade.init;
 
-import cn.sh1rocu.slashblade.api.extension.EntityExtension;
-import cn.sh1rocu.slashblade.item.SlashBladeBaseItem;
 import mods.flammpfeil.slashblade.SlashBlade;
-import mods.flammpfeil.slashblade.entity.BladeItemEntity;
-import mods.flammpfeil.slashblade.item.BladeStandItem;
-import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import mods.flammpfeil.slashblade.item.ItemSlashBladeDetune;
-import mods.flammpfeil.slashblade.item.ItemTierSlashBlade;
+import mods.flammpfeil.slashblade.item.*;
 import mods.flammpfeil.slashblade.registry.SlashArtsRegistry;
 import mods.flammpfeil.slashblade.registry.SpecialEffectsRegistry;
 import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
@@ -21,7 +15,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -41,66 +34,25 @@ public class SBItems {
 
     }
 
-    public static final Item proudsoul = register("proudsoul", new SlashBladeBaseItem(new FabricItemSettings()) {
-        @Override
-        public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
-            if (entity instanceof BladeItemEntity)
-                return false;
-
-            CompoundTag tag = ((EntityExtension) entity).sb$serializeNBT();
-            tag.putInt("Health", 50);
-            ((EntityExtension) entity).sb$deserializeNBT(tag);
-
-            if (entity.isCurrentlyGlowing()) {
-                entity.setDeltaMovement(
-                        entity.getDeltaMovement().multiply(0.8, 0.0, 0.8).add(0.0D, +0.04D, 0.0D));
-            } else if (entity.isOnFire()) {
-                entity.setDeltaMovement(
-                        entity.getDeltaMovement().multiply(0.8, 0.5, 0.8).add(0.0D, +0.04D, 0.0D));
-            }
-
-            return false;
-        }
-
-
-        @Override
-        public boolean isFoil(@NotNull ItemStack stack) {
-            return true;// super.hasEffect(stack);
-        }
-
+    public static final Item proudsoul = register("proudsoul", new ItemProudSoul(new FabricItemSettings()) {
         @Override
         public int getEnchantmentValue(ItemStack stack) {
             return 50;
         }
     });
-    public static final Item proudsoul_ingot = register("proudsoul_ingot", new SlashBladeBaseItem(new FabricItemSettings()) {
-        @Override
-        public boolean isFoil(ItemStack stack) {
-            return true;// super.hasEffect(stack);
-        }
-
+    public static final Item proudsoul_ingot = register("proudsoul_ingot", new ItemProudSoul(new FabricItemSettings()) {
         @Override
         public int getEnchantmentValue(ItemStack stack) {
             return 100;
         }
     });
-    public static final Item proudsoul_tiny = register("proudsoul_tiny", new SlashBladeBaseItem(new FabricItemSettings()) {
-        @Override
-        public boolean isFoil(ItemStack stack) {
-            return true;// super.hasEffect(stack);
-        }
-
+    public static final Item proudsoul_tiny = register("proudsoul_tiny", new ItemProudSoul(new FabricItemSettings()) {
         @Override
         public int getEnchantmentValue(ItemStack stack) {
             return 10;
         }
     });
-    public static final Item proudsoul_sphere = register("proudsoul_sphere", new SlashBladeBaseItem(new FabricItemSettings().rarity(Rarity.UNCOMMON)) {
-        @Override
-        public boolean isFoil(ItemStack stack) {
-            return true;// super.hasEffect(stack);
-        }
-
+    public static final Item proudsoul_sphere = register("proudsoul_sphere", new ItemProudSoul(new FabricItemSettings().rarity(Rarity.UNCOMMON)) {
         @Override
         public int getEnchantmentValue(ItemStack stack) {
             return 150;
@@ -120,12 +72,7 @@ public class SBItems {
             super.appendHoverText(stack, level, components, flag);
         }
     });
-    public static final Item proudsoul_crystal = register("proudsoul_crystal", new SlashBladeBaseItem(new FabricItemSettings().rarity(Rarity.RARE)) {
-        @Override
-        public boolean isFoil(ItemStack stack) {
-            return true;// super.hasEffect(stack);
-        }
-
+    public static final Item proudsoul_crystal = register("proudsoul_crystal", new ItemProudSoul(new FabricItemSettings().rarity(Rarity.RARE)) {
         @Override
         public int getEnchantmentValue(ItemStack stack) {
             return 200;
@@ -152,12 +99,7 @@ public class SBItems {
             super.appendHoverText(stack, level, components, flag);
         }
     });
-    public static final Item proudsoul_trapezohedron = register("proudsoul_trapezohedron", new SlashBladeBaseItem(new FabricItemSettings().rarity(Rarity.EPIC)) {
-        @Override
-        public boolean isFoil(ItemStack stack) {
-            return true;// super.hasEffect(stack);
-        }
-
+    public static final Item proudsoul_trapezohedron = register("proudsoul_trapezohedron", new ItemProudSoul(new FabricItemSettings().rarity(Rarity.EPIC)) {
         @Override
         public int getEnchantmentValue(ItemStack stack) {
             return TRAPEZOHEDRON_MAX_REFINE.get();

@@ -7,8 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.EnumSet;
 
 public enum SwordType {
-    NONE, EDGEFRAGMENT, BROKEN, ENCHANTED, BEWITCHED, FIERCEREDGE, NOSCABBARD, SEALED, UNBREAKABLE,
-    ;
+    NONE, EDGEFRAGMENT, BROKEN, ENCHANTED, BEWITCHED, FIERCEREDGE, NOSCABBARD, SEALED, UNBREAKABLE, SOULEATER;
 
     public static final Codec<SwordType> CODEC = Codec.STRING.xmap(string -> SwordType.valueOf(string.toUpperCase()),
             instance -> instance.name().toLowerCase());
@@ -30,6 +29,9 @@ public enum SwordType {
             if (s.getKillCount() >= 1000)
                 types.add(FIERCEREDGE);
 
+            if (s.getProudSoulCount() >= 10000)
+                types.add(SOULEATER);
+
         }, () -> {
             types.add(NOSCABBARD);
             types.add(EDGEFRAGMENT);
@@ -43,7 +45,7 @@ public enum SwordType {
             types.remove(SwordType.BEWITCHED);
         }
 
-        if(itemStackIn.getOrCreateTag().getBoolean("Unbreakable"))
+        if (itemStackIn.getOrCreateTag().getBoolean("Unbreakable"))
             types.remove(SwordType.BROKEN);
 
         return types;

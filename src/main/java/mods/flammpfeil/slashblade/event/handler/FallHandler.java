@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.event.handler;
 
 import cn.sh1rocu.slashblade.api.event.LivingFallEvent;
 import cn.sh1rocu.slashblade.api.event.PlayerFlyableFallEvent;
+import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.registry.ComboStateRegistry;
 import mods.flammpfeil.slashblade.registry.combo.ComboState;
@@ -13,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.state.BlockState;
@@ -117,12 +119,8 @@ public class FallHandler {
                 AdvancementHelper.grantedIf(Enchantments.FALL_PROTECTION, user);
             }
 
-            // TODO
-            // AttributeInstance gravity = user.getAttribute(ForgeMod.ENTITY_GRAVITY.get());
-            // double g = gravity.getValue() * gravityReductionFactor;
-
-            // gravity.getValue()默认值为0.08
-            double g = 0.08 * gravityReductionFactor;
+            AttributeInstance gravity = user.getAttribute(PortingLibAttributes.ENTITY_GRAVITY);
+            double g = gravity.getValue() * gravityReductionFactor;
 
             Vec3 motion = user.getDeltaMovement();
             if (motion.y < 0)
@@ -135,12 +133,9 @@ public class FallHandler {
             user.fallDistance = 1;
 
             Vec3 motion = user.getDeltaMovement();
-            // TODO
-            // AttributeInstance gravity = user.getAttribute(ForgeMod.ENTITY_GRAVITY.get());
-            // double g = gravity.getValue();
+            AttributeInstance gravity = user.getAttribute(PortingLibAttributes.ENTITY_GRAVITY);
+            double g = gravity.getValue();
 
-            // gravity.getValue()默认值为0.08
-            double g = 0.08;
             if (motion.y < 0)
                 user.setDeltaMovement(motion.x, (motion.y + g + 0.002f), motion.z);
         }

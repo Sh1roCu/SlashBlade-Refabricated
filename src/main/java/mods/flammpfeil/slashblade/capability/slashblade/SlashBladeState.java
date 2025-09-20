@@ -36,7 +36,7 @@ public class SlashBladeState extends ItemComponent implements ISlashBladeState {
         setNonEmpty();
     }
 
-    private CompoundTag getBladeState() {
+    public CompoundTag getBladeState() {
         return stack.getOrCreateTagElement("bladeState");
     }
 

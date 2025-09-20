@@ -4,7 +4,7 @@ import cn.sh1rocu.slashblade.api.extension.EntityExtension;
 import cn.sh1rocu.slashblade.api.extension.IEnchantment;
 import cn.sh1rocu.slashblade.api.extension.ItemSlashBladeExtension;
 import com.google.common.collect.*;
-import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
+import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
 import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.inputstate.CapabilityInputState;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
@@ -123,7 +123,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
                 result.remove(Attributes.ATTACK_DAMAGE, attack);
                 result.put(Attributes.ATTACK_DAMAGE, attack);
 
-                result.put(ReachEntityAttributes.REACH,
+                result.put(PortingLibAttributes.ENTITY_REACH,
                         new AttributeModifier(PLAYER_REACH_AMPLIFIER, "Reach amplifer",
                                 s.isBroken() ? ReachModifier.BrokendReach() : ReachModifier.BladeReach(),
                                 AttributeModifier.Operation.ADDITION));
@@ -634,10 +634,12 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
     @Environment(EnvType.CLIENT)
     public void appendSwordType(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         var swordType = SwordType.from(stack);
+        boolean goldenFlag = swordType.containsAll(List.of(SwordType.SOULEATER, SwordType.FIERCEREDGE));
         if (swordType.contains(SwordType.SEALED)) return;
         if (swordType.contains(SwordType.BEWITCHED)) {
             tooltip.add(
-                    Component.translatable("slashblade.sword_type.bewitched").withStyle(ChatFormatting.DARK_PURPLE));
+                    Component.translatable("slashblade.sword_type.bewitched")
+                            .withStyle(goldenFlag ? ChatFormatting.GOLD : ChatFormatting.DARK_PURPLE));
         } else if (swordType.contains(SwordType.ENCHANTED)) {
             tooltip.add(Component.translatable("slashblade.sword_type.enchanted").withStyle(ChatFormatting.DARK_AQUA));
         } else {

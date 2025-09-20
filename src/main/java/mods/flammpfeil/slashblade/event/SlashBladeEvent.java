@@ -45,11 +45,11 @@ public abstract class SlashBladeEvent extends BaseEvent {
             callback.onUpdateAttack(event);
         }
     });
-    public static final Event<BladeStandAttack> BLADE_STAND_ATTACK = EventFactory.createArrayBacked(BladeStandAttack.class, callbacks -> event -> {
+    public static final Event<BladeStandAttack> BLADE_STAND_ATTACK = EventFactory.createWithPhases(BladeStandAttack.class, callbacks -> event -> {
         for (BladeStandAttack callback : callbacks) {
             callback.onBladeStandAttack(event);
         }
-    });
+    }, HIGHEST, HIGH, Event.DEFAULT_PHASE, LOW, LOWEST);
     public static final Event<Hit> HIT = EventFactory.createArrayBacked(Hit.class, callbacks -> event -> {
         for (Hit callback : callbacks) {
             callback.onHit(event);

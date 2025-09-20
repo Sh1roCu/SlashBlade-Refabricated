@@ -6,6 +6,7 @@ import mods.flammpfeil.slashblade.capability.concentrationrank.CapabilityConcent
 import mods.flammpfeil.slashblade.capability.concentrationrank.IConcentrationRank;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
+import mods.flammpfeil.slashblade.item.SwordType;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -65,10 +66,17 @@ public class KillCounter {
         int souls = (int) Math.floor(event.getDroppedExperience() * (1.0F + (rankBonus.level * 0.1F)));
 
         CapabilitySlashBlade.BLADESTATE.maybeGet(stack).ifPresent(state -> {
-            var killCountEvent = new SlashBladeEvent.AddProudSoulEvent(stack, state, Math.min(SlashBladeConfig.MAX_PROUD_SOUL_GOT.get(), souls));
-            SlashBladeEvent.ADD_PROUD_SOUL.invoker().onAddProudSoul(killCountEvent);
+            var soulEvent = new SlashBladeEvent.AddProudSoulEvent(stack, state, Math.min(SlashBladeConfig.MAX_PROUD_SOUL_GOT.get(), souls));
+            SlashBladeEvent.ADD_PROUD_SOUL.invoker().onAddProudSoul(soulEvent);
+            int newCount = soulEvent.getNewCount();
             state.setProudSoulCount(
-                    state.getProudSoulCount() + killCountEvent.getNewCount());
+                    state.getProudSoulCount() + newCount);
+            if (SwordType.from(stack).contains(SwordType.SOULEATER)) {
+                int damage = newCount / 4;
+                stack.setDamageValue(stack.getDamageValue() >= damage
+                        ? stack.getDamageValue() - damage
+                        : 0);
+            }
         });
     }
 }

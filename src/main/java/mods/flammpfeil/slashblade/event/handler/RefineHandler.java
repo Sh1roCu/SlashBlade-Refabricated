@@ -182,7 +182,7 @@ public class RefineHandler {
         else if (material.getItem() instanceof TieredItem tier)
             level = tier.getEnchantmentValue();
         int refineLimit = Math.max(10, level);
-        if (event.getRefineResult() <= refineLimit) {
+        if (event.getRefineResult() < refineLimit) {
             event.setRefineResult(event.getRefineResult() + 1);
         }
     }

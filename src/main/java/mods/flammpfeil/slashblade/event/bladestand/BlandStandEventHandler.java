@@ -36,18 +36,16 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static cn.sh1rocu.slashblade.api.event.BaseEvent.LOW;
+
 public class BlandStandEventHandler {
-    private static final ResourceLocation LOWEST = SlashBlade.prefix("lowest_priority");
-
     public static void init() {
-        SlashBladeEvent.BLADE_STAND_ATTACK.addPhaseOrdering(Event.DEFAULT_PHASE, LOWEST);
-
         SlashBladeEvent.BLADE_STAND_ATTACK.register(BlandStandEventHandler::eventKoseki);
         SlashBladeEvent.BLADE_STAND_ATTACK.register(BlandStandEventHandler::eventChangeSE);
         SlashBladeEvent.BLADE_STAND_ATTACK.register(BlandStandEventHandler::eventChangeSA);
         SlashBladeEvent.BLADE_STAND_ATTACK.register(BlandStandEventHandler::eventCopySE);
         SlashBladeEvent.BLADE_STAND_ATTACK.register(BlandStandEventHandler::eventCopySA);
-        SlashBladeEvent.BLADE_STAND_ATTACK.register(LOWEST, BlandStandEventHandler::eventProudSoulEnchantment);
+        SlashBladeEvent.BLADE_STAND_ATTACK.register(LOW, BlandStandEventHandler::eventProudSoulEnchantment);
         PreCopySpecialAttackFromBladeEvent.CALLBACK.register(BlandStandEventHandler::copySAEnchantmentCheck);
         ProudSoulEnchantmentEvent.CALLBACK.register(BlandStandEventHandler::proudSoulEnchantmentProbabilityCheck);
     }
@@ -68,6 +66,7 @@ public class BlandStandEventHandler {
             return;
         }
         event.getBladeStand().setItem(Objects.requireNonNull(slashBladeDefinitionRegistry.get(SlashBladeBuiltInRegistry.KOSEKI)).getBlade());
+        event.setCanceled(true);
     }
 
     public static void eventChangeSE(SlashBladeEvent.BladeStandAttackEvent event) {
@@ -197,6 +196,10 @@ public class BlandStandEventHandler {
         }
 
         var world = player.level();
+
+        if (world.isClientSide())
+            return;
+
         var state = event.getSlashBladeState();
         var bladeStand = event.getBladeStand();
         var specialEffects = state.getSpecialEffects();
@@ -267,6 +270,10 @@ public class BlandStandEventHandler {
             return;
         }
         var world = player.level();
+
+        if (world.isClientSide())
+            return;
+
         var state = event.getSlashBladeState();
         var bladeStand = event.getBladeStand();
         ResourceLocation SA = state.getSlashArtsKey();
@@ -314,6 +321,10 @@ public class BlandStandEventHandler {
         if (!(event.getDamageSource().getEntity() instanceof Player player)) {
             return;
         }
+
+        if (player.level().isClientSide())
+            return;
+
         ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
         ItemStack blade = event.getBlade();
 
@@ -328,7 +339,6 @@ public class BlandStandEventHandler {
         if (!stack.isEnchanted()) {
             return;
         }
-
         var world = player.level();
         var random = world.getRandom();
         var bladeStand = event.getBladeStand();
@@ -387,7 +397,6 @@ public class BlandStandEventHandler {
 
         currentBladeEnchantments.putAll(enchantments);
         EnchantmentHelper.setEnchantments(currentBladeEnchantments, blade);
-
         if (!enchantments.isEmpty()) {
             spawnSucceedEffects(world, bladeStand, random);
         }

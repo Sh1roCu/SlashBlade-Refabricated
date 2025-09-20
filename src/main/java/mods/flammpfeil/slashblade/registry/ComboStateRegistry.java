@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade.registry;
 
-import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
+import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.ability.StunManager;
 import mods.flammpfeil.slashblade.capability.inputstate.CapabilityInputState;
@@ -756,7 +756,7 @@ public class ComboStateRegistry {
                         //疾走居合减少3的攻击距离
                         AttributeModifier rsr = new AttributeModifier("RapidSlashReach", -3,
                                 AttributeModifier.Operation.ADDITION);
-                        AttributeInstance mai = e.getAttribute(ReachEntityAttributes.REACH);
+                        AttributeInstance mai = e.getAttribute(PortingLibAttributes.ENTITY_REACH);
                         mai.addTransientModifier(rsr);
                         AttackManager.areaAttack(e, (t) -> {
                             boolean isRightDown = CapabilityInputState.INPUT_STATE.maybeGet(e)
