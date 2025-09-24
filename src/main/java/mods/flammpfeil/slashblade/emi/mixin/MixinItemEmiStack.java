@@ -4,7 +4,8 @@ import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.stack.ItemEmiStack;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.world.item.ItemStack;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -12,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static mods.flammpfeil.slashblade.compat.emi.EMIUtils.SLASHBLADE_COMPARISON;
 
-@Mixin(value = ItemEmiStack.class, remap = false)
+@Mixin(ItemEmiStack.class)
 public abstract class MixinItemEmiStack extends EmiStack {
     @Unique
     public ItemStack slashBlade_Resharped$origionalStack;
@@ -32,7 +33,7 @@ public abstract class MixinItemEmiStack extends EmiStack {
 
     }
 
-    @Inject(method = "copy()Ldev/emi/emi/api/stack/EmiStack;", at = @At("TAIL"), cancellable = true)
+    @Inject(remap = false, method = "copy()Ldev/emi/emi/api/stack/EmiStack;", at = @At("TAIL"), cancellable = true)
     public void copy(CallbackInfoReturnable<EmiStack> cir) {
         if (this.slashBlade_Resharped$origionalStack != null) {
             EmiStack origin = cir.getReturnValue();
