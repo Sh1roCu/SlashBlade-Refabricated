@@ -167,12 +167,19 @@ jar {
 publishing {
     publications {
         create("mavenJava", MavenPublication) {
-            artifactId = project.archives_base_name
+            artifactId = archives_base_name.toString().toLowerCase()
             from components.java
         }
     }
 
     repositories {
-
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Sh1roCu/SlashBlade-Refabricated")
+            credentials {
+                username = System.getenv("GITHUB_USERNAME")
+                password = System.getenv("GITHUB_MAVEN_TOKEN")
+            }
+        }
     }
 }
