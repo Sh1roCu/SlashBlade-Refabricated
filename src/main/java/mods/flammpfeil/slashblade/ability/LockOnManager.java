@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade.ability;
 
 import cn.sh1rocu.slashblade.api.event.RenderTickEvent;
+import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import mods.flammpfeil.slashblade.capability.inputstate.CapabilityInputState;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.event.handler.InputCommandEvent;
@@ -67,9 +68,9 @@ public class LockOnManager {
                 EntityHitResult er = (EntityHitResult) r;
                 Entity target = er.getEntity();
 
-/*                if (target instanceof PartEntity) {
+                if (target instanceof PartEntity) {
                     target = ((PartEntity<?>) target).getParent();
-                }*/
+                }
 
                 boolean isMatch = false;
 
@@ -87,10 +88,8 @@ public class LockOnManager {
                         .min(Comparator.comparingDouble(e -> e.distanceToSqr(player)));
             }
 
-/*            targetEntity = foundEntity.map(e -> (e instanceof PartEntity) ? ((PartEntity<?>) e).getParent() : e)
-                    .orElse(null);*/
-            targetEntity = foundEntity.orElse(null);
-
+            targetEntity = foundEntity.map(e -> (e instanceof PartEntity) ? ((PartEntity<?>) e).getParent() : e)
+                    .orElse(null);
         }
 
         CapabilitySlashBlade.BLADESTATE.maybeGet(stack).ifPresent(

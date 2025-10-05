@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.entity;
 
 import cn.sh1rocu.slashblade.api.extension.EntityExtension;
 import cn.sh1rocu.slashblade.api.extension.IEntityAdditionalSpawnData;
+import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import mods.flammpfeil.slashblade.ability.StunManager;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
@@ -506,9 +507,9 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
             damagesource = this.damageSources().indirectMagic(this, shooter);
             if (shooter instanceof LivingEntity) {
                 Entity hits = targetEntity;
-                //if (targetEntity instanceof PartEntity) {
-                //    hits = ((PartEntity<?>) targetEntity).getParent();
-                //}
+                if (targetEntity instanceof PartEntity) {
+                    hits = ((PartEntity<?>) targetEntity).getParent();
+                }
                 ((LivingEntity) shooter).setLastHurtMob(hits);
             }
         }
@@ -527,9 +528,9 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
         float damageValue = i * scale;
         if (targetEntity.hurt(damagesource, damageValue)) {
             Entity hits = targetEntity;
-            //if (targetEntity instanceof PartEntity) {
-            //    hits = ((PartEntity<?>) targetEntity).getParent();
-            //}
+            if (targetEntity instanceof PartEntity) {
+                hits = ((PartEntity<?>) targetEntity).getParent();
+            }
 
             if (hits instanceof LivingEntity) {
                 LivingEntity targetLivingEntity = (LivingEntity) hits;

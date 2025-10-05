@@ -2,6 +2,8 @@ package mods.flammpfeil.slashblade.util;
 
 import com.google.common.collect.Lists;
 import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
+import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
+import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.data.tag.SlashBladeEntityTypeTagProvider.EntityTypeTags;
@@ -136,32 +138,30 @@ public class TargetSelector {
         list1.addAll(getReflectableEntitiesWithinAABB(attacker));
         list1.addAll(getExtinguishableEntitiesWithinAABB(attacker));
 
-        list1.addAll(world.getEntitiesOfClass(LivingEntity.class, aabb.inflate(5), e -> true /*e.isMultipartEntity()*/).stream()
-                /*.flatMap(e -> (e.isMultipartEntity()) ? Stream.of(e.getParts()) : Stream.of(e))*/.filter(t -> {
+        list1.addAll(world.getEntitiesOfClass(LivingEntity.class, aabb.inflate(5), e -> e instanceof MultiPartEntity me && me.isMultipartEntity()).stream()
+                .flatMap(e -> (e instanceof MultiPartEntity me && me.isMultipartEntity()) ? Stream.of(me.getParts()) : Stream.of(e)).filter(t -> {
                     boolean result = false;
                     var check = new AttackablePredicate();
-                    //if (t instanceof LivingEntity living) {
-                    //result = check.test(living);
-                    result = check.test(t);
-                    //} else if (t instanceof PartEntity<?> part) {
-                    //if (part.getParent() instanceof LivingEntity living)
-                    //    result = check.test(living) && part.distanceToSqr(attacker) < (reach * reach);
-                    //}
+                    if (t instanceof LivingEntity living) {
+                        result = check.test(living);
+                    } else if (t instanceof PartEntity<?> part) {
+                        if (part.getParent() instanceof LivingEntity living)
+                            result = check.test(living) && part.distanceToSqr(attacker) < (reach * reach);
+                    }
                     return result;
                 }).toList());
 
         TargetingConditions predicate = getAreaAttackPredicate(reach);
 
         list1.addAll(world.getEntitiesOfClass(LivingEntity.class, aabb).stream()
-                /*.flatMap(e -> (e.isMultipartEntity()) ? Stream.of(e.getParts()) : Stream.of(e))*/.filter(t -> {
+                .flatMap(e -> (e instanceof MultiPartEntity me && me.isMultipartEntity()) ? Stream.of(me.getParts()) : Stream.of(e)).filter(t -> {
                     boolean result = false;
-                    //if (t instanceof LivingEntity living) {
-                    //    result = predicate.test(attacker, living);
-                    result = predicate.test(attacker, t);
-                    //} else if (t instanceof PartEntity<?> part) {
-                    //    if (part.getParent() instanceof LivingEntity living)
-                    //        result = predicate.test(attacker, living) && part.distanceToSqr(attacker) < (reach * reach);
-                    // }
+                    if (t instanceof LivingEntity living) {
+                        result = predicate.test(attacker, living);
+                    } else if (t instanceof PartEntity<?> part) {
+                        if (part.getParent() instanceof LivingEntity living)
+                            result = predicate.test(attacker, living) && part.distanceToSqr(attacker) < (reach * reach);
+                    }
                     return result;
                 }).toList());
 

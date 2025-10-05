@@ -260,9 +260,9 @@ public class ComboStateRegistry {
                     .nextOfTimeout(entity -> SlashBlade.prefix("combo_b1_end2"))
                     .addTickAction(ComboState.TimeLineTickAction.getBuilder()
                             .put(12 - 3, (entityIn) -> AttackManager.doSlash(entityIn, 0,
-                                    new Vec3(entityIn.getRandom().nextFloat() - 0.5f, 0.8f, 0), false, true, 2f))
+                                    new Vec3(entityIn.getRandom().nextFloat() - 0.5f, 0.8f, 0), false, true, 1f))
                             .put(13 - 3, (entityIn) -> AttackManager.doSlash(entityIn, 5,
-                                    new Vec3(entityIn.getRandom().nextFloat() - 0.5f, 0.8f, 0), true, false, 2f))
+                                    new Vec3(entityIn.getRandom().nextFloat() - 0.5f, 0.8f, 0), true, false, 1f))
                             .build())
                     .addTickAction(ComboState.TimeLineTickAction.getBuilder()
                             .put(12 - 3 + 0, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))

@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade.util;
 
 import cn.sh1rocu.slashblade.api.extension.ItemSlashBladeExtension;
+import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import mods.flammpfeil.slashblade.capability.concentrationrank.CapabilityConcentrationRank;
 import mods.flammpfeil.slashblade.capability.concentrationrank.IConcentrationRank;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
@@ -249,9 +250,9 @@ public class AttackHelper {
 
         ItemStack itemStack = attacker.getMainHandItem();
         Entity entity = target;
-//        if (target instanceof PartEntity<?> partEntity) {
-//            entity = partEntity.getParent();
-//        }
+        if (target instanceof PartEntity<?> partEntity) {
+            entity = partEntity.getParent();
+        }
 
         // 减少耐久
         if (!attacker.level().isClientSide() && !itemStack.isEmpty() && entity instanceof LivingEntity living) {

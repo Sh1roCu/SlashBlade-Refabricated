@@ -61,17 +61,23 @@ public class Untouchable {
         StunManager.setStun((LivingEntity) entity);
     }
 
+    public boolean doUntouchable(LivingEntity self, Entity other) {
+        if (checkUntouchable(self)) {
+            doWitchTime(other);
+            return true;
+        }
+        return false;
+    }
+
     public void onLivingHurt(LivingHurtEvent event) {
-        if (checkUntouchable(event.getEntity())) {
+        if (doUntouchable(event.getEntity(), event.getSource().getEntity())) {
             event.setCanceled(true);
-            doWitchTime(event.getSource().getEntity());
         }
     }
 
     public boolean onLivingDamage(LivingEntity entity, DamageSource source, float amount) {
-        if (checkUntouchable(entity)) {
+        if (doUntouchable(entity, source.getEntity())) {
             //event.setCanceled(true);
-            doWitchTime(source.getEntity());
             return false;
         }
         return true;
@@ -80,14 +86,12 @@ public class Untouchable {
     public void onLivingAttack(LivingAttackEvent event) {
         if (checkUntouchable(event.getEntity())) {
             event.setCanceled(true);
-            doWitchTime(event.getSource().getEntity());
         }
     }
 
     public boolean onLivingDeath(LivingEntity entity, DamageSource damageSource, float damageAmount) {
-        if (checkUntouchable(entity)) {
+        if (doUntouchable(entity, damageSource.getEntity())) {
             //event.setCanceled(true);
-            doWitchTime(damageSource.getEntity());
 
             CapabilityMobEffect.MOB_EFFECT.maybeGet(entity).ifPresent(ef -> {
                 if (ef.hasUntouchableWorked()) {

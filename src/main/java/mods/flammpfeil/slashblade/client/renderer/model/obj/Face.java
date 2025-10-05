@@ -7,7 +7,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -156,7 +155,7 @@ public class Face {
         } else {
             vector3f = new Vector3f(faceNormal.x, faceNormal.y, faceNormal.z);
         }
-        vector3f.mul(new Matrix3f(transform));
+        vector3f.mul(matrix.last().normal());
         vector3f.normalize();
         wr.normal(vector3f.x(), vector3f.y(), vector3f.z());
 

@@ -82,6 +82,8 @@ dependencies {
 
     modImplementation(include("io.github.fabricators_of_create.Porting-Lib:obj_loader:2.3.8+1.20.1"))
     modImplementation(include("io.github.fabricators_of_create.Porting-Lib:attributes:2.3.8+1.20.1"))
+    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:extensions:2.3.8+1.20.1"))
+    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:entity:2.3.8+1.20.1"))
 
     modCompileOnly 'com.google.code.findbugs:jsr305:3.0.2'
     annotationProcessor 'com.google.code.findbugs:jsr305:3.0.2'

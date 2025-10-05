@@ -72,10 +72,8 @@ public class KillCounter {
             state.setProudSoulCount(
                     state.getProudSoulCount() + newCount);
             if (SwordType.from(stack).contains(SwordType.SOULEATER)) {
-                int damage = newCount / 4;
-                stack.setDamageValue(stack.getDamageValue() >= damage
-                        ? stack.getDamageValue() - damage
-                        : 0);
+                int damage = Math.max(1, newCount / 4);
+                stack.setDamageValue(Math.max(stack.getDamageValue() - damage, 0));
             }
         });
     }

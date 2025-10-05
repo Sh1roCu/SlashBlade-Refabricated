@@ -5,7 +5,6 @@ import cn.sh1rocu.slashblade.api.extension.IEnchantment;
 import cn.sh1rocu.slashblade.api.extension.ISlashBladeCapabilityProvider;
 import cn.sh1rocu.slashblade.api.extension.ItemSlashBladeExtension;
 import com.google.common.collect.*;
-import dev.onyxstudios.cca.api.v3.item.ItemComponent;
 import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
 import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.inputstate.CapabilityInputState;
@@ -85,6 +84,12 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
         if (exEnchantment.contains(enchantment))
             return true;
         return IEnchantment.super.canApplyAtEnchantingTable(stack, enchantment);
+    }
+
+    @Override
+    public @Nullable String getCreatorModId(ItemStack itemStack) {
+        // TODO Auto-generated method stub
+        return super.getCreatorModId(itemStack);
     }
 
     @Override
@@ -370,16 +375,19 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
                     return;
 
                 ResourceLocation sa = state.doChargeAction(entityLiving, elapsed);
-
+                boolean isCreative = false;
                 // sa.tickAction(entityLiving);
                 if (!sa.equals(ComboStateRegistry.getId(ComboStateRegistry.NONE))) {
-
-                    var cost = state.getSlashArts().getProudSoulCost();
-                    if (state.getProudSoulCount() >= cost)
-                        state.setProudSoulCount(state.getProudSoulCount() - cost);
-                    else
-                        stack.hurtAndBreak(1, entityLiving, ItemSlashBlade.getOnBroken(stack));
-
+                    if (entityLiving instanceof Player player) {
+                        isCreative = player.getAbilities().instabuild;
+                    }
+                    if (!isCreative) {
+                        var cost = state.getSlashArts().getProudSoulCost();
+                        if (state.getProudSoulCount() >= cost)
+                            state.setProudSoulCount(state.getProudSoulCount() - cost);
+                        else
+                            stack.hurtAndBreak(1, entityLiving, ItemSlashBlade.getOnBroken(stack));
+                    }
                     entityLiving.swing(InteractionHand.MAIN_HAND);
                 }
             });
@@ -596,7 +604,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
         if (proudsoul > 0) {
             MutableComponent countComponent = Component.translatable("slashblade.tooltip.proud_soul", proudsoul)
                     .withStyle(ChatFormatting.GRAY);
-            if (proudsoul > 1000)
+            if (proudsoul > 10000)
                 countComponent = countComponent.withStyle(ChatFormatting.DARK_PURPLE);
             tooltip.add(countComponent);
         }

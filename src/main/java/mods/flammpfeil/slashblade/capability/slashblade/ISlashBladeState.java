@@ -309,11 +309,13 @@ public interface ISlashBladeState extends Component {
     }
 
     default void updateComboSeq(LivingEntity entity, ResourceLocation loc) {
-        BladeMotionEvent.CALLBACK.invoker().onBladeMotion(new BladeMotionEvent(entity, loc));
-        this.setComboSeq(loc);
+        BladeMotionEvent event = new BladeMotionEvent(entity, loc);
+        BladeMotionEvent.CALLBACK.invoker().onBladeMotion(event);
+        if (event.isCanceled()) return;
+        this.setComboSeq(event.getCombo());
         this.setLastActionTime(entity.level().getGameTime());
-        ComboState cs = ComboStateRegistry.COMBO_STATE.get(loc);
-        cs.clickAction(entity);
+        ComboState cs = ComboStateRegistry.COMBO_STATE.get(event.getCombo());
+        cs.clickAction(event.getEntity());
     }
 
     default ResourceLocation resolvCurrentComboState(LivingEntity user) {
