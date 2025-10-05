@@ -2,13 +2,16 @@ package mods.flammpfeil.slashblade.item;
 
 import cn.sh1rocu.slashblade.api.extension.EntityExtension;
 import cn.sh1rocu.slashblade.api.extension.IEnchantment;
+import cn.sh1rocu.slashblade.api.extension.ISlashBladeCapabilityProvider;
 import cn.sh1rocu.slashblade.api.extension.ItemSlashBladeExtension;
 import com.google.common.collect.*;
+import dev.onyxstudios.cca.api.v3.item.ItemComponent;
 import io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes;
 import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.inputstate.CapabilityInputState;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
+import mods.flammpfeil.slashblade.capability.slashblade.SlashBladeState;
 import mods.flammpfeil.slashblade.client.renderer.SlashBladeTEISR;
 import mods.flammpfeil.slashblade.data.tag.SlashBladeItemTags;
 import mods.flammpfeil.slashblade.entity.BladeItemEntity;
@@ -66,7 +69,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlashBladeExtension {
+public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlashBladeExtension, ISlashBladeCapabilityProvider {
     protected static final UUID ATTACK_DAMAGE_AMPLIFIER = UUID.fromString("2D988C13-595B-4E58-B254-39BB6FA077FD");
     protected static final UUID PLAYER_REACH_AMPLIFIER = UUID.fromString("2D988C13-595B-4E58-B254-39BB6FA077FE");
 
@@ -688,5 +691,10 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
         return new SlashBladeTEISR(
                 Minecraft.getInstance().getBlockEntityRenderDispatcher(),
                 Minecraft.getInstance().getEntityModels());
+    }
+
+    @Override
+    public SlashBladeState initCapability(ItemStack stack) {
+        return new SlashBladeState(stack);
     }
 }

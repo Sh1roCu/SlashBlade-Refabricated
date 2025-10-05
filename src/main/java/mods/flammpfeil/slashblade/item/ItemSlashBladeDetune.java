@@ -1,5 +1,7 @@
 package mods.flammpfeil.slashblade.item;
 
+import mods.flammpfeil.slashblade.capability.slashblade.SimpleSlashBladeState;
+import mods.flammpfeil.slashblade.capability.slashblade.SlashBladeState;
 import mods.flammpfeil.slashblade.init.DefaultResources;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -63,5 +65,10 @@ public class ItemSlashBladeDetune extends ItemSlashBlade {
     @Override
     public void appendSwordType(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 
+    }
+
+    @Override
+    public SlashBladeState initCapability(ItemStack stack) {
+        return new SimpleSlashBladeState(stack, this.getModel(), this.getTexture(), this.getBaseAttack(), this.getTier().getUses());
     }
 }
