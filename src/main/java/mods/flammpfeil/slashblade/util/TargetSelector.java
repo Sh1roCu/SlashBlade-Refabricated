@@ -176,7 +176,7 @@ public class TargetSelector {
 
         list1.addAll(world.getEntitiesOfClass(EnderDragon.class, aabb.inflate(5)).stream()
                 .flatMap(d -> Arrays.stream(d.getSubEntities())).filter(e -> (e.distanceToSqr(owner) < (reach * reach)))
-                .collect(Collectors.toList()));
+                .toList());
 
         LivingEntity user;
         if (owner.getShooter() instanceof LivingEntity)
@@ -189,7 +189,7 @@ public class TargetSelector {
         TargetingConditions predicate = getAreaAttackPredicate(0); // reach check has already been completed
 
         list1.addAll(world.getEntitiesOfClass(LivingEntity.class, aabb, (e) -> true).stream()
-                .filter(t -> predicate.test(user, t)).collect(Collectors.toList()));
+                .filter(t -> predicate.test(user, t)).toList());
 
         return list1;
     }
@@ -231,7 +231,8 @@ public class TargetSelector {
         double reach = 4.0D; /* 4 block */
         AttributeInstance attrib = user.getAttribute(PortingLibAttributes.ENTITY_REACH);
         if (attrib != null) {
-            reach = attrib.getValue() - 1;
+            // 用的这个Lib的ENTITY_REACH属性与Forge的计算方式不一样，默认值为0，Forge为3，参照Forge需要+3
+            reach = (attrib.getValue() + 3) - 1;
         }
         return reach;
     }
