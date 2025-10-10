@@ -103,10 +103,10 @@ public class AttackHelper {
         if (attacker instanceof Player player) {
 //            CriticalHitEvent hitResult = ForgeHooks.getCriticalHit(player, target, isCritical, isCritical ? 1.5F : 1.0F);
 //            isCritical = hitResult != null;
-//            if (isCritical) {
+            if (isCritical) {
 //                baseDamage *= hitResult.getDamageModifier();
-//            }
-            baseDamage = 1.5f;
+                baseDamage *= 1.5F;
+            }
         }
         return baseDamage;
     }
