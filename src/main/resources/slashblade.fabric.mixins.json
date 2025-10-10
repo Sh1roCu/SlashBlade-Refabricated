@@ -38,10 +38,8 @@
     "client.EntityRenderDispatcherMixin",
     "client.ItemEntityRendererMixin",
     "client.LivingEntityRendererMixin",
-    "client.LocalPlayerMixin",
     "client.MinecraftMixin",
     "client.PlayerRendererMixin",
-    "client.RemotePlayerMixin",
     "client.TextureAtlasMixin"
   ],
   "injectors": {

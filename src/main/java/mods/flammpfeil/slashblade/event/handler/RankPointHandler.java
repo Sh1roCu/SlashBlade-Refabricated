@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade.event.handler;
 
-import cn.sh1rocu.slashblade.api.event.LivingHurtEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingHurtEvent;
 import mods.flammpfeil.slashblade.capability.concentrationrank.CapabilityConcentrationRank;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import net.minecraft.world.entity.Entity;
@@ -19,7 +19,7 @@ public class RankPointHandler {
     }
 
     public void register() {
-        LivingHurtEvent.CALLBACK.register(this::onLivingDeathEvent);
+        LivingHurtEvent.HURT.register(this::onLivingDeathEvent);
     }
 
     /**

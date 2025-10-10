@@ -1,8 +1,8 @@
 package cn.sh1rocu.slashblade;
 
-import cn.sh1rocu.slashblade.api.event.LivingAttackEvent;
 import cn.sh1rocu.slashblade.api.event.LivingDropsEvent;
 import cn.sh1rocu.slashblade.api.event.MobSpawnEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.LivingAttackEvent;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.event.SlashBladeRegistryEvent;
@@ -24,7 +24,7 @@ public class SlashBladeFabric implements ModInitializer {
         MobSpawnEvent.FINALIZE_SPAWN.register(EntitySpawnEventHandler::onMobSpawn);
         RegistryHandler.onDatapackRegister();
         RegistryHandler.registerSerializers();
-        LivingAttackEvent.CALLBACK.register(SlashBladeEventHandler::onLivingOnFire);
+        LivingAttackEvent.ATTACK.register(SlashBladeEventHandler::onLivingOnFire);
         SlashBladeRegistryEvent.PRE.register(SlashBladeEventHandler::onLoadingBlade);
         SlashBladeEvent.UPDATE.register(WitherEdge::onSlashBladeUpdate);
         SlashBladeEvent.HIT.register(WitherEdge::onSlashBladeHit);

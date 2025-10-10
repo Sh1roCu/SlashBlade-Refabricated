@@ -106,17 +106,6 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
         return multiplier;
     }
 
-    @Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
-    public void sb$attackEvent(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        LivingEntity self = (LivingEntity) (Object) this;
-        if (!(self instanceof Player)) {
-            LivingAttackEvent event = new LivingAttackEvent(self, source, amount);
-            LivingAttackEvent.CALLBACK.invoker().onLivingAttack(event);
-            if (event.isCanceled())
-                cir.setReturnValue(false);
-        }
-    }
-
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"), cancellable = true)
     private void sb$tickEvent(CallbackInfo ci) {
         LivingTickEvent event = new LivingTickEvent((LivingEntity) (Object) this);
@@ -128,31 +117,6 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
     @ModifyArg(method = "dropExperience", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ExperienceOrb;award(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/phys/Vec3;I)V"))
     private int sb$expDropEvent(int original) {
         return EventHooks.getExperienceDrop((LivingEntity) (Object) this, this.lastHurtByPlayer, original);
-    }
-
-    @ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 0), index = 2)
-    private float sb$livingHurtEvent(float value, DamageSource pDamageSource, @Share("hurt") LocalRef<LivingHurtEvent> eventRef) {
-        LivingHurtEvent event = new LivingHurtEvent((LivingEntity) (Object) this, pDamageSource, value);
-        eventRef.set(event);
-        LivingHurtEvent.CALLBACK.invoker().onLivingHurt(event);
-        if (event.isCanceled())
-            return 0;
-        return event.getAmount();
-    }
-
-    @Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getDamageAfterArmorAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"), cancellable = true)
-    private void sb$shouldCancelHurt(DamageSource damageSource, float f, CallbackInfo ci, @Share("hurt") LocalRef<LivingHurtEvent> eventRef) {
-        if (eventRef.get().getAmount() <= 0)
-            ci.cancel();
-    }
-
-    @ModifyVariable(method = "actuallyHurt", at = @At(value = "LOAD", ordinal = 5), index = 2)
-    private float sb$livingDamageEvent(float value, DamageSource pDamageSource) {
-        LivingDamageEvent event = new LivingDamageEvent((LivingEntity) (Object) this, pDamageSource, value);
-        LivingDamageEvent.CALLBACK.invoker().onLivingDamage(event);
-        if (event.isCanceled())
-            return 0;
-        return event.getAmount();
     }
 
     @Inject(method = "jumpFromGround", at = @At("TAIL"))

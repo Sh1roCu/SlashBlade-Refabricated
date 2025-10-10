@@ -1,9 +1,9 @@
 package mods.flammpfeil.slashblade.ability;
 
-import cn.sh1rocu.slashblade.api.event.LivingAttackEvent;
-import cn.sh1rocu.slashblade.api.event.LivingHurtEvent;
 import cn.sh1rocu.slashblade.api.event.LivingJumpEvent;
 import cn.sh1rocu.slashblade.api.event.LivingTickEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.LivingAttackEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingHurtEvent;
 import mods.flammpfeil.slashblade.capability.mobeffect.CapabilityMobEffect;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -28,9 +28,9 @@ public class Untouchable {
     }
 
     public void register() {
-        LivingHurtEvent.CALLBACK.register(this::onLivingHurt);
+        LivingHurtEvent.HURT.register(this::onLivingHurt);
         ServerLivingEntityEvents.ALLOW_DAMAGE.register(this::onLivingDamage);
-        LivingAttackEvent.CALLBACK.register(this::onLivingAttack);
+        LivingAttackEvent.ATTACK.register(this::onLivingAttack);
         ServerLivingEntityEvents.ALLOW_DEATH.register(this::onLivingDeath);
         LivingTickEvent.CALLBACK.register(this::onLivingTicks);
         LivingJumpEvent.CALLBACK.register(this::onPlayerJump);

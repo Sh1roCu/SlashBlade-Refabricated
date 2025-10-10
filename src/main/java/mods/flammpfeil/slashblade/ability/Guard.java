@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade.ability;
 
-import cn.sh1rocu.slashblade.api.event.LivingAttackEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.LivingAttackEvent;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.capability.concentrationrank.CapabilityConcentrationRank;
 import mods.flammpfeil.slashblade.capability.concentrationrank.IConcentrationRank;
@@ -8,7 +8,6 @@ import mods.flammpfeil.slashblade.capability.inputstate.CapabilityInputState;
 import mods.flammpfeil.slashblade.capability.inputstate.IInputState;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
-import mods.flammpfeil.slashblade.capability.slashblade.SlashBladeState;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.registry.ComboStateRegistry;
 import mods.flammpfeil.slashblade.registry.combo.ComboState;
@@ -43,7 +42,7 @@ public class Guard {
     }
 
     public void register() {
-        LivingAttackEvent.CALLBACK.register(this::onLivingAttack);
+        LivingAttackEvent.ATTACK.register(this::onLivingAttack);
     }
 
     public static final ResourceLocation ADVANCEMENT_GUARD = new ResourceLocation(SlashBlade.MODID, "abilities/guard");

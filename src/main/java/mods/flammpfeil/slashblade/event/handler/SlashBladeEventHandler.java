@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade.event.handler;
 
-import cn.sh1rocu.slashblade.api.event.LivingAttackEvent;
+import io.github.fabricators_of_create.porting_lib.entity.events.LivingAttackEvent;
 import mods.flammpfeil.slashblade.event.SlashBladeRegistryEvent;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.DamageTypeTags;
