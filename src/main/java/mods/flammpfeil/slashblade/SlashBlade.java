@@ -95,40 +95,33 @@ public class SlashBlade {
 
         public static final ResourceLocation BladeItemEntityLoc = new ResourceLocation(SlashBlade.MODID,
                 classToString(BladeItemEntity.class));
-        public static EntityType<BladeItemEntity> BladeItem;
 
         public static final ResourceLocation BladeStandEntityLoc = new ResourceLocation(SlashBlade.MODID,
                 classToString(BladeStandEntity.class));
-        public static EntityType<BladeStandEntity> BladeStand;
 
         public static final ResourceLocation SummonedSwordLoc = new ResourceLocation(SlashBlade.MODID,
                 classToString(EntityAbstractSummonedSword.class));
+
         public static final ResourceLocation SpiralSwordsLoc = new ResourceLocation(SlashBlade.MODID,
                 classToString(EntitySpiralSwords.class));
-        public static EntityType<EntitySpiralSwords> SpiralSwords;
 
         public static final ResourceLocation StormSwordsLoc = new ResourceLocation(SlashBlade.MODID,
                 classToString(EntityStormSwords.class));
-        public static EntityType<EntityStormSwords> StormSwords;
+
         public static final ResourceLocation BlisteringSwordsLoc = new ResourceLocation(SlashBlade.MODID,
                 classToString(EntityBlisteringSwords.class));
-        public static EntityType<EntityBlisteringSwords> BlisteringSwords;
+
         public static final ResourceLocation HeavyRainSwordsLoc = new ResourceLocation(SlashBlade.MODID,
                 classToString(EntityHeavyRainSwords.class));
-        public static EntityType<EntityHeavyRainSwords> HeavyRainSwords;
 
         public static final ResourceLocation JudgementCutLoc = new ResourceLocation(SlashBlade.MODID,
                 classToString(EntityJudgementCut.class));
-        public static EntityType<EntityJudgementCut> JudgementCut;
 
         public static final ResourceLocation SlashEffectLoc = new ResourceLocation(SlashBlade.MODID,
                 classToString(EntitySlashEffect.class));
-        public static EntityType<EntitySlashEffect> SlashEffect;
 
         public static final ResourceLocation DriveLoc = new ResourceLocation(SlashBlade.MODID,
                 classToString(EntityDrive.class));
-        public static EntityType<EntityDrive> Drive;
-
 
         private static String classToString(Class<? extends Entity> entityClass) {
             return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, entityClass.getSimpleName())

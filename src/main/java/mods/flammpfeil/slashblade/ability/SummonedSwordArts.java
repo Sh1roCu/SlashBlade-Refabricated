@@ -231,7 +231,7 @@ public class SummonedSwordArts {
 
                 for (int i = 0; i < count; i++) {
                     EntitySpiralSwords ss = new EntitySpiralSwords(
-                            SlashBlade.RegistryEvents.SpiralSwords, worldIn);
+                            SBEntityTypes.SpiralSwords, worldIn);
                     ss.setPos(entity.position());
                     ss.setOwner(entity);
                     ss.setColor(state.getColorCode());
@@ -291,7 +291,7 @@ public class SummonedSwordArts {
             }
 
             for (int i = 0; i < count; i++) {
-                EntityStormSwords ss = new EntityStormSwords(SlashBlade.RegistryEvents.StormSwords,
+                EntityStormSwords ss = new EntityStormSwords(SBEntityTypes.StormSwords,
                         worldIn);
 
                 ss.setPos(entity.position());
@@ -349,7 +349,7 @@ public class SummonedSwordArts {
 
             for (int i = 0; i < count; i++) {
                 EntityBlisteringSwords ss = new EntityBlisteringSwords(
-                        SlashBlade.RegistryEvents.BlisteringSwords, worldIn);
+                        SBEntityTypes.BlisteringSwords, worldIn);
 
                 ss.setPos(entity.position());
                 ss.setOwner(entity);
@@ -415,7 +415,7 @@ public class SummonedSwordArts {
 
             {// no random pos
                 EntityHeavyRainSwords ss = new EntityHeavyRainSwords(
-                        SlashBlade.RegistryEvents.HeavyRainSwords, worldIn);
+                        SBEntityTypes.HeavyRainSwords, worldIn);
 
                 ss.setOwner(entity);
                 ss.setColor(state.getColorCode());
@@ -438,7 +438,7 @@ public class SummonedSwordArts {
             for (int i = 0; i < count; i++)
                 for (int l = 0; l < multiplier; l++) {
                     EntityHeavyRainSwords ss = new EntityHeavyRainSwords(
-                            SlashBlade.RegistryEvents.HeavyRainSwords, worldIn);
+                            SBEntityTypes.HeavyRainSwords, worldIn);
 
                     ss.setOwner(entity);
                     ss.setColor(state.getColorCode());
