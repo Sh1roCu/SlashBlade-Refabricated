@@ -86,12 +86,11 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
         return IEnchantment.super.canApplyAtEnchantingTable(stack, enchantment);
     }
 
-    // TODO: 本来是从依赖的portinglib-extensions里override这个方法，但该模块会抛出NoSuchMethod异常，不知道是哪里的mixin出了问题，暂时不使用
-//    @Override
-//    public @Nullable String getCreatorModId(ItemStack itemStack) {
-//        // TODO Auto-generated method stub
-//        return super.getCreatorModId(itemStack);
-//    }
+    @Override
+    public @Nullable String getCreatorModId(ItemStack itemStack) {
+        // TODO Auto-generated method stub
+        return super.getCreatorModId(itemStack);
+    }
 
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(ItemStack stack, EquipmentSlot slot) {
