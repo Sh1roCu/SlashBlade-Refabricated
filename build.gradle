@@ -116,7 +116,7 @@ dependencies {
 
     modCompileOnly "curse.maven:emi-580555:6420930"
     modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
-    //modLocalRuntime "dev.emi:emi-fabric:${emi_version}"
+    modRuntimeOnly "dev.emi:emi-fabric:${emi_version}"
 
     modRuntimeOnly "curse.maven:nbtedit-reborn-678133:6125442"
 }

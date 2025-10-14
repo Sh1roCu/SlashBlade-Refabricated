@@ -7,11 +7,16 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(value = ItemEmiStackSerializer.class, remap = false)
 public abstract class MixinItemEmiStackSerializer implements EmiStackSerializer<EmiStack> {
+//    private static <T> DynamicOps<T> withRegistryAccess(DynamicOps<T> ops) {
+//        Minecraft instance = Minecraft.getInstance();
+//        return instance != null && instance.level != null ? instance.level.registryAccess().createSerializationContext(ops) : ops;
+//    }
+//
 //    @Override
 //    public EmiIngredient deserialize(JsonElement element) {
 //        ResourceLocation id = null;
 //        String nbt = null;
-//        String capNBT = null;
+//        String sbCap = null;
 //        long amount = 1;
 //        float chance = 1;
 //        EmiStack remainder = EmiStack.EMPTY;
@@ -26,7 +31,7 @@ public abstract class MixinItemEmiStackSerializer implements EmiStackSerializer<
 //            JsonObject json = element.getAsJsonObject();
 //            id = EmiPort.id(GsonHelper.getAsString(json, "id"));
 //            nbt = GsonHelper.getAsString(json, "nbt", null);
-//            capNBT = GsonHelper.getAsString(json, "sbCaps");
+//            sbCap = GsonHelper.getAsString(json, "sbCap", null);
 //            amount = GsonHelper.getAsLong(json, "amount", 1);
 //            chance = GsonHelper.getAsFloat(json, "chance", 1);
 //            if (GsonHelper.isValidNode(json, "remainder")) {
@@ -38,60 +43,73 @@ public abstract class MixinItemEmiStackSerializer implements EmiStackSerializer<
 //        }
 //        if (id != null) {
 //            try {
-//                CompoundTag nbtComp = null;
 //                DataComponentPatch changes = DataComponentPatch.EMPTY;
 //                if (nbt != null) {
-//                    nbtComp = TagParser.parseTag(nbt);
-//                    changes = DataComponentPatch.CODEC.decode(Minecraft.getInstance().level.registryAccess().createSerializationContext(NbtOps.INSTANCE), nbtComp).getOrThrow().getFirst();\
+//                    CompoundTag tag;
+//                    if (sbCap != null)
+//                        tag = TagParser.parseTag(nbt).merge(TagParser.parseTag(sbCap));
+//                    else
+//                        tag = TagParser.parseTag(nbt);
+//
+//                    changes = (DataComponentPatch) ((Pair<?, ?>) DataComponentPatch.CODEC.decode(withRegistryAccess(NbtOps.INSTANCE), tag).getOrThrow()).getFirst();
 //                }
-//                EmiStack stack = create(id, changes, amount);
-//                if (chance != 1) {
+//                EmiStack stack = this.create(id, changes, amount);
+//                if (chance != 1.0F) {
 //                    stack.setChance(chance);
 //                }
+//
 //                if (!remainder.isEmpty()) {
 //                    stack.setRemainder(remainder);
 //                }
+//
 //                return stack;
 //            } catch (Exception e) {
-//                EmiLog.error("Error parsing NBT in deserialized stack");
-//                e.printStackTrace();
+//                EmiLog.error("Error parsing NBT in deserialized stack", e);
 //                return EmiStack.EMPTY;
 //            }
+//        } else {
+//            return EmiStack.EMPTY;
 //        }
-//        return EmiStack.EMPTY;
 //    }
 //
 //    @Override
 //    public JsonElement serialize(EmiStack stack) {
-//        if (stack.getAmount() == 1 && stack.getChance() == 1 && stack.getRemainder().isEmpty()
-//                && !(stack.getItemStack().getItem() instanceof ItemSlashBlade)) {
-//            String s = getType() + ":" + stack.getId();
-//            var componentChanges = stack.getComponentChanges();
-//            if (componentChanges != DataComponentPatch.EMPTY) {
-//                s += DataComponentPatch.CODEC.encodeStart(Minecraft.getInstance().level.registryAccess().createSerializationContext(NbtOps.INSTANCE), componentChanges).getOrThrow().getAsString();
+//        String nbt = null;
+//        String sbCap = null;
+//        var itemStack = stack.getItemStack();
+//        DataComponentPatch componentChanges = stack.getComponentChanges();
+//        if (componentChanges != DataComponentPatch.EMPTY) {
+//            nbt = (DataComponentPatch.CODEC.encodeStart(withRegistryAccess(NbtOps.INSTANCE), componentChanges).getOrThrow().getAsString());
+//        }
+//
+//        var cap = CapabilitySlashBlade.getBladeState(itemStack);
+//        if (cap.isPresent()) {
+//            sbCap = cap.get().getBladeState().getAsString();
+//        }
+//
+//        if (stack.getAmount() == 1L && stack.getChance() == 1.0F && stack.getRemainder().isEmpty() && sbCap == null) {
+//            String var10000 = this.getType();
+//            String s = var10000 + ":" + stack.getId();
+//            if (nbt != null) {
+//                s = s + nbt;
 //            }
+//
 //            return new JsonPrimitive(s);
 //        } else {
 //            JsonObject json = new JsonObject();
 //            json.addProperty("type", getType());
 //            json.addProperty("id", stack.getId().toString());
-//            var data = stack.get(DataComponents.CUSTOM_DATA);
-//            if (data != null) {
-//                json.addProperty("nbt", data.copyTag().getAsString());
+//            if (nbt != null) {
+//                json.addProperty("nbt", nbt);
+//            }
+//            if (sbCap != null) {
+//                json.addProperty("sbCap", sbCap);
 //            }
 //            if (stack.getAmount() != 1) {
 //                json.addProperty("amount", stack.getAmount());
 //            }
 //            if (stack.getChance() != 1) {
 //                json.addProperty("chance", stack.getChance());
-//            }
-//            ItemStack itemStack = stack.getItemStack();
-//            if (itemStack.getItem() instanceof ItemSlashBlade) {
-//                var optional = CapabilitySlashBlade.getBladeState(itemStack);
-//                if (optional.isPresent()) {
-//                    json.addProperty("sbCaps", optional.orElseThrow(NullPointerException::new).getBladeState().getAsString());
-//
-//                }
 //            }
 //            if (!stack.getRemainder().isEmpty()) {
 //                EmiStack remainder = stack.getRemainder();
