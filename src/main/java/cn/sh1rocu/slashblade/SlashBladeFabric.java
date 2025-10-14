@@ -5,7 +5,6 @@ import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingAt
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingDropsEvent;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.SlashBladeCreativeGroup;
-import mods.flammpfeil.slashblade.client.ClientHandler;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.event.SlashBladeRegistryEvent;
 import mods.flammpfeil.slashblade.event.bladestand.BlandStandEventHandler;

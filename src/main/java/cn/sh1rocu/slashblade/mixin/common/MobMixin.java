@@ -29,12 +29,4 @@ public class MobMixin {
             cir.setReturnValue(event.getSpawnData());
         }
     }
-
-    @ModifyExpressionValue(method = "getApproximateAttackDamageWithItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getOrDefault(Lnet/minecraft/core/component/DataComponentType;Ljava/lang/Object;)Ljava/lang/Object;"))
-    private Object sw$modifyItemAttributeModifiers(Object original, @Local(argsOnly = true) ItemStack stack) {
-        if (stack.getItem() instanceof ItemSlashBladeExtension item) {
-            return item.getDefaultAttributeModifiers(stack);
-        }
-        return original;
-    }
 }

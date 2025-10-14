@@ -13,7 +13,6 @@
     "common.AnvilMenuMixin",
     "common.BundlePacketMixin",
     "common.EntityMixin",
-    "common.ItemAttributeModifiersPredicateMixin",
     "common.ItemEntityMixin",
     "common.ItemStackMixin",
     "common.LivingEntityMixin",
