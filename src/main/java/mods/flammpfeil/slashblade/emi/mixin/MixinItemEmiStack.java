@@ -22,6 +22,7 @@ public abstract class MixinItemEmiStack extends EmiStack {
     private void onConstructor(ItemStack stack, CallbackInfo ci) {
         if (stack.getItem() instanceof ItemSlashBlade) {
             this.slashBlade_Resharped$origionalStack = stack.copy();
+            this.slashBlade_Resharped$origionalStack.setDamageValue(0);
             this.comparison = SLASHBLADE_COMPARISON;
         }
     }

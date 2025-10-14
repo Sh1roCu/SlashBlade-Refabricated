@@ -40,7 +40,9 @@ public class JEICompat implements IModPlugin {
     }
 
     public static String syncSlashBlade(ItemStack stack, UidContext context) {
-        return CapabilitySlashBlade.getBladeState(stack).map(ISlashBladeState::getTranslationKey).orElse("");
+        var cap = CapabilitySlashBlade.getBladeState(stack);
+        cap.ifPresent(state -> stack.setDamageValue(0));
+        return cap.map(ISlashBladeState::getTranslationKey).orElse("");
     }
 
     @Override
