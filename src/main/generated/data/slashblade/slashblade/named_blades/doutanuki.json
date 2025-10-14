@@ -1,0 +1,15 @@
+{
+  "name": "slashblade:doutanuki",
+  "properties": {
+    "attack_base": 5.0,
+    "max_damage": 60,
+    "slash_art": "slashblade:circle_slash",
+    "sword_type": [
+      "bewitched"
+    ]
+  },
+  "render": {
+    "model": "slashblade:model/named/muramasa/muramasa.obj",
+    "texture": "slashblade:model/named/muramasa/doutanuki.png"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_proudsoul_sphere": {
+      "conditions": {
+        "items": [
+          {
+            "predicates": {
+              "slashblade:slashblade": {
+                "requestBlade": {
+                  "name": "slashblade:yamato",
+                  "sword_type": [
+                    "broken",
+                    "sealed"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "slashblade:yamato_fix"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_proudsoul_sphere"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "slashblade:yamato_fix"
+    ]
+  }
+}

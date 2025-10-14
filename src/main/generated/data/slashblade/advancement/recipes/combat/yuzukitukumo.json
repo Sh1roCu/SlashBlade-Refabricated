@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_slashblade": {
+      "conditions": {
+        "items": [
+          {
+            "predicates": {
+              "slashblade:slashblade": {
+                "requestBlade": {}
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "slashblade:yuzukitukumo"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_slashblade"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "slashblade:yuzukitukumo"
+    ]
+  }
+}

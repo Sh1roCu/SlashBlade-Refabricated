@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "ingredient": {
+    "item": "slashblade:proudsoul_crystal"
+  },
+  "result": {
+    "id": "slashblade:proudsoul_trapezohedron"
+  },
+  "experience": 0.1,
+  "cookingtime": 400
+}

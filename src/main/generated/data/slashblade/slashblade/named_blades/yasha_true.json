@@ -1,0 +1,15 @@
+{
+  "name": "slashblade:yasha_true",
+  "properties": {
+    "attack_base": 6.0,
+    "max_damage": 70,
+    "slash_art": "slashblade:circle_slash",
+    "sword_type": [
+      "bewitched"
+    ]
+  },
+  "render": {
+    "model": "slashblade:model/named/yasha/yasha_true.obj",
+    "texture": "slashblade:model/named/yasha/yasha.png"
+  }
+}

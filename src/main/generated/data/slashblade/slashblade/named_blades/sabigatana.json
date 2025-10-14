@@ -1,0 +1,10 @@
+{
+  "name": "slashblade:sabigatana",
+  "properties": {
+    "attack_base": 3.0
+  },
+  "render": {
+    "model": "slashblade:model/named/muramasa/muramasa.obj",
+    "texture": "slashblade:model/named/muramasa/sabigatana.png"
+  }
+}

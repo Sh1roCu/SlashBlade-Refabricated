@@ -1,0 +1,6 @@
+{
+  "blade": "slashblade:yasha_true",
+  "drop_rate": 0.2,
+  "entity_type": "twilightforest:minoshroom",
+  "request_slashblade": true
+}

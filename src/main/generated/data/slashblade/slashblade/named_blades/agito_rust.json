@@ -1,0 +1,14 @@
+{
+  "name": "slashblade:agito_rust",
+  "properties": {
+    "attack_base": 3.0,
+    "max_damage": 60,
+    "sword_type": [
+      "sealed"
+    ]
+  },
+  "render": {
+    "model": "slashblade:model/named/agito.obj",
+    "texture": "slashblade:model/named/agito_rust.png"
+  }
+}

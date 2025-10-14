@@ -1,0 +1,10 @@
+{
+  "loader": "porting_lib:obj",
+  "__comment": "Add the following line on the same level as a 'model' declaration.",
+  "flip-v": true,
+  "model": "slashblade:models/item/stand_s.obj",
+  "textures": {
+    "soul": "slashblade:item/soul",
+    "particle": "slashblade:item/soul"
+  }
+}

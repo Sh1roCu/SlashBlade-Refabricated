@@ -1,0 +1,42 @@
+package mods.flammpfeil.slashblade.thetwilightforest.mixin;
+
+import org.spongepowered.asm.mixin.Mixin;
+
+// TODO: wait TwilightForest-Fabric1.21
+// @Mixin(UncraftingMenu.class)
+@Mixin(Dummy.class)
+public class UncraftingMenuMixin {
+/*    @Inject(method = "matches", at = @At("RETURN"), cancellable = true, remap = false)
+    private static void onMatches(ItemStack input, ItemStack output, CallbackInfoReturnable<Boolean> cir) {
+        if (!cir.getReturnValue()) return;
+
+        // 提前排除非拔刀剑类的情况
+        if (!(input.getItem() instanceof ItemSlashBlade) || !(output.getItem() instanceof ItemSlashBlade)) {
+            return;
+        }
+
+        // 获取刀状态（若缺失能力则直接抛出异常）
+        var inputState = CapabilitySlashBlade.BLADESTATE.maybeGet(input).orElseThrow(NullPointerException::new);
+        var outputState = CapabilitySlashBlade.BLADESTATE.maybeGet(output).orElseThrow(NullPointerException::new);
+
+        // 判断是否为同一类刀
+        if (!inputState.getTranslationKey().equals(outputState.getTranslationKey())) {
+            cir.setReturnValue(false);
+            return;
+        }
+
+        // 判断断刀状态是否一致
+        if (inputState.isBroken() != outputState.isBroken()) {
+            cir.setReturnValue(false);
+            return;
+        }
+
+        // 判断附魔是否一致
+        if (!EnchantmentsHelper.hasEnchantmentsMatch(input, output)) {
+            cir.setReturnValue(false);
+            return;
+        }
+
+        // 所有条件满足时不做更改保持原true返回值
+    }*/
+}

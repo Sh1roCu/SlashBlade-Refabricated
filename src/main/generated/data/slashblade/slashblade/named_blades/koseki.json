@@ -1,0 +1,26 @@
+{
+  "enchantments": [
+    {
+      "id": "minecraft:power",
+      "lvl": 2
+    }
+  ],
+  "name": "slashblade:koseki",
+  "properties": {
+    "attack_base": 5.0,
+    "max_damage": 70,
+    "slash_art": "slashblade:drive_vertical",
+    "special_effects": [
+      "slashblade:wither_edge"
+    ],
+    "sword_type": [
+      "bewitched"
+    ]
+  },
+  "render": {
+    "carry_type": "ninja",
+    "model": "slashblade:model/named/dios/dios.obj",
+    "summon_sword_color": 3158064,
+    "texture": "slashblade:model/named/dios/koseki.png"
+  }
+}

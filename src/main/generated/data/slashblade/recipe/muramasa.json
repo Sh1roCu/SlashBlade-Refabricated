@@ -1,0 +1,27 @@
+{
+  "type": "slashblade:shaped_blade",
+  "blade": "slashblade:muramasa",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "fabric:type": "slashblade:blade",
+      "items": "slashblade:slashblade",
+      "request": {
+        "proud_soul": 10000,
+        "refine": 20
+      }
+    },
+    "S": {
+      "item": "slashblade:proudsoul_sphere"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SBS",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "slashblade:slashblade"
+  }
+}

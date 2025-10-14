@@ -1,0 +1,43 @@
+{
+  "package": "cn.sh1rocu.slashblade.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "required": true,
+  "minVersion": "0.8",
+  "plugin": "cn.sh1rocu.slashblade.util.MixinPlugin",
+  "refmap": "slashblade.refmap.json",
+  "mixins": [
+    "accessor.AnvilMenuAccessor",
+    "accessor.BlockBehaviorAccessor",
+    "accessor.MobAccessor",
+    "accessor.ServerPlayerAccessor",
+    "common.AnvilMenuMixin",
+    "common.BundlePacketMixin",
+    "common.EntityMixin",
+    "common.ItemAttributeModifiersPredicateMixin",
+    "common.ItemEntityMixin",
+    "common.ItemStackMixin",
+    "common.LivingEntityMixin",
+    "common.MobMixin",
+    "common.PersistentEntitySectionManagerMixin",
+    "common.PlayerMixin",
+    "common.ServerEntityMixin",
+    "common.ServerLevelMixin"
+  ],
+  "client": [
+    "accessor.AdvancementsScreenAccessor",
+    "accessor.AdvancementTabAccessor",
+    "accessor.AdvancementWidgetAccessor",
+    "accessor.EntityRendererAccessor",
+    "accessor.LivingEntityRendererAccessor",
+    "client.ClientLevelMixin",
+    "client.EntityRenderDispatcherMixin",
+    "client.ItemEntityRendererMixin",
+    "client.LivingEntityRendererMixin",
+    "client.MinecraftMixin",
+    "client.PlayerRendererMixin",
+    "client.TextureAtlasMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

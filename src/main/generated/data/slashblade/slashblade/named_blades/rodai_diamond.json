@@ -1,0 +1,11 @@
+{
+  "name": "slashblade:rodai_diamond",
+  "properties": {
+    "attack_base": 7.0,
+    "max_damage": 1561
+  },
+  "render": {
+    "carry_type": "default",
+    "texture": "slashblade:model/rodai_diamond.png"
+  }
+}
