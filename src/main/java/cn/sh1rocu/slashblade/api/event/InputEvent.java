@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.world.InteractionHand;
-import org.jetbrains.annotations.ApiStatus;
 
 public abstract class InputEvent extends BaseEvent {
     public static final Event<ClickInput> CLICK_INPUT_CALLBACK = EventFactory.createArrayBacked(ClickInput.class, callbacks -> event -> {

@@ -5,7 +5,6 @@ import cn.sh1rocu.slashblade.util.ClientHooks;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
-import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
 import org.jetbrains.annotations.Nullable;
