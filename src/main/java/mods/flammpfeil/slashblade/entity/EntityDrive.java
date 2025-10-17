@@ -71,7 +71,7 @@ public class EntityDrive extends EntityAbstractSummonedSword {
     }
 
     public void setKnockBack(KnockBacks action) {
-        this.action = action;
+        this.action = action == null ? KnockBacks.cancel : action;
     }
 
     public void setKnockBackOrdinal(int ordinal) {
@@ -314,8 +314,8 @@ public class EntityDrive extends EntityAbstractSummonedSword {
 
         if (targetEntity.hurt(damagesource, damageValue)) {
             Entity hits = targetEntity;
-             if (targetEntity instanceof PartEntity) {
-                 hits = ((PartEntity<?>) targetEntity).getParent();
+            if (targetEntity instanceof PartEntity) {
+                hits = ((PartEntity<?>) targetEntity).getParent();
             }
 
             if (hits instanceof LivingEntity) {
