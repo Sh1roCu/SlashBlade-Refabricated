@@ -60,6 +60,9 @@ repositories {
         url "https://cursemaven.com"
     }
     maven {
+        url = "https://api.modrinth.com/maven"
+    }
+    maven {
         url "https://maven.jamieswhiteshirt.com/libs-release"
         content {
             includeGroup "com.jamieswhiteshirt"
@@ -86,7 +89,7 @@ dependencies {
     modImplementation(include("io.github.fabricators_of_create.Porting-Lib:extensions:2.3.8+1.20.1"))
     modImplementation(include("io.github.fabricators_of_create.Porting-Lib:entity:2.3.8+1.20.1"))
 
-    modCompileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
     annotationProcessor 'com.google.code.findbugs:jsr305:3.0.2'
 
     // CCA
@@ -130,6 +133,11 @@ dependencies {
     modImplementation("curse.maven:emi-580555:6420944")
     modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
     modLocalRuntime "dev.emi:emi-fabric:${emi_version}"
+
+    compileOnly "org.projectlombok:lombok:1.18.38"
+    annotationProcessor "org.projectlombok:lombok:1.18.38"
+    modImplementation "maven.modrinth:accrelatedrendering-refabricated:1.0.5.1-1.20.1-alpha-fabric.1"
+
 }
 
 processResources {

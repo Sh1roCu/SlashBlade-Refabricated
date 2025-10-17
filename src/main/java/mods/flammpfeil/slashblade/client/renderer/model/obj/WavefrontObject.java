@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.client.renderer.model.obj;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -134,34 +135,34 @@ public class WavefrontObject {
     }
 
     @Environment(EnvType.CLIENT)
-    public void tessellateAll(VertexConsumer tessellator) {
+    public void tessellateAll(VertexConsumer tessellator, PoseStack matrixStack, int light, int color) {
         for (GroupObject groupObject : groupObjects) {
-            groupObject.render(tessellator);
+            groupObject.render(tessellator, matrixStack, light, color);
         }
     }
 
     @Environment(EnvType.CLIENT)
-    public void tessellateOnly(VertexConsumer tessellator, String... groupNames) {
+    public void tessellateOnly(VertexConsumer tessellator, PoseStack matrixStack, int light, int color, String... groupNames) {
         for (GroupObject groupObject : groupObjects) {
             for (String groupName : groupNames) {
                 if (groupName.equalsIgnoreCase(groupObject.name)) {
-                    groupObject.render(tessellator);
+                    groupObject.render(tessellator, matrixStack, light, color);
                 }
             }
         }
     }
 
     @Environment(EnvType.CLIENT)
-    public void tessellatePart(VertexConsumer tessellator, String partName) {
+    public void tessellatePart(VertexConsumer tessellator, PoseStack matrixStack, int light, int color, String partName) {
         for (GroupObject groupObject : groupObjects) {
             if (partName.equalsIgnoreCase(groupObject.name)) {
-                groupObject.render(tessellator);
+                groupObject.render(tessellator, matrixStack, light, color);
             }
         }
     }
 
     @Environment(EnvType.CLIENT)
-    public void tessellateAllExcept(VertexConsumer tessellator, String... excludedGroupNames) {
+    public void tessellateAllExcept(VertexConsumer tessellator, PoseStack matrixStack, int light, int color, String... excludedGroupNames) {
         boolean exclude;
         for (GroupObject groupObject : groupObjects) {
             exclude = false;
@@ -171,7 +172,7 @@ public class WavefrontObject {
                 }
             }
             if (!exclude) {
-                groupObject.render(tessellator);
+                groupObject.render(tessellator, matrixStack, light, color);
             }
         }
     }

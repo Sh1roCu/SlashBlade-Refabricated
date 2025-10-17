@@ -49,7 +49,8 @@
     "slashblade.fabric.mixins.json",
     "slashblade.thetwilightforest.mixins.json",
     "slashblade.patchouli.mixins.json",
-    "slashblade.emi.mixins.json"
+    "slashblade.emi.mixins.json",
+    "slashblade.ar.mixins.json"
   ],
   "accessWidener": "slashblade.accesswidener",
   "depends": {
