@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.opengl.GL14;
 
@@ -100,19 +101,20 @@ public class BladeRenderState extends RenderStateShard {
         RenderType rt = event.getGetRenderType().apply(loc);// getSlashBladeBlendLuminous(event.getTexture());
         VertexConsumer vb = bufferIn.getBuffer(rt);
 
-        Face.setCol(col);
-        Face.setLightMap(event.getPackedLightIn());
-        Face.setMatrix(matrixStackIn);
-        event.getModel().tessellateOnly(vb, event.getTarget());
+        int color = FastColor.ARGB32.color(
+                col.getAlpha(),
+                col.getRed(),
+                col.getGreen(),
+                col.getBlue()
+        );
+
+
+        event.getModel().tessellateOnly(vb, matrixStackIn, event.getPackedLightIn(), color, event.getTarget());
 
         if (stack.hasFoil() && event.isEnableEffect()) {
             vb = bufferIn.getBuffer(target.startsWith("item_") ? BladeRenderState.SLASHBLADE_ITEM_GLINT : BladeRenderState.SLASHBLADE_GLINT);
-            event.getModel().tessellateOnly(vb, event.getTarget());
+            event.getModel().tessellateOnly(vb, matrixStackIn, event.getPackedLightIn(), color, event.getTarget());
         }
-
-        Face.resetMatrix();
-        Face.resetLightMap();
-        Face.resetCol();
 
         Face.resetAlphaOverride();
         Face.resetUvOperator();

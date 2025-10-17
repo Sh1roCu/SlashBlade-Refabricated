@@ -1,14 +1,16 @@
 package mods.flammpfeil.slashblade.client.renderer.model.obj;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GroupObject {
     public String name;
-    public ArrayList<Face> faces = new ArrayList<Face>();
+    public List<Face> faces = new ArrayList<>();
     public int glDrawingMode;
 
     public GroupObject() {
@@ -25,10 +27,10 @@ public class GroupObject {
     }
 
     @Environment(EnvType.CLIENT)
-    public void render(VertexConsumer tessellator) {
+    public void render(VertexConsumer tessellator, PoseStack matrixStack, int light, int color) {
         if (faces.size() > 0) {
             for (Face face : faces) {
-                face.addFaceForRender(tessellator);
+                face.addFaceForRender(tessellator, matrixStack, light, color);
             }
         }
     }

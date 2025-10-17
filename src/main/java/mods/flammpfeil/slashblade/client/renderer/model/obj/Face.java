@@ -1,31 +1,20 @@
 package mods.flammpfeil.slashblade.client.renderer.model.obj;
 
-import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-import java.awt.*;
 import java.util.function.BiFunction;
-import java.util.function.Supplier;
 
 public class Face {
-    public static boolean isSmoothShade = true;
-    public static int lightmap = 15;
-
-    public static void setLightMap(int value) {
-        lightmap = value;
-    }
-
-    public static void resetLightMap() {
-        lightmap = 15;
-    }
 
     public static final BiFunction<Vector4f, Integer, Integer> alphaNoOverride = (v, a) -> a;
     public static final BiFunction<Vector4f, Integer, Integer> alphaOverrideYZZ = (v, a) -> v.y() == 0 ? 0 : a;
@@ -50,44 +39,18 @@ public class Face {
         Face.uvOperator = uvDefaultOperator;
     }
 
-    public static Color col;
-
-    public static void setCol(Color col) {
-        Face.col = col;
-    }
-
-    public static void resetCol() {
-        Face.col = Color.white;
-    }
-
-    private static final Supplier<Matrix4f> defaultTransform = Suppliers.memoize(() -> {
-        Matrix4f m = new Matrix4f();
-        m.identity();
-        return m;
-    });
-
-    public static PoseStack matrix = null;
-
-    public static void setMatrix(PoseStack ms) {
-        matrix = ms;
-    }
-
-    public static void resetMatrix() {
-        matrix = null;
-    }
-
     public Vertex[] vertices;
     public Vertex[] vertexNormals;
     public Vertex faceNormal;
     public TextureCoordinate[] textureCoordinates;
 
     @Environment(EnvType.CLIENT)
-    public void addFaceForRender(VertexConsumer tessellator) {
-        addFaceForRender(tessellator, 0.0005F);
+    public void addFaceForRender(VertexConsumer tessellator, PoseStack matrixStack, int light, int color) {
+        addFaceForRender(tessellator, 0.0005F, matrixStack.last().pose(), light, color);
     }
 
     @Environment(EnvType.CLIENT)
-    public void addFaceForRender(VertexConsumer tessellator, float textureOffset) {
+    public void addFaceForRender(VertexConsumer tessellator, float textureOffset, Matrix4f transform, int light, int color) {
         if (faceNormal == null) {
             faceNormal = this.calculateFaceNormal();
         }
@@ -105,24 +68,18 @@ public class Face {
             averageV = averageV / textureCoordinates.length;
         }
 
-        Matrix4f transform;
-        if (matrix != null) {
-            transform = matrix.last().pose();
-        } else {
-            transform = defaultTransform.get();
-        }
-
         for (int i = 0; i < vertices.length; ++i) {
-            putVertex(tessellator, i, transform, textureOffset, averageU, averageV);
+            putVertex(tessellator, i, transform, textureOffset, averageU, averageV, light, color);
         }
     }
 
-    void putVertex(VertexConsumer wr, int i, Matrix4f transform, float textureOffset, float averageU, float averageV) {
+    void putVertex(VertexConsumer wr, int i, Matrix4f transform, float textureOffset, float averageU, float averageV, int light, int color) {
         float offsetU, offsetV;
         wr.addVertex(transform, vertices[i].x, vertices[i].y, vertices[i].z);
 
-        wr.setColor(col.getRed(), col.getGreen(), col.getBlue(),
-                alphaOverride.apply(new Vector4f(vertices[i].x, vertices[i].y, vertices[i].z, 1.0F), col.getAlpha()));
+        wr.setColor(FastColor.ARGB32.red(color), FastColor.ARGB32.green(color), FastColor.ARGB32.blue(color),
+                alphaOverride.apply(new Vector4f(vertices[i].x, vertices[i].y, vertices[i].z, 1.0F), FastColor.ARGB32.alpha(color))
+        );
 
         if ((textureCoordinates != null) && (textureCoordinates.length > 0)) {
             offsetU = textureOffset;
@@ -144,18 +101,18 @@ public class Face {
         }
 
         wr.setOverlay(OverlayTexture.NO_OVERLAY);
-        wr.setLight(lightmap);
+        wr.setLight(light);
 
         Vector3f vector3f;
-        if (isSmoothShade && vertexNormals != null) {
-
+        if (vertexNormals != null) {
             Vertex normal = vertexNormals[i];
 
             vector3f = new Vector3f(normal.x, normal.y, normal.z);
         } else {
             vector3f = new Vector3f(faceNormal.x, faceNormal.y, faceNormal.z);
         }
-        vector3f.mul(matrix.last().normal());
+
+        vector3f.mul(new Matrix3f(transform));
         vector3f.normalize();
         wr.setNormal(vector3f.x(), vector3f.y(), vector3f.z());
     }
