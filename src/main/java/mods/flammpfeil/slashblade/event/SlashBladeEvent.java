@@ -312,7 +312,7 @@ public abstract class SlashBladeEvent extends BaseEvent {
         }
 
         public void setKnockback(KnockBacks knockback) {
-            this.knockback = knockback;
+            this.knockback = knockback == null ? KnockBacks.cancel : knockback;
         }
 
         public float getYRot() {

@@ -66,7 +66,7 @@ public class EntitySlashEffect extends Projectile implements IShootable {
     }
 
     public void setKnockBack(KnockBacks action) {
-        this.action = action;
+        this.action = action == null ? KnockBacks.cancel : action;
     }
 
     public void setKnockBackOrdinal(int ordinal) {

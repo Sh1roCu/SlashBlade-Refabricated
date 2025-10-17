@@ -69,7 +69,7 @@ public class EntityDrive extends EntityAbstractSummonedSword {
     }
 
     public void setKnockBack(KnockBacks action) {
-        this.action = action;
+        this.action = action == null ? KnockBacks.cancel : action;
     }
 
     public void setKnockBackOrdinal(int ordinal) {
