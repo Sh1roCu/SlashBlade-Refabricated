@@ -713,9 +713,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     @Environment(EnvType.CLIENT)
     @Override
     public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-        return new SlashBladeTEISR(
-                Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-                Minecraft.getInstance().getEntityModels());
+        return SlashBladeTEISR.INSTANCE;
     }
 
     @Override
