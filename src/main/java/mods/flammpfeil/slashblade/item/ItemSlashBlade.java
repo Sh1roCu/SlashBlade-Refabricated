@@ -69,6 +69,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlashBladeExtension, ISlashBladeCapabilityProvider {
+
     protected static final UUID ATTACK_DAMAGE_AMPLIFIER = UUID.fromString("2D988C13-595B-4E58-B254-39BB6FA077FD");
     protected static final UUID PLAYER_REACH_AMPLIFIER = UUID.fromString("2D988C13-595B-4E58-B254-39BB6FA077FE");
 
@@ -696,9 +697,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
     @Environment(EnvType.CLIENT)
     @Override
     public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-        return new SlashBladeTEISR(
-                Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-                Minecraft.getInstance().getEntityModels());
+        return SlashBladeTEISR.INSTANCE;
     }
 
     @Override

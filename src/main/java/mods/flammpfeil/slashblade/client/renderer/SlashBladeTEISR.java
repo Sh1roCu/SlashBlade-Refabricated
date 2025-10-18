@@ -37,6 +37,10 @@ import java.util.regex.Pattern;
 
 public class SlashBladeTEISR extends BlockEntityWithoutLevelRenderer {
 
+    public static final BlockEntityWithoutLevelRenderer INSTANCE = new SlashBladeTEISR(
+            Minecraft.getInstance().getBlockEntityRenderDispatcher(),
+            Minecraft.getInstance().getEntityModels());
+
     public SlashBladeTEISR(BlockEntityRenderDispatcher p_172550_, EntityModelSet p_172551_) {
         super(p_172550_, p_172551_);
     }
