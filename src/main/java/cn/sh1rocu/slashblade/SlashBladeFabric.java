@@ -16,11 +16,16 @@ import mods.flammpfeil.slashblade.registry.specialeffects.WitherEdge;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.server.MinecraftServer;
 
 public class SlashBladeFabric implements ModInitializer {
 
     private static MinecraftServer server;
+
+    public static final HolderLookup.Provider REGISTRY_ACCESS = VanillaRegistries.createLookup();
 
     @Override
     public void onInitialize() {

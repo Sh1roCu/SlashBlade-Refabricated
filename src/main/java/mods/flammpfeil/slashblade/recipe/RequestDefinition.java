@@ -148,7 +148,7 @@ public class RequestDefinition {
         state.setRefine(getRefineCount());
 
         var lookup = FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ?
-                VanillaRegistries.createLookup().lookupOrThrow(Registries.ENCHANTMENT) :
+                SlashBladeFabric.REGISTRY_ACCESS.lookupOrThrow(Registries.ENCHANTMENT) :
                 SlashBladeFabric.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
         this.getEnchantments()
                 .forEach(enchantment -> blade.enchant(lookup.getOrThrow(
@@ -187,7 +187,7 @@ public class RequestDefinition {
         boolean refineCheck = state.getRefine() >= this.getRefineCount();
 
         var lookup = FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ?
-                VanillaRegistries.createLookup().lookupOrThrow(Registries.ENCHANTMENT) :
+                SlashBladeFabric.REGISTRY_ACCESS.lookupOrThrow(Registries.ENCHANTMENT) :
                 SlashBladeFabric.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
         for (var enchantment : this.getEnchantments()) {
             if (EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(
