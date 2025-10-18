@@ -14,8 +14,8 @@ import mods.flammpfeil.slashblade.registry.slashblade.EnchantmentDefinition;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -148,7 +148,7 @@ public class RequestDefinition {
         state.setRefine(getRefineCount());
 
         var lookup = FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ?
-                Minecraft.getInstance().level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT) :
+                VanillaRegistries.createLookup().lookupOrThrow(Registries.ENCHANTMENT) :
                 SlashBladeFabric.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
         this.getEnchantments()
                 .forEach(enchantment -> blade.enchant(lookup.getOrThrow(
@@ -187,7 +187,7 @@ public class RequestDefinition {
         boolean refineCheck = state.getRefine() >= this.getRefineCount();
 
         var lookup = FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ?
-                Minecraft.getInstance().level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT) :
+                VanillaRegistries.createLookup().lookupOrThrow(Registries.ENCHANTMENT) :
                 SlashBladeFabric.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
         for (var enchantment : this.getEnchantments()) {
             if (EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(
