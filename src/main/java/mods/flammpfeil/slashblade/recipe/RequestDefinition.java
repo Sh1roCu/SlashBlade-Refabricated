@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.recipe;
 
+import cn.sh1rocu.slashblade.SlashBladeFabric;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -10,9 +11,11 @@ import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.item.SwordType;
 import mods.flammpfeil.slashblade.registry.slashblade.EnchantmentDefinition;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -144,9 +147,11 @@ public class RequestDefinition {
         state.setKillCount(getKillCount());
         state.setRefine(getRefineCount());
 
+        var lookup = FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ?
+                Minecraft.getInstance().level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT) :
+                SlashBladeFabric.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
         this.getEnchantments()
-                .forEach(enchantment -> blade.enchant(
-                        VanillaRegistries.createLookup().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(
+                .forEach(enchantment -> blade.enchant(lookup.getOrThrow(
                                 ResourceKey.create(Registries.ENCHANTMENT, enchantment.getEnchantmentID())
                         ),
                         enchantment.getEnchantmentLevel()));
@@ -181,10 +186,12 @@ public class RequestDefinition {
         boolean killCheck = state.getKillCount() >= this.getKillCount();
         boolean refineCheck = state.getRefine() >= this.getRefineCount();
 
+        var lookup = FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ?
+                Minecraft.getInstance().level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT) :
+                SlashBladeFabric.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
         for (var enchantment : this.getEnchantments()) {
-            if (EnchantmentHelper.getItemEnchantmentLevel(VanillaRegistries.createLookup()
-                    .lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(
-                            ResourceKey.create(Registries.ENCHANTMENT, enchantment.getEnchantmentID())), blade) < enchantment.getEnchantmentLevel()) {
+            if (EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(
+                    ResourceKey.create(Registries.ENCHANTMENT, enchantment.getEnchantmentID())), blade) < enchantment.getEnchantmentLevel()) {
                 return false;
             }
         }

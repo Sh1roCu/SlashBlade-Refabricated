@@ -42,11 +42,11 @@ public class EntityDropEvent {
 
             if (entry.isDropFixedPoint())
                 dropBlade(entity, BuiltInRegistries.ENTITY_TYPE.get(entry.getEntityType()),
-                        bladeRegistry.get(entry.getBladeName()).getBlade(), resultRate, entry.getDropPoint().x,
+                        bladeRegistry.get(entry.getBladeName()).getBlade(entity.registryAccess()), resultRate, entry.getDropPoint().x,
                         entry.getDropPoint().y, entry.getDropPoint().z);
             else
                 dropBlade(entity, BuiltInRegistries.ENTITY_TYPE.get(entry.getEntityType()),
-                        bladeRegistry.get(entry.getBladeName()).getBlade(), resultRate, entity.getX(), entity.getY(),
+                        bladeRegistry.get(entry.getBladeName()).getBlade(entity.registryAccess()), resultRate, entity.getX(), entity.getY(),
                         entity.getZ());
         });
 

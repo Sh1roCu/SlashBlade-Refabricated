@@ -9,16 +9,13 @@ import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.SlashBladeState;
 import mods.flammpfeil.slashblade.event.SlashBladeRegistryEvent;
 import mods.flammpfeil.slashblade.init.SBItems;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder.Reference;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -106,11 +103,11 @@ public class SlashBladeDefinition {
         return enchantments;
     }
 
-    public ItemStack getBlade() {
-        return getBlade(getItem());
+    public ItemStack getBlade(HolderLookup.Provider access) {
+        return getBlade(getItem(), access);
     }
 
-    public ItemStack getBlade(Item bladeItem) {
+    public ItemStack getBlade(Item bladeItem, HolderLookup.Provider access) {
         SlashBladeRegistryEvent.Pre event = new SlashBladeRegistryEvent.Pre(this);
         SlashBladeRegistryEvent.PRE.invoker().onPre(event);
         if (event.isCanceled())
@@ -147,9 +144,7 @@ public class SlashBladeDefinition {
         if (!this.getName().equals(SlashBlade.prefix("none")))
             state.setTranslationKey(this.getTranslationKey());
 
-        var lookup = FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ?
-                Minecraft.getInstance().level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT) :
-                VanillaRegistries.createLookup().lookupOrThrow(Registries.ENCHANTMENT);
+        var lookup = access.lookupOrThrow(Registries.ENCHANTMENT);
         for (var instance : this.enchantments) {
             var key = ResourceKey.create(Registries.ENCHANTMENT, instance.getEnchantmentID());
             var enchantment = lookup.getOrThrow(key);

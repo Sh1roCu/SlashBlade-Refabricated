@@ -12,6 +12,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -72,8 +73,9 @@ public class SlashBladeCreativeGroup {
                     if (!Objects.equals(BuiltInRegistries.CREATIVE_MODE_TAB.getKey(group), entry.value().getCreativeGroup()))
                         return;
 
-                    if (!entry.value().getBlade().isEmpty())
-                        entries.accept(entry.value().getBlade());
+                    var blade = entry.value().getBlade(entries.getContext().holders());
+                    if (!blade.isEmpty())
+                        entries.accept(blade);
                 });
     }
 
@@ -81,8 +83,9 @@ public class SlashBladeCreativeGroup {
     private static void fillBlades(CreativeModeTab.ItemDisplayParameters features, CreativeModeTab.Output output) {
         SlashBlade.getSlashBladeDefinitionRegistry(features.holders()).listElements()
                 .sorted(SlashBladeDefinition.COMPARATOR).forEach(entry -> {
-                    if (!entry.value().getBlade().isEmpty())
-                        output.accept(entry.value().getBlade());
+                    var blade = entry.value().getBlade(features.holders());
+                    if (!blade.isEmpty())
+                        output.accept(blade);
                 });
     }
 
@@ -105,7 +108,8 @@ public class SlashBladeCreativeGroup {
             if (slashArts.equals(SlashArtsRegistry.NONE) || key == null)
                 return;
             ItemStack sphere = new ItemStack(SBItems.proudsoul_sphere);
-            CustomData.update(DataComponents.CUSTOM_DATA, sphere, tag -> tag.putString("SpecialAttackType", key.toString()));
+            CustomData.update(DataComponents.CUSTOM_DATA, sphere,
+                    tag -> tag.putString("SpecialAttackType", key.toString()));
             output.accept(sphere);
         });
     }

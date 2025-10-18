@@ -14,13 +14,19 @@ import mods.flammpfeil.slashblade.event.handler.RegistryHandler;
 import mods.flammpfeil.slashblade.event.handler.SlashBladeEventHandler;
 import mods.flammpfeil.slashblade.registry.specialeffects.WitherEdge;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.server.MinecraftServer;
 
 public class SlashBladeFabric implements ModInitializer {
+
+    private static MinecraftServer server;
 
     @Override
     public void onInitialize() {
         SlashBlade.init();
+        ServerLifecycleEvents.SERVER_STARTING.register((server) -> SlashBladeFabric.server = server);
+        ServerLifecycleEvents.SERVER_STOPPED.register((server) -> SlashBladeFabric.server = null);
         ItemGroupEvents.MODIFY_ENTRIES_ALL.register(SlashBladeCreativeGroup::onCreativeTagBuilding);
         BlandStandEventHandler.init();
         LivingDropsEvent.EVENT.register(EntityDropEvent::dropBlade);
@@ -31,5 +37,10 @@ public class SlashBladeFabric implements ModInitializer {
         SlashBladeRegistryEvent.PRE.register(SlashBladeEventHandler::onLoadingBlade);
         SlashBladeEvent.UPDATE.register(WitherEdge::onSlashBladeUpdate);
         SlashBladeEvent.HIT.register(WitherEdge::onSlashBladeHit);
+    }
+
+    @SuppressWarnings("")
+    public static MinecraftServer getServer() {
+        return server;
     }
 }

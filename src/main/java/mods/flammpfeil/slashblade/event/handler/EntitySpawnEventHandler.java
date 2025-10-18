@@ -35,10 +35,10 @@ public class EntitySpawnEventHandler {
         if (rngResult < SlashBladeConfig.BROKEN_SABIGATANA_SPAWN_CHANCE.get() * difficultyMultiplier) {
             if (rngResult < SlashBladeConfig.SABIGATANA_SPAWN_CHANCE.get() * difficultyMultiplier) {
                 entity.setItemSlot(EquipmentSlot.MAINHAND,
-                        bladeRegistry.get(SlashBladeBuiltInRegistry.SABIGATANA.location()).getBlade());
+                        bladeRegistry.get(SlashBladeBuiltInRegistry.SABIGATANA.location()).getBlade(event.getEntity().registryAccess()));
             } else {
                 entity.setItemSlot(EquipmentSlot.MAINHAND,
-                        bladeRegistry.get(SlashBladeBuiltInRegistry.SABIGATANA_BROKEN.location()).getBlade());
+                        bladeRegistry.get(SlashBladeBuiltInRegistry.SABIGATANA_BROKEN.location()).getBlade(event.getEntity().registryAccess()));
             }
         }
     }
