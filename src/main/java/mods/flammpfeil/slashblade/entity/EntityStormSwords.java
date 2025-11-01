@@ -52,7 +52,7 @@ public class EntityStormSwords extends EntityAbstractSummonedSword {
             if (target != null) {
                 dir = target.position().subtract(this.position()).multiply(1, 0, 1).normalize();
             }
-            ((EntityStormSwords) this).shoot(dir.x, dir.y, dir.z, 3.0f, 1.0f);
+            this.shoot(dir.x, dir.y, dir.z, 3.0f, 1.0f);
             return;
         }
 

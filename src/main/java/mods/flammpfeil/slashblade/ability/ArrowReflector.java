@@ -21,10 +21,7 @@ public class ArrowReflector {
     public static boolean isMatch(Entity arrow, Entity attacker) {
         if (arrow == null)
             return false;
-        if (!(arrow instanceof Projectile))
-            return false;
-
-        return true;
+        return arrow instanceof Projectile;
     }
 
     public static void doReflect(Entity arrow, Entity attacker) {
@@ -36,7 +33,7 @@ public class ArrowReflector {
             Vec3 dir = attacker.getLookAngle();
 
             do {
-                if (attacker instanceof LivingEntity)
+                if (!(attacker instanceof LivingEntity))
                     break;
 
                 ItemStack stack = ((LivingEntity) attacker).getMainHandItem();
@@ -87,11 +84,16 @@ public class ArrowReflector {
                     : ComboStateRegistry.NONE;
             if (old != current) {
                 ComboState oldCS = ComboStateRegistry.COMBO_STATE.get(current);
-                ticks -= (int) TimeValueHelper.getTicksFromMSec(oldCS.getTimeoutMS());
+                if (oldCS != null) {
+                    ticks -= (int) TimeValueHelper.getTicksFromMSec(oldCS.getTimeoutMS());
+                }
             }
 
-            double period = TimeValueHelper.getTicksFromFrames(currentCS.getEndFrame() - currentCS.getStartFrame())
-                    * (1.0f / currentCS.getSpeed());
+            double period = 0;
+            if (currentCS != null) {
+                period = TimeValueHelper.getTicksFromFrames(currentCS.getEndFrame() - currentCS.getStartFrame())
+                        * (1.0f / currentCS.getSpeed());
+            }
 
             if (ticks < period) {
                 List<Entity> founds = TargetSelector.getReflectableEntitiesWithinAABB(attacker);

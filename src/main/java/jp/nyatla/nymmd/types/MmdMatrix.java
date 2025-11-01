@@ -109,7 +109,6 @@ public class MmdMatrix {
         this.m31 = i_value[13];
         this.m32 = i_value[14];
         this.m33 = i_value[15];
-        return;
     }
 
     /**
@@ -134,7 +133,6 @@ public class MmdMatrix {
         this.m31 = i_value.m31;
         this.m32 = i_value.m32;
         this.m33 = i_value.m33;
-        return;
     }
 
     /**
@@ -157,7 +155,6 @@ public class MmdMatrix {
         o_value[13] = this.m31;
         o_value[14] = this.m32;
         o_value[15] = this.m33;
-        return;
     }
 
     public void getValue(float[] o_value) {
@@ -177,7 +174,6 @@ public class MmdMatrix {
         o_value[13] = (float) this.m31;
         o_value[14] = (float) this.m32;
         o_value[15] = (float) this.m33;
-        return;
     }
 
     /**
@@ -202,7 +198,6 @@ public class MmdMatrix {
         o_value[13] = this.m13;
         o_value[14] = this.m23;
         o_value[15] = this.m33;
-        return;
     }
 
     /**
@@ -353,7 +348,6 @@ public class MmdMatrix {
                 + i_mat_l.m33 * i_mat_r.m32;
         this.m33 = i_mat_l.m30 * i_mat_r.m03 + i_mat_l.m31 * i_mat_r.m13 + i_mat_l.m32 * i_mat_r.m23
                 + i_mat_l.m33 * i_mat_r.m33;
-        return;
     }
 
     /**
@@ -362,7 +356,6 @@ public class MmdMatrix {
     public final void identity() {
         this.m00 = this.m11 = this.m22 = this.m33 = 1;
         this.m01 = this.m02 = this.m03 = this.m10 = this.m12 = this.m13 = this.m20 = this.m21 = this.m23 = this.m30 = this.m31 = this.m32 = 0;
-        return;
     }
 
     public void MatrixLerp(MmdMatrix sm1, MmdMatrix sm2, float fLerpValue) {
@@ -383,7 +376,6 @@ public class MmdMatrix {
         this.m31 = sm1.m31 * fLerpValue + sm2.m31 * fT;
         this.m32 = sm1.m32 * fLerpValue + sm2.m32 * fT;
         this.m33 = sm1.m33 * fLerpValue + sm2.m33 * fT;
-        return;
     }
 
     public void QuaternionToMatrix(MmdVector4 pvec4Quat) {
@@ -409,7 +401,6 @@ public class MmdMatrix {
 
         this.m03 = this.m13 = this.m23 = this.m30 = this.m31 = this.m32 = 0.0f;
         this.m33 = 1.0f;
-        return;
     }
 
     public MmdVector3 getPos() {

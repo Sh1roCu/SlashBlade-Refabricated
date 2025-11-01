@@ -89,8 +89,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
 
     @Override
     public @Nullable String getCreatorModId(ItemStack itemStack) {
-        // TODO Auto-generated method stub
-        return super.getCreatorModId(itemStack);
+        return this.getBladeId(itemStack).getNamespace();
     }
 
     @Override
@@ -527,12 +526,29 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
                 .map(ISlashBladeState::getTranslationKey).orElseGet(() -> stackDefaultDescriptionId(stack));
     }
 
+    public ResourceLocation getBladeId(ItemStack stack) {
+        return CapabilitySlashBlade.BLADESTATE.maybeGet(stack).filter((s) -> !s.getTranslationKey().isBlank())
+                .map((state) -> parseBladeID(state.getTranslationKey())).orElseGet(() -> stackDefaultId(stack));
+    }
+
     private String stackDefaultDescriptionId(ItemStack stack) {
         var cap = CapabilitySlashBlade.BLADESTATE.maybeGet(stack);
         if (cap.isEmpty())
             return super.getDescriptionId(stack);
         String key = cap.get().getTranslationKey();
         return !key.isBlank() ? key : super.getDescriptionId(stack);
+    }
+
+    private ResourceLocation stackDefaultId(ItemStack stack) {
+        CompoundTag tag = stack.getOrCreateTag();
+        if (!tag.contains("bladeState"))
+            return BuiltInRegistries.ITEM.getKey(this);
+        String key = tag.getCompound("bladeState").getString("translationKey");
+        return !key.isBlank() ? parseBladeID(key) : BuiltInRegistries.ITEM.getKey(this);
+    }
+
+    public static ResourceLocation parseBladeID(String key) {
+        return ResourceLocation.tryParse(key.substring(5).replaceFirst("\\.", ":"));
     }
 
     public boolean isDestructable(ItemStack stack) {

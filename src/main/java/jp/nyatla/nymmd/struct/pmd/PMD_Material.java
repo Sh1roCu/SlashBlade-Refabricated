@@ -61,7 +61,6 @@ public class PMD_Material implements StructType {
         this.unknown = i_reader.readUnsignedShort();
         this.ulNumIndices = i_reader.readInt();
         this.szTextureFileName = i_reader.readAscii(20);
-        return;
     }
     /*
      * Color4 col4Diffuse; float fShininess; Color3 col3Specular, col3Ambient;

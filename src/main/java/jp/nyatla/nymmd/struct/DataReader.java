@@ -45,7 +45,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public class DataReader {
-    private ByteBuffer _buf;
+    private final ByteBuffer _buf;
 
     public DataReader(InputStream i_stream) throws MmdException {
         try {
@@ -71,7 +71,6 @@ public class DataReader {
             this._buf = ByteBuffer.wrap(buffer.toByteArray());
 
             this._buf.order(ByteOrder.LITTLE_ENDIAN);
-            return;
         } catch (Exception e) {
             throw new MmdException();
         }

@@ -1,7 +1,10 @@
 package mods.flammpfeil.slashblade.util;
 
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.DoubleTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.world.phys.Vec3;
+
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -156,9 +159,9 @@ public class NBTHelper {
     public static <T> void readNBT(CompoundTag src, String key, Consumer<T> dest, boolean isNullable,
             T... defaultValue) {
         if (isNullable)
-            dest.accept(((Optional<T>) castValue(key, src, defaultValue)).orElse(null));
+            dest.accept(castValue(key, src, defaultValue).orElse(null));
         else
-            ((Optional<T>) castValue(key, src, defaultValue)).ifPresent(dest);
+            castValue(key, src, defaultValue).ifPresent(dest);
     }
 
     public static <T> Optional<T> castValue(String key, CompoundTag src, T... defaultValue) {

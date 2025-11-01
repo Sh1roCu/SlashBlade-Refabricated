@@ -40,7 +40,6 @@ public class UncraftingMenuMixin {
         // 判断附魔是否一致
         if (!EnchantmentsHelper.hasEnchantmentsMatch(input, output)) {
             cir.setReturnValue(false);
-            return;
         }
 
         // 所有条件满足时不做更改保持原true返回值

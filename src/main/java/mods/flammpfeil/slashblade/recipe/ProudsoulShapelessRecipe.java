@@ -1,12 +1,9 @@
 package mods.flammpfeil.slashblade.recipe;
 
-import java.util.Map;
-
 import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
@@ -14,14 +11,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+
+import java.util.Map;
 
 public class ProudsoulShapelessRecipe extends ShapelessRecipe {
 
@@ -105,7 +100,7 @@ public class ProudsoulShapelessRecipe extends ShapelessRecipe {
 			String s = GsonHelper.getAsString(p_44291_, "group", "");
 			@SuppressWarnings("deprecation")
 			CraftingBookCategory craftingbookcategory = CraftingBookCategory.CODEC
-					.byName(GsonHelper.getAsString(p_44291_, "category", (String) null), CraftingBookCategory.MISC);
+					.byName(GsonHelper.getAsString(p_44291_, "category", null), CraftingBookCategory.MISC);
 			NonNullList<Ingredient> nonnulllist = itemsFromJson(GsonHelper.getAsJsonArray(p_44291_, "ingredients"));
 			if (nonnulllist.isEmpty()) {
 				throw new JsonParseException("No ingredients for shapeless recipe");

@@ -16,14 +16,12 @@ public class WitherEdge extends SpecialEffect {
     public static void onSlashBladeUpdate(SlashBladeEvent.UpdateEvent event) {
         ISlashBladeState state = event.getSlashBladeState();
         if (state.hasSpecialEffect(SpecialEffectsRegistry.SPECIAL_EFFECT.getKey(SpecialEffectsRegistry.WITHER_EDGE))) {
-            if (!(event.getEntity() instanceof Player)) {
+            if (!(event.getEntity() instanceof Player player)) {
                 return;
             }
 
             if (!event.isSelected())
                 return;
-
-            Player player = (Player) event.getEntity();
 
             int level = player.experienceLevel;
 
@@ -35,11 +33,9 @@ public class WitherEdge extends SpecialEffect {
     public static void onSlashBladeHit(SlashBladeEvent.HitEvent event) {
         ISlashBladeState state = event.getSlashBladeState();
         if (state.hasSpecialEffect(SpecialEffectsRegistry.SPECIAL_EFFECT.getKey(SpecialEffectsRegistry.WITHER_EDGE))) {
-            if (!(event.getUser() instanceof Player)) {
+            if (!(event.getUser() instanceof Player player)) {
                 return;
             }
-
-            Player player = (Player) event.getUser();
 
             int level = player.experienceLevel;
 

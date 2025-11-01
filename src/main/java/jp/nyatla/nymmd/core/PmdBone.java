@@ -43,7 +43,7 @@ import jp.nyatla.nymmd.types.MmdVector3;
 import jp.nyatla.nymmd.types.MmdVector4;
 
 public class PmdBone {
-    private String _name;
+    private final String _name;
     public final MmdVector3 _pmd_bone_position = new MmdVector3();
     public final MmdVector3 m_vec3Offset = new MmdVector3();
     public final MmdMatrix m_matInvTransform = new MmdMatrix(); // 初期値のボーンを原点に移動させるような行列
@@ -105,7 +105,6 @@ public class PmdBone {
         if (this._parent_bone != null) {
             m_vec3Offset.Vector3Sub(this._pmd_bone_position, this._parent_bone._pmd_bone_position);
         }
-        return;
     }
 
     public void reset() {
@@ -121,12 +120,10 @@ public class PmdBone {
 
     public void setIKLimitAngle(boolean i_value) {
         this.m_bIKLimitAngle = i_value;
-        return;
     }
 
     public void updateSkinningMat(MmdMatrix o_matrix) {
         o_matrix.mul(this.m_matInvTransform, this.m_matLocal);
-        return;
     }
 
     public void updateMatrix() {
@@ -145,7 +142,6 @@ public class PmdBone {
             this.m_matLocal.m31 = m_vec3Position.y + m_vec3Offset.y;
             this.m_matLocal.m32 = m_vec3Position.z + m_vec3Offset.z;
         }
-        return;
     }
 
     private final MmdMatrix _mat_tmp1 = new MmdMatrix();

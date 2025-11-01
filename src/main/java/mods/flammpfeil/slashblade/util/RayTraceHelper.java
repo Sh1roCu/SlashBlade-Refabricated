@@ -1,17 +1,16 @@
 package mods.flammpfeil.slashblade.util;
 
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
 
 public class RayTraceHelper {
 
@@ -51,7 +50,7 @@ public class RayTraceHelper {
         Entity resultEntity = null;
 
         for (Entity foundEntity : worldIn.getEntities(entityIn, boundingBox, selector)) {
-            AABB axisalignedbb = foundEntity.getBoundingBox().inflate((double) 0.5F);
+            AABB axisalignedbb = foundEntity.getBoundingBox().inflate(0.5F);
             Optional<Vec3> optional = axisalignedbb.clip(start, end);
             if (optional.isPresent()) {
                 double newDist = start.distanceToSqr(optional.get());

@@ -59,6 +59,5 @@ public class PMD_Bone implements StructType {
         this.cbKind = i_reader.readByte();
         this.unIKTarget = i_reader.readShort();
         StructReader.read(this.vec3Position, i_reader);
-        return;
     }
 }

@@ -50,7 +50,6 @@ public class PMD_FACE_VTX implements StructType {
     public void read(DataReader i_reader) throws MmdException {
         this.ulIndex = i_reader.readInt();
         StructReader.read(this.vec3Pos, i_reader);
-        return;
     }
 
     public static PMD_FACE_VTX[] createArray(int i_length) {
@@ -64,7 +63,6 @@ public class PMD_FACE_VTX implements StructType {
     public void setValue(PMD_FACE_VTX i_value) {
         this.ulIndex = i_value.ulIndex;
         this.vec3Pos.setValue(i_value.vec3Pos);
-        return;
     }
 
     /*

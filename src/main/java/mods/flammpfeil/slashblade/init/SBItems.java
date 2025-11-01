@@ -88,11 +88,13 @@ public class SBItems {
                     Player player = mcinstance.player;
                     ResourceLocation se = new ResourceLocation(tag.getString("SpecialEffectType"));
                     if (SpecialEffectsRegistry.SPECIAL_EFFECT.containsKey(se)) {
-                        components.add(Component.translatable("slashblade.tooltip.special_effect", SpecialEffect.getDescription(se),
-                                        Component.literal(String.valueOf(SpecialEffect.getRequestLevel(se)))
-                                                .withStyle(SpecialEffect.isEffective(se, player.experienceLevel) ? ChatFormatting.RED
-                                                        : ChatFormatting.DARK_GRAY))
-                                .withStyle(ChatFormatting.GRAY));
+                        if (player != null) {
+                            components.add(Component.translatable("slashblade.tooltip.special_effect", SpecialEffect.getDescription(se),
+                                            Component.literal(String.valueOf(SpecialEffect.getRequestLevel(se)))
+                                                    .withStyle(SpecialEffect.isEffective(se, player.experienceLevel) ? ChatFormatting.RED
+                                                            : ChatFormatting.DARK_GRAY))
+                                    .withStyle(ChatFormatting.GRAY));
+                        }
                     }
                 }
             }

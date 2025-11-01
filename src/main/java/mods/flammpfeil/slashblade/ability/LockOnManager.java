@@ -119,42 +119,40 @@ public class LockOnManager {
                 if (!target.isAlive())
                     return;
 
-                LivingEntity entity = player;
-
-                if (!entity.level().isClientSide())
+                if (!player.level().isClientSide())
                     return;
-                if (CapabilityInputState.INPUT_STATE.maybeGet(entity)
+                if (CapabilityInputState.INPUT_STATE.maybeGet(player)
                         .filter(input -> input.getCommands().contains(InputCommand.SNEAK)).isEmpty())
                     return;
 
                 float partialTicks = mcinstance.getFrameTime();
 
-                float oldYawHead = entity.yHeadRot;
-                float oldYawOffset = entity.yBodyRot;
-                float oldPitch = entity.getXRot();
-                float oldYaw = entity.getYRot();
+                float oldYawHead = player.yHeadRot;
+                float oldYawOffset = player.yBodyRot;
+                float oldPitch = player.getXRot();
+                float oldYaw = player.getYRot();
 
-                float prevYawHead = entity.yHeadRotO;
-                float prevYawOffset = entity.yBodyRotO;
-                float prevYaw = entity.yRotO;
-                float prevPitch = entity.xRotO;
+                float prevYawHead = player.yHeadRotO;
+                float prevYawOffset = player.yBodyRotO;
+                float prevYaw = player.yRotO;
+                float prevPitch = player.xRotO;
 
-                entity.lookAt(EntityAnchorArgument.Anchor.EYES, target.position().add(0, target.getEyeHeight() / 2.0, 0));
+                player.lookAt(EntityAnchorArgument.Anchor.EYES, target.position().add(0, target.getEyeHeight() / 2.0, 0));
 
                 float step = 0.125f * partialTicks;
 
-                step *= Math.min(1.0f, Math.abs(Mth.wrapDegrees(oldYaw - entity.yHeadRot) * 0.5f));
+                step *= Math.min(1.0f, Math.abs(Mth.wrapDegrees(oldYaw - player.yHeadRot) * 0.5f));
 
-                entity.setXRot(Mth.rotLerp(step, oldPitch, entity.getXRot()));
-                entity.setYRot(Mth.rotLerp(step, oldYaw, entity.getYRot()));
-                entity.setYHeadRot(Mth.rotLerp(step, oldYawHead, entity.getYHeadRot()));
+                player.setXRot(Mth.rotLerp(step, oldPitch, player.getXRot()));
+                player.setYRot(Mth.rotLerp(step, oldYaw, player.getYRot()));
+                player.setYHeadRot(Mth.rotLerp(step, oldYawHead, player.getYHeadRot()));
 
-                entity.yBodyRot = oldYawOffset;
+                player.yBodyRot = oldYawOffset;
 
-                entity.yBodyRotO = prevYawOffset;
-                entity.yHeadRotO = prevYawHead;
-                entity.yRotO = prevYaw;
-                entity.xRotO = prevPitch;
+                player.yBodyRotO = prevYawOffset;
+                player.yHeadRotO = prevYawHead;
+                player.yRotO = prevYaw;
+                player.xRotO = prevPitch;
             });
         }
     }

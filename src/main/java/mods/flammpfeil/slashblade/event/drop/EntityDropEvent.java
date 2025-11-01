@@ -23,10 +23,8 @@ public class EntityDropEvent {
             if (!bladeRegistry.containsKey(entry.getBladeName()))
                 return;
 
-            if (!(event.getSource().getEntity() instanceof LivingEntity))
+            if (!(event.getSource().getEntity() instanceof LivingEntity attacker))
                 return;
-
-            LivingEntity attacker = (LivingEntity) event.getSource().getEntity();
 
             if(SlashBladeConfig.FRIENDLY_ENABLE.get() || (entity instanceof Enemy)) {
                 if (entry.isRequestSlashBladeKill()

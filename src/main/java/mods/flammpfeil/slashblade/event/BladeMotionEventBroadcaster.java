@@ -23,10 +23,8 @@ public class BladeMotionEventBroadcaster {
     }
 
     public void onBladeMotion(BladeMotionEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer))
+        if (!(event.getEntity() instanceof ServerPlayer sp))
             return;
-
-        ServerPlayer sp = (ServerPlayer) event.getEntity();
 
         // if(msg.combo == Extra.EX_JUDGEMENT_CUT.getName())
         {

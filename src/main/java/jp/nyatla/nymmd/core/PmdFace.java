@@ -43,9 +43,9 @@ import jp.nyatla.nymmd.struct.pmd.PMD_FACE_VTX;
 import jp.nyatla.nymmd.types.MmdVector3;
 
 public class PmdFace {
-    private String _name;
+    private final String _name;
 
-    private PMD_FACE_VTX[] _face_vertex; // 表情頂点データ
+    private final PMD_FACE_VTX[] _face_vertex; // 表情頂点データ
 
     public PmdFace(PMD_FACE pPMDFaceData, PmdFace pPMDFaceBase) {
         // 表情名のコピー
@@ -67,7 +67,6 @@ public class PmdFace {
                 vertex.ulIndex = pPMDFaceBase._face_vertex[vertex.ulIndex].ulIndex;
             }
         }
-        return;
     }
 
     public void setFace(MmdVector3[] pvec3Vertices) throws MmdException {
@@ -80,7 +79,6 @@ public class PmdFace {
             final PMD_FACE_VTX vertex = vertex_array[i];
             pvec3Vertices[vertex.ulIndex].setValue(vertex.vec3Pos);
         }
-        return;
     }
 
     public void blendFace(MmdVector3[] pvec3Vertices, float fRate) throws MmdException {
@@ -94,7 +92,6 @@ public class PmdFace {
             MmdVector3 vec = pvec3Vertices[vertex.ulIndex];
             vec.Vector3Lerp(vec, vertex.vec3Pos, fRate);
         }
-        return;
     }
 
     public String getName() {

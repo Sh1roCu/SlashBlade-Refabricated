@@ -45,7 +45,6 @@ public class MmdVector4 {
         this.y = v.y;
         this.z = v.z;
         this.w = v.w;
-        return;
     }
 
     public void QuaternionSlerp(MmdVector4 pvec4Src1, MmdVector4 pvec4Src2, double fLerpValue) {
@@ -67,7 +66,6 @@ public class MmdVector4 {
             this.w = pvec4Src1.w * t0 + pvec4Src2.w * fLerpValue;
         }
         QuaternionNormalize(this);
-        return;
     }
 
     public void QuaternionNormalize(MmdVector4 pvec4Src) {
@@ -93,7 +91,6 @@ public class MmdVector4 {
             this.z = pvec3Axis.z * fTemp;
             this.w = Math.cos(fRotAngle);
         }
-        return;
     }
 
     public void QuaternionMultiply(MmdVector4 pvec4Src1, MmdVector4 pvec4Src2) {

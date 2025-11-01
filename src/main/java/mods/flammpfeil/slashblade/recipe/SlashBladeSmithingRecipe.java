@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade.recipe;
 
 import com.google.gson.JsonObject;
+import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.init.SBItems;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
@@ -97,7 +98,11 @@ public class SlashBladeSmithingRecipe implements SmithingRecipe {
         var ingredientState = CapabilitySlashBlade.BLADESTATE.maybeGet(stack).orElseThrow(NullPointerException::new);
 
         resultState.setProudSoulCount(resultState.getProudSoulCount() + ingredientState.getProudSoulCount());
-        resultState.setKillCount(resultState.getKillCount() + ingredientState.getKillCount());
+        resultState.setKillCount(
+                SlashBladeConfig.DO_CRAFTING_SUM_REFINE.get() ?
+                        Math.max(resultState.getKillCount(), ingredientState.getKillCount()) :
+                        resultState.getKillCount() + ingredientState.getKillCount()
+        );
         resultState.setRefine(resultState.getRefine() + ingredientState.getRefine());
         updateEnchantment(result, stack);
 
@@ -143,26 +148,25 @@ public class SlashBladeSmithingRecipe implements SmithingRecipe {
         var newItemEnchants = EnchantmentHelper.deserializeEnchantments(result.getEnchantmentTags());
         var oldItemEnchants = EnchantmentHelper.deserializeEnchantments(ingredient.getEnchantmentTags());
         for (Enchantment enchantIndex : oldItemEnchants.keySet()) {
-            Enchantment enchantment = enchantIndex;
 
-            int destLevel = newItemEnchants.containsKey(enchantIndex) ? newItemEnchants.get(enchantIndex) : 0;
+            int destLevel = newItemEnchants.getOrDefault(enchantIndex, 0);
             int srcLevel = oldItemEnchants.get(enchantIndex);
 
             srcLevel = Math.max(srcLevel, destLevel);
-            srcLevel = Math.min(srcLevel, enchantment.getMaxLevel());
+            srcLevel = Math.min(srcLevel, enchantIndex.getMaxLevel());
 
             // boolean canApplyFlag = enchantment.canApplyAtEnchantingTable(result);
-            boolean canApplyFlag = enchantment.canEnchant(result);
+            boolean canApplyFlag = enchantIndex.canEnchant(result);
             if (canApplyFlag) {
                 for (Enchantment curEnchantIndex : newItemEnchants.keySet()) {
                     if (curEnchantIndex != enchantIndex
-                            && !enchantment.isCompatibleWith(curEnchantIndex) /* canApplyTogether */) {
+                            && !enchantIndex.isCompatibleWith(curEnchantIndex) /* canApplyTogether */) {
                         canApplyFlag = false;
                         break;
                     }
                 }
                 if (canApplyFlag)
-                    newItemEnchants.put(enchantIndex, Integer.valueOf(srcLevel));
+                    newItemEnchants.put(enchantIndex, srcLevel);
             }
         }
         EnchantmentHelper.setEnchantments(newItemEnchants, result);

@@ -60,7 +60,6 @@ public class PMD_FACE implements StructType {
         for (i = 0; i < this.ulNumVertices; i++) {
             this.pVertices[i].read(i_reader);
         }
-        return;
     }
     /*
      * char szName[20]; // 表情名 (0x00 終端，余白は 0xFD)

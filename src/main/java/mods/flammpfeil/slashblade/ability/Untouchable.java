@@ -76,11 +76,8 @@ public class Untouchable {
     }
 
     public boolean onLivingDamage(LivingEntity entity, DamageSource source, float amount) {
-        if (doUntouchable(entity, source.getEntity())) {
-            //event.setCanceled(true);
-            return false;
-        }
-        return true;
+        //event.setCanceled(true);
+        return !doUntouchable(entity, source.getEntity());
     }
 
     public void onLivingAttack(LivingAttackEvent event) {

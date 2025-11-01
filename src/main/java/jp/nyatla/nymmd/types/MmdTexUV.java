@@ -51,6 +51,5 @@ public class MmdTexUV {
     public void setValue(MmdTexUV v) {
         this.u = v.u;
         this.v = v.v;
-        return;
     }
 }

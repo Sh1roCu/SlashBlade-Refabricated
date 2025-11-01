@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -113,7 +112,7 @@ public class BladeStandEntityRenderer extends ItemFrameRenderer<BladeStandEntity
     private void renderItem(BladeStandEntity entity, ItemStack itemstack, PoseStack matrixStackIn,
                             MultiBufferSource bufferIn, int packedLightIn) {
         if (!itemstack.isEmpty()) {
-            BakedModel ibakedmodel = this.itemRenderer.getModel(itemstack, entity.level(), (LivingEntity) null, 0);
+            BakedModel ibakedmodel = this.itemRenderer.getModel(itemstack, entity.level(), null, 0);
             this.itemRenderer.render(itemstack, ItemDisplayContext.FIXED, false, matrixStackIn, bufferIn, packedLightIn,
                     OverlayTexture.NO_OVERLAY, ibakedmodel);
         }

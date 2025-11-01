@@ -23,9 +23,8 @@ public class StunManager {
     }
 
     public static void onEntityJoinWorldEvent(EntityJoinLevelEvent event) {
-        if (!(event.getEntity() instanceof PathfinderMob))
+        if (!(event.getEntity() instanceof PathfinderMob entity))
             return;
-        PathfinderMob entity = (PathfinderMob) event.getEntity();
 
         ((MobAccessor) entity).sb$getGoalSelector().addGoal(-1, new StunGoal(entity));
     }
@@ -33,8 +32,6 @@ public class StunManager {
     public static void onEntityLivingUpdate(LivingTickEvent event) {
         LivingEntity target = event.getEntity();
         if (!(target instanceof PathfinderMob))
-            return;
-        if (target.level() == null)
             return;
 
         boolean onStun = CapabilityMobEffect.MOB_EFFECT.maybeGet(target)
@@ -61,15 +58,11 @@ public class StunManager {
     public static void setStun(LivingEntity target, long duration) {
         if (!(target instanceof PathfinderMob))
             return;
-        if (target.level() == null)
-            return;
 
         CapabilityMobEffect.MOB_EFFECT.maybeGet(target).ifPresent(state -> state.setManagedStun(target.level().getGameTime(), duration));
     }
 
     public static void removeStun(LivingEntity target) {
-        if (target.level() == null)
-            return;
         if (!(target instanceof LivingEntity))
             return;
 

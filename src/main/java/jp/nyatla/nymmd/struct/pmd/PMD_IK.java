@@ -60,7 +60,6 @@ public class PMD_IK implements StructType {
         for (int i = 0; i < this.cbNumLink; i++) {
             this.punLinkNo[i] = i_reader.readUnsignedShort();
         }
-        return;
     }
 
     /*

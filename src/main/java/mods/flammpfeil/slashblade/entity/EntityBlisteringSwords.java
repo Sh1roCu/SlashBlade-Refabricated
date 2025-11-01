@@ -71,7 +71,7 @@ public class EntityBlisteringSwords extends EntityAbstractSummonedSword {
             Entity vehicle = getVehicle();
             Vec3 dir = this.getViewVector(0);
             if (!(vehicle instanceof LivingEntity)) {
-                ((EntityBlisteringSwords) this).shoot(dir.x, dir.y, dir.z, 3.0f, 1.0f);
+                this.shoot(dir.x, dir.y, dir.z, 3.0f, 1.0f);
                 return;
             }
 
@@ -120,7 +120,7 @@ public class EntityBlisteringSwords extends EntityAbstractSummonedSword {
             Vec3 pos = this.getPosition(0.0f);
             dir = targetPos.subtract(pos).normalize();
 
-            ((EntityBlisteringSwords) this).shoot(dir.x, dir.y, dir.z, 3.0f, 1.0f);
+            this.shoot(dir.x, dir.y, dir.z, 3.0f, 1.0f);
             if (sender instanceof ServerPlayer) {
                 ((ServerPlayer) sender).playNotifySound(SoundEvents.ENDER_DRAGON_FLAP, SoundSource.PLAYERS, 1.0F, 1.0F);
             }
@@ -137,8 +137,7 @@ public class EntityBlisteringSwords extends EntityAbstractSummonedSword {
         // this.getVehicle().positionRider(this);
 
         // lifetime check
-        if (!itFired() && getVehicle() instanceof LivingEntity) {
-            LivingEntity owner = (LivingEntity) getVehicle();
+        if (!itFired() && getVehicle() instanceof LivingEntity owner) {
             CapabilityInputState.INPUT_STATE.maybeGet(owner).ifPresent(s -> {
                 if (!s.getCommands().contains(InputCommand.M_DOWN)) {
 

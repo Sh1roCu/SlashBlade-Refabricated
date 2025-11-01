@@ -130,10 +130,7 @@ public class Guard {
             boolean inMotion = slashBlade.filter(s -> {
                 ResourceLocation current = s.resolvCurrentComboState(victim);
                 ComboState currentCS = ComboStateRegistry.COMBO_STATE.get(current);
-                if (!current.equals(ComboStateRegistry.getId(ComboStateRegistry.NONE)) && current == currentCS.getNext(victim))
-                    return true;
-                else
-                    return false;
+                return !current.equals(ComboStateRegistry.getId(ComboStateRegistry.NONE)) && current == currentCS.getNext(victim);
             }).isPresent();
             if (inMotion)
                 return;
@@ -194,9 +191,7 @@ public class Guard {
             Vec3 viewVec = victim.getViewVector(1.0F);
             Vec3 attackVec = sPos.vectorTo(victim.position()).normalize();
             attackVec = new Vec3(attackVec.x, 0.0D, attackVec.z);
-            if (attackVec.dot(viewVec) < 0.0D) {
-                return true;
-            }
+            return attackVec.dot(viewVec) < 0.0D;
         }
         return false;
     }

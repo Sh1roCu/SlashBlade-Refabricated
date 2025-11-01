@@ -57,7 +57,6 @@ public class PMD_Header implements StructType {
 
         // szComment
         this.szComment = i_reader.readAscii(256);
-        return;
     }
     /*
      * char szMagic[3]; // "Pmd" float fVersion; // PMDバージョン番号 char szName[20]; //

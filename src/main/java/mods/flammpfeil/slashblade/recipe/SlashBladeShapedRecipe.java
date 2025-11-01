@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.recipe;
 
+import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.init.SBItems;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
@@ -64,16 +65,28 @@ public class SlashBladeShapedRecipe extends ShapedRecipe {
         }
 
         var resultState = CapabilitySlashBlade.BLADESTATE.maybeGet(result).orElseThrow(NullPointerException::new);
+        boolean sumRefine = SlashBladeConfig.DO_CRAFTING_SUM_REFINE.get();
+        int proudSoul = resultState.getProudSoulCount();
+        int killCount = resultState.getKillCount();
+        int refine = resultState.getRefine();
         for (var stack : container.getItems()) {
             if (!(stack.getItem() instanceof ItemSlashBlade))
                 continue;
             var ingredientState = CapabilitySlashBlade.BLADESTATE.maybeGet(stack).orElseThrow(NullPointerException::new);
 
-            resultState.setProudSoulCount(resultState.getProudSoulCount() + ingredientState.getProudSoulCount());
-            resultState.setKillCount(resultState.getKillCount() + ingredientState.getKillCount());
-            resultState.setRefine(resultState.getRefine() + ingredientState.getRefine());
+            proudSoul += ingredientState.getProudSoulCount();
+            killCount += ingredientState.getKillCount();
+            if (sumRefine) {
+                refine += ingredientState.getRefine();
+            } else {
+                refine = Math.max(refine, ingredientState.getRefine());
+            }
             updateEnchantment(result, stack);
         }
+
+        resultState.setProudSoulCount(proudSoul);
+        resultState.setKillCount(killCount);
+        resultState.setRefine(refine);
 
         return result;
     }
@@ -82,26 +95,25 @@ public class SlashBladeShapedRecipe extends ShapedRecipe {
         var newItemEnchants = EnchantmentHelper.getEnchantments(result);
         var oldItemEnchants = EnchantmentHelper.getEnchantments(ingredient);
         for (Enchantment enchantIndex : oldItemEnchants.keySet()) {
-            Enchantment enchantment = enchantIndex;
 
             int destLevel = newItemEnchants.getOrDefault(enchantIndex, 0);
             int srcLevel = oldItemEnchants.get(enchantIndex);
 
             srcLevel = Math.max(srcLevel, destLevel);
-            srcLevel = Math.min(srcLevel, enchantment.getMaxLevel());
+            srcLevel = Math.min(srcLevel, enchantIndex.getMaxLevel());
 
             // boolean canApplyFlag = enchantment.canApplyAtEnchantingTable(result);
-            boolean canApplyFlag = enchantment.canEnchant(result);
+            boolean canApplyFlag = enchantIndex.canEnchant(result);
             if (canApplyFlag) {
                 for (Enchantment curEnchantIndex : newItemEnchants.keySet()) {
                     if (curEnchantIndex != enchantIndex
-                            && !enchantment.isCompatibleWith(curEnchantIndex) /* canApplyTogether */) {
+                            && !enchantIndex.isCompatibleWith(curEnchantIndex) /* canApplyTogether */) {
                         canApplyFlag = false;
                         break;
                     }
                 }
                 if (canApplyFlag)
-                    newItemEnchants.put(enchantIndex, Integer.valueOf(srcLevel));
+                    newItemEnchants.put(enchantIndex, srcLevel);
             }
         }
         EnchantmentHelper.setEnchantments(newItemEnchants, result);

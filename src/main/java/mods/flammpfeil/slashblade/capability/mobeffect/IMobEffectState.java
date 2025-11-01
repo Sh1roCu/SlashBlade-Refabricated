@@ -118,8 +118,8 @@ public interface IMobEffectState extends AutoSyncedComponent {
 
     void setAvoidCount(int value);
 
-    static final int AVOID_MAX = 3;
-    static final int COOLDOWN_TICKS = 20;
+    int AVOID_MAX = 3;
+    int COOLDOWN_TICKS = 20;
 
     default boolean checkCanAvoid(long now) {
         if (getAvoidCount() < AVOID_MAX)

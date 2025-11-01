@@ -43,14 +43,14 @@ import jp.nyatla.nymmd.types.MmdVector3;
 import jp.nyatla.nymmd.types.MmdVector4;
 
 public class PmdIK {
-    private PmdBone m_pTargetBone; // IKターゲットボーン
-    private PmdBone m_pEffBone; // IK先端ボーン
+    private final PmdBone m_pTargetBone; // IKターゲットボーン
+    private final PmdBone m_pEffBone; // IK先端ボーン
 
-    private int m_unCount;
-    private double _fact;
-    private int m_nSortVal;
+    private final int m_unCount;
+    private final double _fact;
+    private final int m_nSortVal;
 
-    private PmdBone[] m_ppBoneList; // IKを構成するボーンの配列
+    private final PmdBone[] m_ppBoneList; // IKを構成するボーンの配列
 
     private final MmdVector3[] _work_vector3 = MmdVector3.createArray(4);
     private final MmdVector4 _work_vector4 = new MmdVector4();
@@ -96,7 +96,6 @@ public class PmdIK {
 
         // XYZ軸回転からクォータニオンへ
         pvec4Out.QuaternionCreateEuler(vec3Angle);
-        return;
     }
 
     public int getSortVal() {
@@ -184,6 +183,5 @@ public class PmdIK {
                 }
             }
         }
-        return;
     }
 }

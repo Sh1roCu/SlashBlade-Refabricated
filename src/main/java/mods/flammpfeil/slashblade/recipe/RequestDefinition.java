@@ -19,7 +19,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class RequestDefinition {
 
@@ -124,7 +126,7 @@ public class RequestDefinition {
 
         this.getEnchantments()
                 .forEach(enchantment -> blade.enchant(
-                        BuiltInRegistries.ENCHANTMENT.get(enchantment.getEnchantmentID()),
+                        Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.get(enchantment.getEnchantmentID())),
                         enchantment.getEnchantmentLevel()));
         this.defaultType.forEach(type -> {
             switch (type) {
@@ -158,8 +160,8 @@ public class RequestDefinition {
         boolean refineCheck = state.getRefine() >= this.getRefineCount();
 
         for (var enchantment : this.getEnchantments()) {
-            if (EnchantmentHelper.getItemEnchantmentLevel(BuiltInRegistries.ENCHANTMENT
-                    .get(enchantment.getEnchantmentID()), blade) < enchantment.getEnchantmentLevel()) {
+            if (EnchantmentHelper.getItemEnchantmentLevel(Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT
+                    .get(enchantment.getEnchantmentID())), blade) < enchantment.getEnchantmentLevel()) {
                 return false;
             }
         }
@@ -178,8 +180,8 @@ public class RequestDefinition {
         private int proudCount;
         private int killCount;
         private int refineCount;
-        private List<EnchantmentDefinition> enchantments;
-        private List<SwordType> defaultType;
+        private final List<EnchantmentDefinition> enchantments;
+        private final List<SwordType> defaultType;
 
         private Builder() {
             this.name = SlashBlade.prefix("none");
@@ -215,14 +217,12 @@ public class RequestDefinition {
         }
 
         public Builder addEnchantment(EnchantmentDefinition... enchantments) {
-            for (var enchantment : enchantments)
-                this.enchantments.add(enchantment);
+            Collections.addAll(this.enchantments, enchantments);
             return this;
         }
 
         public Builder addSwordType(SwordType... types) {
-            for (var type : types)
-                this.defaultType.add(type);
+            Collections.addAll(this.defaultType, types);
             return this;
         }
 
