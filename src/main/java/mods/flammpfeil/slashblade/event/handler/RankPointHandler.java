@@ -33,10 +33,9 @@ public class RankPointHandler {
                     .ifPresent(cr -> cr.addRankPoint(victim, -cr.getUnitCapacity()));
 
         Entity trueSource = event.getSource().getEntity();
-        if (!(trueSource instanceof LivingEntity))
+        if (!(trueSource instanceof LivingEntity sourceEntity))
             return;
 
-        LivingEntity sourceEntity = (LivingEntity) trueSource;
         if (CapabilitySlashBlade.getBladeState(sourceEntity.getMainHandItem()).isEmpty())
             return;
 

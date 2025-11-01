@@ -116,7 +116,6 @@ public class AdvancementsRecipeRenderer implements PlaceRecipe<Ingredient> {
             nonnulllist.set(1, Ingredient.CONTENTS_STREAM_CODEC.decode(pb));
 
             result = ItemStack.STREAM_CODEC.decode(pb);
-            ;
         }
 
         @Override
@@ -379,14 +378,12 @@ public class AdvancementsRecipeRenderer implements PlaceRecipe<Ingredient> {
 
     @Environment(EnvType.CLIENT)
     public void onDrawScreenPost(Screen screen, GuiGraphics drawContext, int mouseX, int mouseY, float tickDelta) {
-        if (!(screen instanceof AdvancementsScreen))
+        if (!(screen instanceof AdvancementsScreen gui))
             return;
         if (AdvancementsRecipeRenderer.currentRecipe == null)
             return;
         if (AdvancementsRecipeRenderer.currentView == null)
             return;
-
-        AdvancementsScreen gui = (AdvancementsScreen) screen;
 
         try {
 
@@ -420,10 +417,9 @@ public class AdvancementsRecipeRenderer implements PlaceRecipe<Ingredient> {
     @SuppressWarnings("unchecked")
     @Environment(EnvType.CLIENT)
     public void onInitGuiPost(Minecraft client, Screen screen, int scaledWidth, int scaledHeight) {
-        if (!(screen instanceof AdvancementsScreen))
+        if (!(screen instanceof AdvancementsScreen gui))
             return;
 
-        AdvancementsScreen gui = (AdvancementsScreen) screen;
         ((List<GuiEventListener>) gui.children()).add(new AdvancementsExGuiEventListener(gui));
     }
 

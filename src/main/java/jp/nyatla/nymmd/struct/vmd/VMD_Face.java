@@ -51,7 +51,6 @@ public class VMD_Face implements StructType {
         this.szFaceName = i_reader.readAscii(15);
         this.ulFrameNo = i_reader.readInt();
         this.fFactor = i_reader.readFloat();
-        return;
     }
 
 }

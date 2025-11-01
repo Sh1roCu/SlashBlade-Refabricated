@@ -58,16 +58,13 @@ public class SlashBladeTEISR extends BlockEntityWithoutLevelRenderer {
 
     boolean checkRenderNaked() {
         ItemStack mainHand = BladeModel.user.getMainHandItem();
-        if (!(mainHand.getItem() instanceof ItemSlashBlade))
-            return true;
+        return !(mainHand.getItem() instanceof ItemSlashBlade);
         /*
          * if(ItemSlashBlade.hasScabbardInOffhand(BladeModel.user)) return true;
          *
          * EnumSet<SwordType> type = SwordType.from(mainHand);
          * if(type.contains(SwordType.NoScabbard)) return true;
          */
-
-        return false;
     }
 
     public boolean renderBlade(ItemStack stack, ItemDisplayContext transformType, PoseStack matrixStack,
@@ -261,8 +258,7 @@ public class SlashBladeTEISR extends BlockEntityWithoutLevelRenderer {
         boolean hasScabbard = true;
 
         if (stack.isFramed()) {
-            if (stack.getFrame() instanceof BladeStandEntity) {
-                BladeStandEntity stand = (BladeStandEntity) stack.getFrame();
+            if (stack.getFrame() instanceof BladeStandEntity stand) {
                 Item type = stand.currentType;
 
                 Pose pose = stand.getPose();

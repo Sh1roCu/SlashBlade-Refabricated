@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.recipe;
 
+import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.init.SBItems;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
@@ -16,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 public class SlashBladeShapedRecipe extends ShapedRecipe {
@@ -94,16 +94,28 @@ public class SlashBladeShapedRecipe extends ShapedRecipe {
         }
 
         var resultState = CapabilitySlashBlade.getBladeState(result).orElseThrow(NullPointerException::new);
+        boolean sumRefine = SlashBladeConfig.DO_CRAFTING_SUM_REFINE.get();
+        int proudSoul = resultState.getProudSoulCount();
+        int killCount = resultState.getKillCount();
+        int refine = resultState.getRefine();
         for (var stack : container.items()) {
             if (!(stack.getItem() instanceof ItemSlashBlade))
                 continue;
             var ingredientState = CapabilitySlashBlade.getBladeState(stack).orElseThrow(NullPointerException::new);
 
-            resultState.setProudSoulCount(resultState.getProudSoulCount() + ingredientState.getProudSoulCount());
-            resultState.setKillCount(resultState.getKillCount() + ingredientState.getKillCount());
-            resultState.setRefine(resultState.getRefine() + ingredientState.getRefine());
+            proudSoul += ingredientState.getProudSoulCount();
+            killCount += ingredientState.getKillCount();
+            if (sumRefine) {
+                refine += ingredientState.getRefine();
+            } else {
+                refine = Math.max(refine, ingredientState.getRefine());
+            }
             updateEnchantment(result, stack);
         }
+
+        resultState.setProudSoulCount(proudSoul);
+        resultState.setKillCount(killCount);
+        resultState.setRefine(refine);
 
         return result;
     }

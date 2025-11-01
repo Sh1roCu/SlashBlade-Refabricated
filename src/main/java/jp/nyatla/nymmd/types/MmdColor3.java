@@ -44,6 +44,5 @@ public class MmdColor3 {
         this.r = v.r;
         this.g = v.g;
         this.b = v.b;
-        return;
     }
 }

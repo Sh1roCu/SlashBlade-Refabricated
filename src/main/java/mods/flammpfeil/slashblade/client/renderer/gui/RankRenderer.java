@@ -107,9 +107,9 @@ public class RankRenderer {
 
                 // GL11.glScalef(3,3,3);
                 // iconFrame
-                drawTexturedQuad(poseStack, 0, 0, 0 + textOffset + 64, rankOffset, 64, 32, -95f);
+                drawTexturedQuad(poseStack, 0, 0, textOffset + 64, rankOffset, 64, 32, -95f);
                 // icon
-                drawTexturedQuad(poseStack, 0, progressIconInv + 7, 0 + textOffset, rankOffset + progressIconInv + 7,
+                drawTexturedQuad(poseStack, 0, progressIconInv + 7, textOffset, rankOffset + progressIconInv + 7,
                         64, progressIcon, -90f);
 
                 // gauge frame
@@ -133,10 +133,10 @@ public class RankRenderer {
 
         Matrix4f m = poseStack.last().pose();
 
-        wr.addVertex(m, x + 0, y + height, zLevel).setUv((u + 0.0f) * var7, (v + height) * var8);
+        wr.addVertex(m, x, y + height, zLevel).setUv((u + 0.0f) * var7, (v + height) * var8);
         wr.addVertex(m, x + width, y + height, zLevel).setUv((u + width) * var7, (v + height) * var8);
-        wr.addVertex(m, x + width, y + 0, zLevel).setUv((u + width) * var7, (v + 0) * var8);
-        wr.addVertex(m, x + 0, y + 0, zLevel).setUv((u + 0) * var7, (v + 0) * var8);
+        wr.addVertex(m, x + width, y, zLevel).setUv((u + width) * var7, (v) * var8);
+        wr.addVertex(m, x, y, zLevel).setUv((u) * var7, (v) * var8);
 
         // tessellator.end();
         BufferUploader.drawWithShader(wr.buildOrThrow());

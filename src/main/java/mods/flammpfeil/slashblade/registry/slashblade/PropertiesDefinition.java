@@ -83,7 +83,7 @@ public class PropertiesDefinition {
         private float baseAttackModifier;
         private int maxDamage;
         private List<SwordType> defaultType;
-        private List<ResourceLocation> specialEffects;
+        private final List<ResourceLocation> specialEffects;
         private boolean unbreakable;
 
         private Builder() {

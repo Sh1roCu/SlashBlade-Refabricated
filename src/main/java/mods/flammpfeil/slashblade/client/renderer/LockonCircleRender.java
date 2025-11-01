@@ -73,7 +73,7 @@ public class LockonCircleRender {
         float f = livingEntity.getBbHeight() * 0.5f;
 
         poseStack.pushPose();
-        poseStack.translate(0.0D, (double) f, 0.0D);
+        poseStack.translate(0.0D, f, 0.0D);
 
         Vec3 offset = ((EntityRendererAccessor) renderer).sb$getEntityRenderDispatcher().camera.getPosition()
                 .subtract(livingEntity.getPosition(partialTicks).add(0, f, 0));

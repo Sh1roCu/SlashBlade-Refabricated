@@ -42,7 +42,8 @@ public class AcceleratedGroupObject implements IAcceleratedRenderer<Void> {
         if (AcceleratedEntityRenderingFeature.isEnabled()
                 && AcceleratedEntityRenderingFeature.shouldUseAcceleratedPipeline()
                 && (CoreFeature.isRenderingLevel()
-                || (CoreFeature.isRenderingGui() && AcceleratedEntityRenderingFeature.shouldAccelerateInGui()))
+                || (CoreFeature.isRenderingGui() && AcceleratedEntityRenderingFeature.shouldAccelerateInGui())
+                || CoreFeature.isRenderingHand())
                 && extension.isAccelerated()) {
             ci.cancel();
 

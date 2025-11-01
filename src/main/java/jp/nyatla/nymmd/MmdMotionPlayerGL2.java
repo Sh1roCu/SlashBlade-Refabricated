@@ -80,7 +80,6 @@ public class MmdMotionPlayerGL2 extends MmdMotionPlayer {
         this._materials = materials.toArray(new Material[materials.size()]);
 
         this._tex_array = this._ref_pmd_model.getUvArray();
-        return;
     }
 
     public void setVmd(MmdVmdMotion_BasicClass i_vmd_model) throws MmdException {
@@ -124,7 +123,6 @@ public class MmdMotionPlayerGL2 extends MmdMotionPlayer {
             ft[p2++] = ((float) (vp.x * mat.m01 + vp.y * mat.m11 + vp.z * mat.m21));
             ft[p2++] = ((float) (vp.x * mat.m02 + vp.y * mat.m12 + vp.z * mat.m22));
         }
-        return;
     }
 
     public void render() {
@@ -206,7 +204,6 @@ public class MmdMotionPlayerGL2 extends MmdMotionPlayer {
 
         GL11.glPopClientAttrib();
         GL11.glPopAttrib();
-        return;
     }
 
     private static FloatBuffer makeFloatBuffer(int i_size) {

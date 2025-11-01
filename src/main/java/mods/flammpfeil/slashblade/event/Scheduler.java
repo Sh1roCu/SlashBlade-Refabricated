@@ -6,7 +6,7 @@ import net.minecraft.world.level.timers.*;
 public class Scheduler {
     public static final TimerCallbacks<LivingEntity> SB_CALLBACKS = (new TimerCallbacks<LivingEntity>());
     
-    private TimerQueue<LivingEntity> queue = new TimerQueue<>(SB_CALLBACKS);
+    private final TimerQueue<LivingEntity> queue = new TimerQueue<>(SB_CALLBACKS);
 
     public Scheduler() {
     }

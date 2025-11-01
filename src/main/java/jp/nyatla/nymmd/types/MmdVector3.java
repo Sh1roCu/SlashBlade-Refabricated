@@ -61,21 +61,18 @@ public class MmdVector3 {
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
-        return;
     }
 
     public void Vector3Add(MmdVector3 pvec3Add1, MmdVector3 pvec3Add2) {
         this.x = pvec3Add1.x + pvec3Add2.x;
         this.y = pvec3Add1.y + pvec3Add2.y;
         this.z = pvec3Add1.z + pvec3Add2.z;
-        return;
     }
 
     public void Vector3Sub(MmdVector3 pvec3Sub1, MmdVector3 pvec3Sub2) {
         this.x = pvec3Sub1.x - pvec3Sub2.x;
         this.y = pvec3Sub1.y - pvec3Sub2.y;
         this.z = pvec3Sub1.z - pvec3Sub2.z;
-        return;
     }
 
     public void Vector3MulAdd(MmdVector3 pvec3Add1, MmdVector3 pvec3Add2, float fRate) {
@@ -89,7 +86,6 @@ public class MmdVector3 {
         this.x = (float) (pvec3Src.x * fSqr);
         this.y = (float) (pvec3Src.y * fSqr);
         this.z = (float) (pvec3Src.z * fSqr);
-        return;
     }
 
     public double Vector3DotProduct(MmdVector3 pvec3Src2) {
@@ -114,7 +110,6 @@ public class MmdVector3 {
         this.x = pvec3Src1.x * t0 + pvec3Src2.x * fLerpValue;
         this.y = pvec3Src1.y * t0 + pvec3Src2.y * fLerpValue;
         this.z = pvec3Src1.z * t0 + pvec3Src2.z * fLerpValue;
-        return;
     }
 
     public void Vector3Transform(MmdVector3 pVec3In, MmdMatrix matTransform) {
@@ -124,7 +119,6 @@ public class MmdVector3 {
         this.x = (float) (vx * matTransform.m00 + vy * matTransform.m10 + vz * matTransform.m20 + matTransform.m30);
         this.y = (float) (vx * matTransform.m01 + vy * matTransform.m11 + vz * matTransform.m21 + matTransform.m31);
         this.z = (float) (vx * matTransform.m02 + vy * matTransform.m12 + vz * matTransform.m22 + matTransform.m32);
-        return;
     }
 
     public void Vector3Transform(MmdMatrix i_posmat, MmdMatrix matTransform) {
@@ -134,7 +128,6 @@ public class MmdVector3 {
         this.x = (float) (vx * matTransform.m00 + vy * matTransform.m10 + vz * matTransform.m20 + matTransform.m30);
         this.y = (float) (vx * matTransform.m01 + vy * matTransform.m11 + vz * matTransform.m21 + matTransform.m31);
         this.z = (float) (vx * matTransform.m02 + vy * matTransform.m12 + vz * matTransform.m22 + matTransform.m32);
-        return;
     }
 
     public void Vector3Rotate(MmdVector3 pVec3In, MmdMatrix matRotate) {
@@ -144,7 +137,6 @@ public class MmdVector3 {
         this.x = (float) (vx * matRotate.m00 + vy * matRotate.m10 + vz * matRotate.m20);
         this.y = (float) (vx * matRotate.m01 + vy * matRotate.m11 + vz * matRotate.m21);
         this.z = (float) (vx * matRotate.m02 + vy * matRotate.m12 + vz * matRotate.m22);
-        return;
     }
 
     public void QuaternionToEuler(MmdVector4 pvec4Quat) {

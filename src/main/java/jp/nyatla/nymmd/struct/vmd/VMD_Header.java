@@ -50,7 +50,6 @@ public class VMD_Header implements StructType {
         this.szHeader = i_reader.readAscii(30);
         // szModelName
         this.szModelName = i_reader.readAscii(20);
-        return;
     }
 
     /*

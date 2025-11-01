@@ -57,7 +57,7 @@ import java.util.stream.Stream;
 
 class DataComparator implements Comparator<PmdIK> {
     public int compare(PmdIK o1, PmdIK o2) {
-        return (int) (o1.getSortVal() - o2.getSortVal());
+        return o1.getSortVal() - o2.getSortVal();
     }
 }
 
@@ -70,7 +70,7 @@ public abstract class MmdPmdModel_BasicClass {
 
     private PmdFace[] m_pFaceArray; // 表情配列
     private PmdBone[] m_pBoneArray; // ボーン配列
-    private Map<String, PmdBone> boneMap = Maps.newHashMap();
+    private final Map<String, PmdBone> boneMap = Maps.newHashMap();
     private PmdIK[] m_pIKArray; // IK配列
 
     private MmdVector3[] _position_array; // 座標配列
@@ -78,16 +78,15 @@ public abstract class MmdPmdModel_BasicClass {
     private MmdTexUV[] _texture_uv; // テクスチャ座標配列
     private PmdSkinInfo[] _skin_info_array;
     private PmdMaterial[] _materials; // マテリアル配列
-    private IResourceProvider _res_provider;
+    private final IResourceProvider _res_provider;
 
     public interface IResourceProvider {
-        public ResourceLocation getTextureStream(String i_name) throws MmdException;
+        ResourceLocation getTextureStream(String i_name) throws MmdException;
     }
 
     public MmdPmdModel_BasicClass(InputStream i_stream, IResourceProvider i_provider) throws MmdException {
         initialize(i_stream);
         this._res_provider = i_provider;
-        return;
     }
 
     public int getNumberOfVertex() {
@@ -241,7 +240,6 @@ public abstract class MmdPmdModel_BasicClass {
         if (face_array != null && 0 < face_array.length) {
             face_array[0].setFace(this._position_array);
         }
-        return;
     }
 
     private static short[] createIndicesArray(DataReader i_reader) throws MmdException {

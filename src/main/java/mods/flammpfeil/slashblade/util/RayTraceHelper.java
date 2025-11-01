@@ -50,7 +50,7 @@ public class RayTraceHelper {
         Entity resultEntity = null;
 
         for (Entity foundEntity : worldIn.getEntities(entityIn, boundingBox, selector)) {
-            AABB axisalignedbb = foundEntity.getBoundingBox().inflate((double) 0.5F);
+            AABB axisalignedbb = foundEntity.getBoundingBox().inflate(0.5F);
             Optional<Vec3> optional = axisalignedbb.clip(start, end);
             if (optional.isPresent()) {
                 double newDist = start.distanceToSqr(optional.get());

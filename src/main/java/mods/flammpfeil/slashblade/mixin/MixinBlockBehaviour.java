@@ -60,5 +60,4 @@ public class MixinBlockBehaviour {
         throw new IllegalStateException("Mixin failed to shadow asState()");
     }
 
-    ;
 }

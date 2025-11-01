@@ -66,10 +66,7 @@ public class TargetSelector {
                 return false;
 
             if (livingentity instanceof ArmorStand)
-                if (((ArmorStand) livingentity).isMarker())
-                    return true;
-                else
-                    return false;
+                return ((ArmorStand) livingentity).isMarker();
 
             if (livingentity.getTags().contains(AttackableTag)) {
                 livingentity.removeTag(AttackableTag);
@@ -100,7 +97,7 @@ public class TargetSelector {
         Level world = attacker.level();
         return Stream.of(world.getEntitiesOfClass(Projectile.class, aabb).stream()
                         .filter(e -> ((e.getOwner()/* getThrower() */ == null || e.getOwner()/* getThrower() */ != attacker)
-                                && (e instanceof IShootable ? ((IShootable) e).getShooter() != attacker : true))))
+                                && (!(e instanceof IShootable) || ((IShootable) e).getShooter() != attacker))))
                 /*
                  * world.getEntitiesWithinAABB(DamagingProjectileEntity.class, aabb).stream()
                  * .filter(e-> (e.shootingEntity == null || e.shootingEntity != attacker)),
@@ -257,18 +254,15 @@ public class TargetSelector {
             Entity tmp = s.getTargetEntity(sender.level());
             if (tmp == null)
                 return;
-            if (!(tmp instanceof LivingEntity))
+            if (!(tmp instanceof LivingEntity target))
                 return;
-
-            LivingEntity target = (LivingEntity) tmp;
 
             if (target.getLastHurtByMob() == sender)
                 return;
 
             target.setLastHurtByMob(sender);
 
-            if (target.level() instanceof ServerLevel) {
-                ServerLevel sw = (ServerLevel) target.level();
+            if (target.level() instanceof ServerLevel sw) {
 
                 sw.sendParticles(sender, ParticleTypes.ANGRY_VILLAGER, false, target.getX(),
                         target.getY() + target.getEyeHeight(), target.getZ(), 5, target.getBbWidth() * 1.5,

@@ -73,7 +73,6 @@ public class MmdVmdMotion_BasicClass {
 
     public MmdVmdMotion_BasicClass(InputStream i_stream) throws MmdException {
         initialize(i_stream);
-        return;
     }
 
     public MotionData[] refMotionDataArray() {

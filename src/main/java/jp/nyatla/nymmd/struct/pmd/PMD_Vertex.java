@@ -67,7 +67,6 @@ public class PMD_Vertex implements StructType {
         this.unBoneNo[1] = i_reader.readUnsignedShort();
         this.cbWeight = i_reader.read();
         this.cbEdge = i_reader.read();
-        return;
     }
 
 }

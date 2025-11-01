@@ -113,7 +113,7 @@ public class BladeStandEntityRenderer extends ItemFrameRenderer<BladeStandEntity
     private void renderItem(BladeStandEntity entity, ItemStack itemstack, PoseStack matrixStackIn,
                             MultiBufferSource bufferIn, int packedLightIn) {
         if (!itemstack.isEmpty()) {
-            BakedModel ibakedmodel = this.itemRenderer.getModel(itemstack, entity.level(), (LivingEntity) null, 0);
+            BakedModel ibakedmodel = this.itemRenderer.getModel(itemstack, entity.level(), null, 0);
             this.itemRenderer.render(itemstack, ItemDisplayContext.FIXED, false, matrixStackIn, bufferIn, packedLightIn,
                     OverlayTexture.NO_OVERLAY, ibakedmodel);
         }

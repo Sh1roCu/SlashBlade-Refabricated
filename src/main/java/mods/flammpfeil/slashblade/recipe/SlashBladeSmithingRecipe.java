@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.recipe;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.init.SBItems;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
@@ -91,7 +92,11 @@ public record SlashBladeSmithingRecipe(ResourceLocation outputBlade, Ingredient 
         var ingredientState = CapabilitySlashBlade.getBladeState(stack).orElseThrow(NullPointerException::new);
 
         resultState.setProudSoulCount(resultState.getProudSoulCount() + ingredientState.getProudSoulCount());
-        resultState.setKillCount(resultState.getKillCount() + ingredientState.getKillCount());
+        resultState.setKillCount(
+                SlashBladeConfig.DO_CRAFTING_SUM_REFINE.get() ?
+                        Math.max(resultState.getKillCount(), ingredientState.getKillCount()) :
+                        resultState.getKillCount() + ingredientState.getKillCount()
+        );
         resultState.setRefine(resultState.getRefine() + ingredientState.getRefine());
         updateEnchantment(result, stack);
 

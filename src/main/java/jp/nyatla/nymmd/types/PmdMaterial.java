@@ -45,4 +45,4 @@ public class PmdMaterial {
     public String texture_name;
     public short[] indices;
     public int unknown;
-};
+}

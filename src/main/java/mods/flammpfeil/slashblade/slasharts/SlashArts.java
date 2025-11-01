@@ -37,7 +37,7 @@ public class SlashArts {
         Fail, Success, Jackpot, Super
     }
 
-    private Function<LivingEntity, ResourceLocation> comboState;
+    private final Function<LivingEntity, ResourceLocation> comboState;
     private Function<LivingEntity, ResourceLocation> comboStateJust;
     private Function<LivingEntity, ResourceLocation> comboStateSuper;
 

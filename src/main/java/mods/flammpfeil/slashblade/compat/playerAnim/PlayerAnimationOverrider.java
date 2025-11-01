@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.Map;
 
 public class PlayerAnimationOverrider {
-    private Map<ResourceLocation, VmdAnimation> animation = initAnimations();
+    private final Map<ResourceLocation, VmdAnimation> animation = initAnimations();
 
     private static final class SingletonHolder {
         private static final PlayerAnimationOverrider instance = new PlayerAnimationOverrider();
@@ -38,9 +38,8 @@ public class PlayerAnimationOverrider {
     }
 
     public void onBladeAnimationStart(BladeMotionEvent event) {
-        if (!(event.getEntity() instanceof AbstractClientPlayer))
+        if (!(event.getEntity() instanceof AbstractClientPlayer player))
             return;
-        AbstractClientPlayer player = (AbstractClientPlayer) event.getEntity();
 
         AnimationStack animationStack = PlayerAnimationAccess.getPlayerAnimLayer(player);
 

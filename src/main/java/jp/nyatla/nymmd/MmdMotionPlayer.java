@@ -86,7 +86,6 @@ public abstract class MmdMotionPlayer {
     private PmdBone m_pNeckBone; // 首のボーン
 
     public MmdMotionPlayer() {
-        return;
     }
 
     public void setPmd(MmdPmdModel_BasicClass i_pmd_model) throws MmdException {
@@ -114,7 +113,6 @@ public abstract class MmdMotionPlayer {
         if (this._ref_vmd_motion != null) {
             makeBoneFaceList();
         }
-        return;
     }
 
     public void setVmd(MmdVmdMotion_BasicClass i_vmd_model) throws MmdException {
@@ -134,7 +132,6 @@ public abstract class MmdMotionPlayer {
         if (this._ref_pmd_model != null) {
             makeBoneFaceList();
         }
-        return;
     }
 
     private void makeBoneFaceList() {
@@ -153,7 +150,6 @@ public abstract class MmdMotionPlayer {
         for (int i = 0; i < pFaceDataList.length; i++) {
             this.m_ppFaceList[i] = pmd_model.getFaceByName(pFaceDataList[i].szFaceName);
         }
-        return;
     }
 
     /**
@@ -219,7 +215,6 @@ public abstract class MmdMotionPlayer {
             bone_array[i].updateSkinningMat(this._skinning_mat[i]);
         }
         this.onUpdateSkinningMatrix(this._skinning_mat);
-        return;
     }
 
     protected abstract void onUpdateSkinningMatrix(MmdMatrix[] i_skinning_mat) throws MmdException;
@@ -262,7 +257,7 @@ public abstract class MmdMotionPlayer {
         this._lookme_enabled = i_enable;
     }
 
-    private MmdVector3 _looktarget = new MmdVector3();
+    private final MmdVector3 _looktarget = new MmdVector3();
     private boolean _lookme_enabled = false;
 
     /**
@@ -286,7 +281,6 @@ public abstract class MmdMotionPlayer {
         for (; i < bone_array.length; i++) {
             bone_array[i].updateMatrix();
         }
-        return;
     }
 
     private void updateBone(float i_frame) throws MmdException {
@@ -307,7 +301,6 @@ public abstract class MmdMotionPlayer {
             // QuaternionSlerp( &((*pBone)->m_vec4Rotate), &((*pBone)->m_vec4Rotate),
             // &vec4Rotate, fLerpValue );
         }
-        return;
     }
 
     /**
@@ -331,7 +324,6 @@ public abstract class MmdMotionPlayer {
                 ppFace[i].blendFace(position_array, fFaceRate);
             }
         }
-        return;
     }
 
     private float getFaceRate(FaceData pFaceData, float fFrame) {

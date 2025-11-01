@@ -54,9 +54,8 @@ public class SuperSlashArts {
             CapabilityInputState.INPUT_STATE.maybeGet(sender).ifPresent(input -> {
                 input.getScheduler().schedule("sendPartical", pressTime + 5, (rawEntity, queue, now) -> {
 
-                    if (!(rawEntity instanceof ServerPlayer))
+                    if (!(rawEntity instanceof ServerPlayer entity))
                         return;
-                    ServerPlayer entity = (ServerPlayer) rawEntity;
 
                     InputCommand targetCommnad1 = InputCommand.SPRINT;
                     boolean inputSucceed = CapabilityInputState.INPUT_STATE.maybeGet(entity)
@@ -94,9 +93,8 @@ public class SuperSlashArts {
 
                     @Override
                     public void handle(LivingEntity rawEntity, TimerQueue<LivingEntity> queue, long now) {
-                        if (!(rawEntity instanceof ServerPlayer))
+                        if (!(rawEntity instanceof ServerPlayer entity))
                             return;
-                        ServerPlayer entity = (ServerPlayer) rawEntity;
 
                         InputCommand targetCommnad = InputCommand.SPRINT;
                         boolean inputSucceed = CapabilityInputState.INPUT_STATE.maybeGet(entity)

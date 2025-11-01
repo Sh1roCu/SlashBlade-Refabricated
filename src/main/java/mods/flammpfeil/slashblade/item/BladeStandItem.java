@@ -16,7 +16,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
 public class BladeStandItem extends HangingEntityItem {
-    private boolean isWallType;
+    private final boolean isWallType;
 
     public BladeStandItem(Properties builder) {
         this(builder, false);

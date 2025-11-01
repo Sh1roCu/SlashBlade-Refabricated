@@ -40,16 +40,16 @@ import java.util.List;
 
 public class EntitySlashEffect extends Projectile implements IShootable {
     private static final EntityDataAccessor<Integer> COLOR = SynchedEntityData
-            .<Integer>defineId(EntitySlashEffect.class, EntityDataSerializers.INT);
+            .defineId(EntitySlashEffect.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> FLAGS = SynchedEntityData
-            .<Integer>defineId(EntitySlashEffect.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Float> RANK = SynchedEntityData.<Float>defineId(EntitySlashEffect.class,
+            .defineId(EntitySlashEffect.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> RANK = SynchedEntityData.defineId(EntitySlashEffect.class,
             EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> ROTATION_OFFSET = SynchedEntityData
-            .<Float>defineId(EntitySlashEffect.class, EntityDataSerializers.FLOAT);
+            .defineId(EntitySlashEffect.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> ROTATION_ROLL = SynchedEntityData
-            .<Float>defineId(EntitySlashEffect.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> BASESIZE = SynchedEntityData.<Float>defineId(EntitySlashEffect.class,
+            .defineId(EntitySlashEffect.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> BASESIZE = SynchedEntityData.defineId(EntitySlashEffect.class,
             EntityDataSerializers.FLOAT);
 
     private int lifetime = 10;
@@ -59,7 +59,7 @@ public class EntitySlashEffect extends Projectile implements IShootable {
 
     private boolean cycleHit = false;
 
-    private List<Entity> alreadyHits = Lists.newArrayList();
+    private final List<Entity> alreadyHits = Lists.newArrayList();
 
     public KnockBacks getKnockBack() {
         return action;
@@ -84,7 +84,7 @@ public class EntitySlashEffect extends Projectile implements IShootable {
         this.cycleHit = cycleHit;
     }
 
-    private SoundEvent livingEntitySound = SoundEvents.WITHER_HURT;
+    private final SoundEvent livingEntitySound = SoundEvents.WITHER_HURT;
 
     protected SoundEvent getHitEntitySound() {
         return this.livingEntitySound;
@@ -303,7 +303,7 @@ public class EntitySlashEffect extends Projectile implements IShootable {
                 Vec3 vec3 = start.add(normal3d.scale(this.getBaseSize() * 2.5));
                 this.level().addParticle(ParticleTypes.CRIT, vec3.x(), vec3.y(), vec3.z(), dir.x() + normal.x(),
                         dir.y() + normal.y(), dir.z() + normal.z());
-                float randScale = random.nextFloat() * 1.0f + 0.5f;
+                float randScale = random.nextFloat() + 0.5f;
                 vec3 = vec3.add(dir.x() * randScale, dir.y() * randScale, dir.z() * randScale);
                 this.level().addParticle(ParticleTypes.CRIT, vec3.x(), vec3.y(), vec3.z(), dir.x() + normal.x(),
                         dir.y() + normal.y(), dir.z() + normal.z());
@@ -320,8 +320,7 @@ public class EntitySlashEffect extends Projectile implements IShootable {
 
                 // this::onHitEntity ro KnockBackHandler::setCancel
                 List<Entity> hits;
-                if (!getIndirect() && getShooter() instanceof LivingEntity) {
-                    LivingEntity shooter = (LivingEntity) getShooter();
+                if (!getIndirect() && getShooter() instanceof LivingEntity shooter) {
                     float ratio = (float) damage * (getIsCritical() ? 1.1f : 1.0f);
                     hits = AttackManager.areaAttack(shooter, this.action.action, ratio, forceHit, false, true,
                             alreadyHits);

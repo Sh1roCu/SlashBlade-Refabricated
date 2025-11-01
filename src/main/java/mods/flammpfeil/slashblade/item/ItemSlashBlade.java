@@ -33,6 +33,7 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -97,8 +98,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
 
     @Override
     public @Nullable String getCreatorNamespace(ItemStack itemStack) {
-        // TODO Auto-generated method stub
-        return super.getCreatorNamespace(itemStack);
+        return this.getBladeId(itemStack).getNamespace();
     }
 
     @Override
@@ -544,12 +544,29 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
                 .map(ISlashBladeState::getTranslationKey).orElseGet(() -> stackDefaultDescriptionId(stack));
     }
 
+    public ResourceLocation getBladeId(ItemStack stack) {
+        return CapabilitySlashBlade.getBladeState(stack).filter((s) -> !s.getTranslationKey().isBlank())
+                .map((state) -> parseBladeID(state.getTranslationKey())).orElseGet(() -> stackDefaultId(stack));
+    }
+
     private String stackDefaultDescriptionId(ItemStack stack) {
         var cap = CapabilitySlashBlade.getBladeState(stack);
         if (cap.isEmpty())
             return super.getDescriptionId(stack);
         String key = cap.get().getTranslationKey();
         return !key.isBlank() ? key : super.getDescriptionId(stack);
+    }
+
+    private ResourceLocation stackDefaultId(ItemStack stack) {
+        var cap = CapabilitySlashBlade.getBladeState(stack);
+        if (cap.isEmpty())
+            return BuiltInRegistries.ITEM.getKey(this);
+        String key = cap.get().getTranslationKey();
+        return !key.isBlank() ? parseBladeID(key) : BuiltInRegistries.ITEM.getKey(this);
+    }
+
+    public static ResourceLocation parseBladeID(String key) {
+        return ResourceLocation.tryParse(key.substring(5).replaceFirst("\\.", ":"));
     }
 
     public boolean isDestructable(ItemStack stack) {

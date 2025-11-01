@@ -31,10 +31,10 @@ import java.util.List;
 
 public class EntityJudgementCut extends Projectile implements IShootable {
     private static final EntityDataAccessor<Integer> COLOR = SynchedEntityData
-            .<Integer>defineId(EntityJudgementCut.class, EntityDataSerializers.INT);
+            .defineId(EntityJudgementCut.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> FLAGS = SynchedEntityData
-            .<Integer>defineId(EntityJudgementCut.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Float> RANK = SynchedEntityData.<Float>defineId(EntityJudgementCut.class,
+            .defineId(EntityJudgementCut.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> RANK = SynchedEntityData.defineId(EntityJudgementCut.class,
             EntityDataSerializers.FLOAT);
 
     private int lifetime = 10;
@@ -56,7 +56,7 @@ public class EntityJudgementCut extends Projectile implements IShootable {
         this.cycleHit = cycleHit;
     }
 
-    private SoundEvent livingEntitySound = SoundEvents.WITHER_HURT;
+    private final SoundEvent livingEntitySound = SoundEvents.WITHER_HURT;
 
     protected SoundEvent getHitEntitySound() {
         return this.livingEntitySound;

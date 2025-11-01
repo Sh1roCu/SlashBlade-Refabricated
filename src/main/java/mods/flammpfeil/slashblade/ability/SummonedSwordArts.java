@@ -177,13 +177,12 @@ public class SummonedSwordArts {
         float f3 = Mth.sin(f1);
         float f4 = Mth.cos(f);
         float f5 = Mth.sin(f);
-        return new Vec3((double) (f3 * f4), (double) (-f5), (double) (f2 * f4));
+        return new Vec3(f3 * f4, -f5, f2 * f4);
     }
 
     private void performSpiralSwords(int powerLevel, final Long pressTime, LivingEntity rawEntity) {
-        if (!(rawEntity instanceof ServerPlayer))
+        if (!(rawEntity instanceof ServerPlayer entity))
             return;
-        ServerPlayer entity = (ServerPlayer) rawEntity;
 
         InputCommand targetCommnad = InputCommand.M_DOWN;
         boolean inputSucceed = CapabilityInputState.INPUT_STATE.maybeGet(entity)
@@ -254,9 +253,8 @@ public class SummonedSwordArts {
     }
 
     private void performStormSwords(int powerLevel, final Long pressTime, LivingEntity rawEntity) {
-        if (!(rawEntity instanceof ServerPlayer))
+        if (!(rawEntity instanceof ServerPlayer entity))
             return;
-        ServerPlayer entity = (ServerPlayer) rawEntity;
 
         InputCommand targetCommnad = InputCommand.M_DOWN;
         boolean inputSucceed = CapabilityInputState.INPUT_STATE.maybeGet(entity)
@@ -313,9 +311,8 @@ public class SummonedSwordArts {
     }
 
     private void performBlisteringSwords(int powerLevel, final Long pressTime, LivingEntity rawEntity, long now) {
-        if (!(rawEntity instanceof ServerPlayer))
+        if (!(rawEntity instanceof ServerPlayer entity))
             return;
-        ServerPlayer entity = (ServerPlayer) rawEntity;
 
         InputCommand targetCommnad = InputCommand.M_DOWN;
         boolean inputSucceed = CapabilityInputState.INPUT_STATE.maybeGet(entity)
@@ -372,9 +369,8 @@ public class SummonedSwordArts {
     }
 
     private void performHeavyRains(int powerLevel, final Long pressTime, LivingEntity rawEntity, long now) {
-        if (!(rawEntity instanceof ServerPlayer))
+        if (!(rawEntity instanceof ServerPlayer entity))
             return;
-        ServerPlayer entity = (ServerPlayer) rawEntity;
 
         InputCommand targetCommnad = InputCommand.M_DOWN;
         boolean inputSucceed = CapabilityInputState.INPUT_STATE.maybeGet(entity)

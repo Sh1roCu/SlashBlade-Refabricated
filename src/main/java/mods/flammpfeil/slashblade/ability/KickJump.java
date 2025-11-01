@@ -108,7 +108,7 @@ public class KickJump {
         if (worldIn instanceof ServerLevel) {
             ((ServerLevel) worldIn).sendParticles(
                     new BlockParticleOption(ParticleTypes.BLOCK, Blocks.GLASS.defaultBlockState()), sender.getX(),
-                    sender.getY(), sender.getZ(), 20, 0.0D, 0.0D, 0.0D, (double) 0.15F);
+                    sender.getY(), sender.getZ(), 20, 0.0D, 0.0D, 0.0D, 0.15F);
         }
     }
 

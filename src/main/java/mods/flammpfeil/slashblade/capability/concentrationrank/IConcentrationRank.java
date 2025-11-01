@@ -37,7 +37,7 @@ public interface IConcentrationRank extends AutoSyncedComponent {
             return concentrationRanksMap.get(point);
         }
 
-        private static RangeMap<Float, ConcentrationRanks> concentrationRanksMap = ImmutableRangeMap
+        private static final RangeMap<Float, ConcentrationRanks> concentrationRanksMap = ImmutableRangeMap
                 .<Float, ConcentrationRanks>builder().put(ConcentrationRanks.NONE.pointRange, ConcentrationRanks.NONE)
                 .put(ConcentrationRanks.D.pointRange, ConcentrationRanks.D)
                 .put(ConcentrationRanks.C.pointRange, ConcentrationRanks.C)
@@ -119,10 +119,8 @@ public interface IConcentrationRank extends AutoSyncedComponent {
     }
 
     default void addRankPoint(DamageSource src) {
-        if (!(src.getEntity() instanceof LivingEntity))
+        if (!(src.getEntity() instanceof LivingEntity user))
             return;
-
-        LivingEntity user = (LivingEntity) src.getEntity();
 
         ItemStack stack = user.getMainHandItem();
 

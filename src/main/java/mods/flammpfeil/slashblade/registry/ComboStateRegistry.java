@@ -148,7 +148,7 @@ public class ComboStateRegistry {
                             .put(8, (entityIn) -> AttackManager.doSlash(entityIn, 45, false, false, 0.44f))
                             .put(9, (entityIn) -> AttackManager.doSlash(entityIn, 50, true, false, 0.44f)).build())
                     .addTickAction(ComboState.TimeLineTickAction.getBuilder()
-                            .put(8 + 0, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
+                            .put(8, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(8 + 1, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(8 + 2, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(8 + 3, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
@@ -196,7 +196,7 @@ public class ComboStateRegistry {
                             .put(17, (entityIn) -> AttackManager.doSlash(entityIn, 40, true, true, 1f))
                             .put(19, (entityIn) -> AttackManager.doSlash(entityIn, 30, true, true, 1f)).build())
                     .addTickAction(ComboState.TimeLineTickAction.getBuilder()
-                            .put(13 + 0, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
+                            .put(13, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(13 + 1, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(13 + 2, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(13 + 3, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
@@ -220,7 +220,7 @@ public class ComboStateRegistry {
                     .addTickAction(ComboState.TimeLineTickAction.getBuilder().put(6, (entityIn) -> {
                                 AttackManager.doSlash(entityIn, -30, false, false, 0.244f);
                                 AttackManager.doSlash(entityIn, 180 - 35, true, false, 0.244f);
-                            }).put(7 + 0,
+                            }).put(7,
                                     (entityIn) -> AttackManager.doSlash(entityIn, -90 + 180 * entityIn.getRandom().nextFloat(),
                                             AttackManager.genRushOffset(entityIn), false, false, 0.244f))
                             .put(7 + 1,
@@ -267,7 +267,7 @@ public class ComboStateRegistry {
                                     new Vec3(entityIn.getRandom().nextFloat() - 0.5f, 0.8f, 0), true, false, 1f))
                             .build())
                     .addTickAction(ComboState.TimeLineTickAction.getBuilder()
-                            .put(12 - 3 + 0, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
+                            .put(12 - 3, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(12 - 3 + 1, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(12 - 3 + 2, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(12 - 3 + 3, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
@@ -421,7 +421,7 @@ public class ComboStateRegistry {
                             new Vec3(entityIn.getRandom().nextFloat() - 0.5f, 0.8f, 0), true, false, 0.244f))
                     .build())
             .addTickAction(ComboState.TimeLineTickAction.getBuilder()
-                    .put(12 + 0, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
+                    .put(12, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                     .put(12 + 1, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                     .put(12 + 2, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                     .put(12 + 3, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
@@ -446,7 +446,7 @@ public class ComboStateRegistry {
                                     new Vec3(entityIn.getRandom().nextFloat() - 0.5f, 0.8f, 0), true, false, 0.244f))
                             .build())
                     .addTickAction(ComboState.TimeLineTickAction.getBuilder()
-                            .put(12 - 3 + 0, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
+                            .put(12 - 3, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(12 - 3 + 1, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(12 - 3 + 2, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(12 - 3 + 3, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
@@ -469,7 +469,7 @@ public class ComboStateRegistry {
                     .next(ComboState.TimeoutNext.buildFromFrame(5, entity -> SlashBlade.prefix("aerial_rave_a2")))
                     .nextOfTimeout(entity -> SlashBlade.prefix("aerial_rave_a1_end"))
                     .addTickAction(ComboState.TimeLineTickAction.getBuilder()
-                            .put((int) TimeValueHelper.getTicksFromFrames(3) + 0,
+                            .put((int) TimeValueHelper.getTicksFromFrames(3),
                                     (entityIn) -> AttackManager.doSlash(entityIn, -20, false, false, 0.28f))
                             .build().andThen(FallHandler::fallDecrease))
                     .addHitEffect(StunManager::setStun)
@@ -487,7 +487,7 @@ public class ComboStateRegistry {
                     .next(ComboState.TimeoutNext.buildFromFrame(5, entity -> SlashBlade.prefix("aerial_rave_a3")))
                     .nextOfTimeout(entity -> SlashBlade.prefix("aerial_rave_a2_end"))
                     .addTickAction(ComboState.TimeLineTickAction.getBuilder()
-                            .put((int) TimeValueHelper.getTicksFromFrames(3) + 0,
+                            .put((int) TimeValueHelper.getTicksFromFrames(3),
                                     (entityIn) -> AttackManager.doSlash(entityIn, 180 - 30, false, false, 0.28f))
                             .build())
                     .addHitEffect(StunManager::setStun).addTickAction(FallHandler::fallDecrease).build());
@@ -509,7 +509,7 @@ public class ComboStateRegistry {
                     .next(ComboState.TimeoutNext.buildFromFrame(9, entity -> SlashBlade.prefix("none")))
                     .nextOfTimeout(entity -> SlashBlade.prefix("aerial_rave_a3_end"))
                     .addTickAction(ComboState.TimeLineTickAction.getBuilder()
-                            .put((int) TimeValueHelper.getTicksFromFrames(4) + 0,
+                            .put((int) TimeValueHelper.getTicksFromFrames(4),
                                     (entityIn) -> AttackManager.doSlash(entityIn, 0, Vec3.ZERO, false, false, 0.28f,
                                             KnockBacks.smash))
                             .put((int) TimeValueHelper.getTicksFromFrames(4) + 1,
@@ -565,7 +565,7 @@ public class ComboStateRegistry {
                     .next(ComboState.TimeoutNext.buildFromFrame(9, entity -> SlashBlade.prefix("none")))
                     .nextOfTimeout(entity -> SlashBlade.prefix("aerial_rave_b4_end"))
                     .addTickAction(ComboState.TimeLineTickAction.getBuilder()
-                            .put((int) TimeValueHelper.getTicksFromFrames(10) + 0,
+                            .put((int) TimeValueHelper.getTicksFromFrames(10),
                                     (entityIn) -> AttackManager.doSlash(entityIn, 45, Vec3.ZERO, false, false, 0.34f,
                                             KnockBacks.meteor))
                             .put((int) TimeValueHelper.getTicksFromFrames(10) + 1,
@@ -573,7 +573,7 @@ public class ComboStateRegistry {
                                             KnockBacks.meteor))
                             .build())
                     .addTickAction(ComboState.TimeLineTickAction.getBuilder()
-                            .put(5 + 0, (entityIn) -> UserPoseOverrider.setRot(entityIn, 90, true))
+                            .put(5, (entityIn) -> UserPoseOverrider.setRot(entityIn, 90, true))
                             .put(5 + 1, (entityIn) -> UserPoseOverrider.setRot(entityIn, 90, true))
                             .put(5 + 2, (entityIn) -> UserPoseOverrider.setRot(entityIn, 90, true))
                             .put(5 + 3, (entityIn) -> UserPoseOverrider.setRot(entityIn, 90, true))
@@ -667,7 +667,7 @@ public class ComboStateRegistry {
                         long elapsed = ComboState.getElapsed(e);
 
                         if (elapsed == 2) {
-                            e.level().playSound((Player) null, e.getX(), e.getY(), e.getZ(),
+                            e.level().playSound(null, e.getX(), e.getY(), e.getZ(),
                                     SoundEvents.PLAYER_ATTACK_STRONG, SoundSource.PLAYERS, 0.75F, 1.0F);
                         }
 
@@ -785,7 +785,7 @@ public class ComboStateRegistry {
                         long elapsed = ComboState.getElapsed(e);
 
                         if (elapsed == 0) {
-                            e.level().playSound((Player) null, e.getX(), e.getY(), e.getZ(),
+                            e.level().playSound(null, e.getX(), e.getY(), e.getZ(),
                                     SoundEvents.ARMOR_EQUIP_IRON, SoundSource.PLAYERS, 1.0F, 1.0F);
                         }
 
@@ -851,12 +851,12 @@ public class ComboStateRegistry {
                                             KnockBacks.toss))
                             .build())
                     .addTickAction(ComboState.TimeLineTickAction.getBuilder()
-                            .put(0 + 0, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
-                            .put(0 + 1, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
-                            .put(0 + 2, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
-                            .put(0 + 3, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
-                            .put(0 + 4, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
-                            .put(5 + 0, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
+                            .put(0, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
+                            .put(1, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
+                            .put(2, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
+                            .put(3, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
+                            .put(4, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
+                            .put(5, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(5 + 1, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(5 + 2, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(5 + 3, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
@@ -909,7 +909,7 @@ public class ComboStateRegistry {
                                 double d1 = vec.z;
 
                                 while (d0 != 0.0D && e.level().noCollision(e,
-                                        e.getBoundingBox().move(d0, (double) (-e.maxUpStep()), 0.0D))) {
+                                        e.getBoundingBox().move(d0, -e.maxUpStep(), 0.0D))) {
                                     if (d0 < 0.05D && d0 >= -0.05D) {
                                         d0 = 0.0D;
                                     } else if (d0 > 0.0D) {
@@ -920,7 +920,7 @@ public class ComboStateRegistry {
                                 }
 
                                 while (d1 != 0.0D && e.level().noCollision(e,
-                                        e.getBoundingBox().move(0.0D, (double) (-e.maxUpStep()), d1))) {
+                                        e.getBoundingBox().move(0.0D, -e.maxUpStep(), d1))) {
                                     if (d1 < 0.05D && d1 >= -0.05D) {
                                         d1 = 0.0D;
                                     } else if (d1 > 0.0D) {
@@ -931,7 +931,7 @@ public class ComboStateRegistry {
                                 }
 
                                 while (d0 != 0.0D && d1 != 0.0D && e.level().noCollision(e,
-                                        e.getBoundingBox().move(d0, (double) (-e.maxUpStep()), d1))) {
+                                        e.getBoundingBox().move(d0, -e.maxUpStep(), d1))) {
                                     if (d0 < 0.05D && d0 >= -0.05D) {
                                         d0 = 0.0D;
                                     } else if (d0 > 0.0D) {
@@ -1035,13 +1035,13 @@ public class ComboStateRegistry {
             .addTickAction(entity -> entity.setDeltaMovement(Vec3.ZERO))
             .addTickAction(ComboState.TimeLineTickAction.getBuilder().put(16, AttackManager::doVoidSlashAttack).build())
             .addTickAction(ComboState.TimeLineTickAction.getBuilder()
-                    .put(16 + 0, (entityIn) -> UserPoseOverrider.setRot(entityIn, -36, true))
+                    .put(16, (entityIn) -> UserPoseOverrider.setRot(entityIn, -36, true))
                     .put(16 + 1, (entityIn) -> UserPoseOverrider.setRot(entityIn, -36, true))
                     .put(16 + 2, (entityIn) -> UserPoseOverrider.setRot(entityIn, -36, true))
                     .put(16 + 3, (entityIn) -> UserPoseOverrider.setRot(entityIn, -36, true))
                     .put(16 + 4, (entityIn) -> UserPoseOverrider.setRot(entityIn, -36, true))
                     .put(16 + 5, (entityIn) -> UserPoseOverrider.setRot(entityIn, 0, true))
-                    .put(57 + 0, (entityIn) -> UserPoseOverrider.setRot(entityIn, 18, true))
+                    .put(57, (entityIn) -> UserPoseOverrider.setRot(entityIn, 18, true))
                     .put(57 + 1, (entityIn) -> UserPoseOverrider.setRot(entityIn, 18, true))
                     .put(57 + 2, (entityIn) -> UserPoseOverrider.setRot(entityIn, 18, true))
                     .put(57 + 3, (entityIn) -> UserPoseOverrider.setRot(entityIn, 18, true))
@@ -1132,7 +1132,7 @@ public class ComboStateRegistry {
                             .put(6, (entityIn) -> CircleSlash.doCircleSlashAttack(entityIn, 0))
                             .put(7, (entityIn) -> CircleSlash.doCircleSlashAttack(entityIn, -90)).build())
                     .addTickAction(ComboState.TimeLineTickAction.getBuilder()
-                            .put(7 - 3 + 0, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
+                            .put(7 - 3, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(7 - 3 + 1, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(7 - 3 + 2, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))
                             .put(7 - 3 + 3, (entityIn) -> UserPoseOverrider.setRot(entityIn, 72, true))

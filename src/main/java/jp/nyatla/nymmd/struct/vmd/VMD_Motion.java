@@ -75,7 +75,6 @@ public class VMD_Motion implements StructType {
         for (i = 0; i < 16; i++) {
             this.cInterpolation4[i] = i_reader.readByte();
         }
-        return;
     }
 
     /*

@@ -23,9 +23,8 @@ public class StunManager {
     }
 
     public static void onEntityJoinWorldEvent(EntityJoinLevelEvent event) {
-        if (!(event.getEntity() instanceof PathfinderMob))
+        if (!(event.getEntity() instanceof PathfinderMob entity))
             return;
-        PathfinderMob entity = (PathfinderMob) event.getEntity();
 
         ((MobAccessor) entity).sb$getGoalSelector().addGoal(-1, new StunGoal(entity));
     }

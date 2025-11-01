@@ -40,6 +40,6 @@ package jp.nyatla.nymmd.struct;
 import jp.nyatla.nymmd.MmdException;
 
 public interface StructType {
-    public void read(DataReader i_reader) throws MmdException;
+    void read(DataReader i_reader) throws MmdException;
 
 }
