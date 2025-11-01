@@ -19,8 +19,11 @@
       "conditions": {
         "items": [
           {
-            "type": "slashblade:slashblade",
-            "requestBlade": {}
+            "predicates": {
+              "slashblade:slashblade": {
+                "requestBlade": {}
+              }
+            }
           }
         ]
       }

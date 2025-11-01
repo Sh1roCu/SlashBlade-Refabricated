@@ -15,7 +15,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.Util;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -23,7 +22,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -186,13 +184,13 @@ public class RequestDefinition {
         boolean killCheck = state.getKillCount() >= this.getKillCount();
         boolean refineCheck = state.getRefine() >= this.getRefineCount();
 
-        var lookup = FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ?
-                SlashBladeFabric.REGISTRY_ACCESS.lookupOrThrow(Registries.ENCHANTMENT) :
-                SlashBladeFabric.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+        var matching = blade.getEnchantments().entrySet();
+
         for (var enchantment : this.getEnchantments()) {
-            if (EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(
-                    ResourceKey.create(Registries.ENCHANTMENT, enchantment.getEnchantmentID())), blade) < enchantment.getEnchantmentLevel()) {
-                return false;
+            for (var entry : matching) {
+                if (entry.getKey().is(enchantment.getEnchantmentID()) && entry.getIntValue() < enchantment.getEnchantmentLevel()) {
+                    return false;
+                }
             }
         }
 

@@ -108,11 +108,6 @@ public class SlashBladeShapedRecipe extends ShapedRecipe {
         return result;
     }
 
-    @Override
-    public boolean canCraftInDimensions(int i, int j) {
-        return false;
-    }
-
     private void updateEnchantment(ItemStack result, ItemStack ingredient) {
         var newItemEnchants = EnchantmentHelper.getEnchantmentsForCrafting(result);
         var oldItemEnchants = EnchantmentHelper.getEnchantmentsForCrafting(ingredient);

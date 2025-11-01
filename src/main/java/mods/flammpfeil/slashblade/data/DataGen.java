@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade.data;
 import mods.flammpfeil.slashblade.data.builtin.SlashBladeBuiltInRegistry;
 import mods.flammpfeil.slashblade.data.builtin.SlashBladeEntityDropBuiltInRegistry;
 import mods.flammpfeil.slashblade.data.tag.SlashBladeEntityTypeTagProvider;
+import mods.flammpfeil.slashblade.data.tag.SlashBladeItemTags;
 import mods.flammpfeil.slashblade.event.drop.EntityDropEntry;
 import mods.flammpfeil.slashblade.registry.slashblade.SlashBladeDefinition;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
@@ -17,6 +18,7 @@ public class DataGen implements DataGeneratorEntrypoint {
         pack.addProvider(SlashBladeRecipeProvider::new);
         // Tag
         pack.addProvider(SlashBladeEntityTypeTagProvider::new);
+        pack.addProvider(SlashBladeItemTags::new);
         // Dynamic
         pack.addProvider(RegistryDataGenerator::new);
     }
