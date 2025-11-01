@@ -1,9 +1,9 @@
 package mods.flammpfeil.slashblade;
 
 import cn.sh1rocu.slashblade.api.event.LivingKnockBackEvent;
-import cn.sh1rocu.slashblade.util.ItemPredicateRegistry;
 import com.google.common.base.CaseFormat;
 import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
+import io.github.fabricators_of_create.porting_lib.util.ItemPredicateRegistry;
 import mods.flammpfeil.slashblade.ability.*;
 import mods.flammpfeil.slashblade.advancement.SlashBladeItemPredicate;
 import mods.flammpfeil.slashblade.client.renderer.model.BladeModelManager;
@@ -26,7 +26,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.logging.log4j.LogManager;

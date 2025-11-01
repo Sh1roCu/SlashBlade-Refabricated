@@ -19,7 +19,6 @@
     "common.EnderDragonMixin",
     "common.EntityMixin",
     "common.ItemEntityMixin",
-    "common.ItemPredicateMixin",
     "common.ItemStackMixin",
     "common.LivingEntityMixin",
     "common.MagmaCubeMixin",
