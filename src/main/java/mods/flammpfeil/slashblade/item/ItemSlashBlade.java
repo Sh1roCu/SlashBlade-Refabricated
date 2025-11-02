@@ -566,7 +566,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     }
 
     public static ResourceLocation parseBladeID(String key) {
-        return ResourceLocation.tryParse(key.substring(5).replaceFirst("\\.", ":"));
+        return ResourceLocation.tryParse(key.substring(5).replaceFirst("\\.", ":").replace(".", "/"));
     }
 
     public boolean isDestructable(ItemStack stack) {
