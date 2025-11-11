@@ -74,7 +74,7 @@ public class BladeStandEntity extends ItemFrame implements IEntityWithComplexSpa
     }
 
     public static BladeStandEntity createInstanceFromPos(Level worldIn, BlockPos placePos, Direction dir, Item type) {
-        BladeStandEntity e = new BladeStandEntity(SBEntityTypes.BladeStand, worldIn);
+        BladeStandEntity e = new BladeStandEntity(SBEntityTypes.BLADE_STAND, worldIn);
 
         e.pos = placePos;
         e.setDirection(dir);

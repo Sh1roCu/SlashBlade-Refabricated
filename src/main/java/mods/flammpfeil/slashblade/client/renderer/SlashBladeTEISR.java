@@ -291,10 +291,10 @@ public class SlashBladeTEISR extends BlockEntityWithoutLevelRenderer {
                         break;
                 }
 
-                if (type == SBItems.bladestand_1) {
+                if (type == SBItems.BLADESTAND_1) {
                     bladeOffset = Vec3.ZERO;
                     sheathOffset = Vec3.ZERO;
-                } else if (type == SBItems.bladestand_2) {
+                } else if (type == SBItems.BLADESTAND_2) {
                     bladeOffset = new Vec3(0, 21.5f, 0);
                     if (hFlip) {
                         sheathOffset = new Vec3(-40, -27, 0);
@@ -302,12 +302,12 @@ public class SlashBladeTEISR extends BlockEntityWithoutLevelRenderer {
                         sheathOffset = new Vec3(40, -27, 0);
                     }
                     sheathOffsetBaseRot = -4;
-                } else if (type == SBItems.bladestand_v) {
+                } else if (type == SBItems.BLADESTAND_V) {
                     bladeOffset = new Vec3(-100, 230, 0);
                     sheathOffset = new Vec3(-100, 230, 0);
                     bladeOffsetRot = 80;
                     sheathOffsetRot = 80;
-                } else if (type == SBItems.bladestand_s) {
+                } else if (type == SBItems.BLADESTAND_S) {
                     if (hFlip) {
                         bladeOffset = new Vec3(60, -25, 0);
                         sheathOffset = new Vec3(60, -25, 0);
@@ -315,10 +315,10 @@ public class SlashBladeTEISR extends BlockEntityWithoutLevelRenderer {
                         bladeOffset = new Vec3(-60, -25, 0);
                         sheathOffset = new Vec3(-60, -25, 0);
                     }
-                } else if (type == SBItems.bladestand_1w) {
+                } else if (type == SBItems.BLADESTAND_1_W) {
                     bladeOffset = Vec3.ZERO;
                     sheathOffset = Vec3.ZERO;
-                } else if (type == SBItems.bladestand_2w) {
+                } else if (type == SBItems.BLADESTAND_2_W) {
                     bladeOffset = new Vec3(0, 21.5f, 0);
                     if (hFlip) {
                         sheathOffset = new Vec3(-40, -27, 0);

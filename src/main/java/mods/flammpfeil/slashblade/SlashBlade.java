@@ -26,7 +26,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.neoforged.fml.config.ModConfig;
 import org.apache.logging.log4j.LogManager;
@@ -96,33 +95,33 @@ public class SlashBlade {
 
     public static class RegistryEvents {
 
-        public static final ResourceLocation BladeItemEntityLoc = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
+        public static final ResourceLocation BLADE_ITEM_ENTITY_LOC = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
                 classToString(BladeItemEntity.class));
 
-        public static final ResourceLocation BladeStandEntityLoc = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
+        public static final ResourceLocation BLADE_STAND_ENTITY_LOC = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
                 classToString(BladeStandEntity.class));
 
-        public static final ResourceLocation SummonedSwordLoc = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
+        public static final ResourceLocation SUMMONED_SWORD_LOC = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
                 classToString(EntityAbstractSummonedSword.class));
-        public static final ResourceLocation SpiralSwordsLoc = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
+        public static final ResourceLocation SPIRAL_SWORDS_LOC = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
                 classToString(EntitySpiralSwords.class));
 
-        public static final ResourceLocation StormSwordsLoc = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
+        public static final ResourceLocation STORM_SWORDS_LOC = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
                 classToString(EntityStormSwords.class));
 
-        public static final ResourceLocation BlisteringSwordsLoc = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
+        public static final ResourceLocation BLISTERING_SWORDS_LOC = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
                 classToString(EntityBlisteringSwords.class));
 
-        public static final ResourceLocation HeavyRainSwordsLoc = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
+        public static final ResourceLocation HEAVY_RAIN_SWORDS_LOC = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
                 classToString(EntityHeavyRainSwords.class));
 
-        public static final ResourceLocation JudgementCutLoc = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
+        public static final ResourceLocation JUDGEMENT_CUT_LOC = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
                 classToString(EntityJudgementCut.class));
 
-        public static final ResourceLocation SlashEffectLoc = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
+        public static final ResourceLocation SLASH_EFFECT_LOC = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
                 classToString(EntitySlashEffect.class));
 
-        public static final ResourceLocation DriveLoc = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
+        public static final ResourceLocation DRIVE_LOC = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
                 classToString(EntityDrive.class));
 
 

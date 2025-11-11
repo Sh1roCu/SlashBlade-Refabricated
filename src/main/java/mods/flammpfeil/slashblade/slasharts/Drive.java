@@ -38,7 +38,7 @@ public class Drive {
         pos = pos.add(VectorHelper.getVectorForRotation(-90.0F, playerIn.getViewYRot(0)).scale(centerOffset.y))
                 .add(VectorHelper.getVectorForRotation(0, playerIn.getViewYRot(0) + 90).scale(centerOffset.z))
                 .add(lookAngle.scale(centerOffset.z));
-        EntityDrive drive = new EntityDrive(SBEntityTypes.Drive, playerIn.level());
+        EntityDrive drive = new EntityDrive(SBEntityTypes.DRIVE, playerIn.level());
 
         drive.setPos(pos.x, pos.y, pos.z);
         drive.setDamage(damage);

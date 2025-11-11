@@ -44,15 +44,15 @@ public class SlashBladeFabricClient implements ClientModInitializer, ModelLoadin
     }
 
     public static void regisetEntityRenderers() {
-        EntityRendererRegistry.register(SBEntityTypes.SummonedSword, SummonedSwordRenderer::new);
-        EntityRendererRegistry.register(SBEntityTypes.StormSwords, SummonedSwordRenderer::new);
-        EntityRendererRegistry.register(SBEntityTypes.SpiralSwords, SummonedSwordRenderer::new);
-        EntityRendererRegistry.register(SBEntityTypes.BlisteringSwords, SummonedSwordRenderer::new);
-        EntityRendererRegistry.register(SBEntityTypes.HeavyRainSwords, SummonedSwordRenderer::new);
-        EntityRendererRegistry.register(SBEntityTypes.JudgementCut, JudgementCutRenderer::new);
-        EntityRendererRegistry.register(SBEntityTypes.BladeItem, BladeItemEntityRenderer::new);
-        EntityRendererRegistry.register(SBEntityTypes.BladeStand, BladeStandEntityRenderer::new);
-        EntityRendererRegistry.register(SBEntityTypes.SlashEffect, SlashEffectRenderer::new);
-        EntityRendererRegistry.register(SBEntityTypes.Drive, DriveRenderer::new);
+        EntityRendererRegistry.register(SBEntityTypes.SUMMONED_SWORD, SummonedSwordRenderer::new);
+        EntityRendererRegistry.register(SBEntityTypes.STORM_SWORDS, SummonedSwordRenderer::new);
+        EntityRendererRegistry.register(SBEntityTypes.SPIRAL_SWORDS, SummonedSwordRenderer::new);
+        EntityRendererRegistry.register(SBEntityTypes.BLISTERING_SWORDS, SummonedSwordRenderer::new);
+        EntityRendererRegistry.register(SBEntityTypes.HEAVY_RAIN_SWORDS, SummonedSwordRenderer::new);
+        EntityRendererRegistry.register(SBEntityTypes.JUDGEMENT_CUT, JudgementCutRenderer::new);
+        EntityRendererRegistry.register(SBEntityTypes.BLADE_ITEM, BladeItemEntityRenderer::new);
+        EntityRendererRegistry.register(SBEntityTypes.BLADE_STAND, BladeStandEntityRenderer::new);
+        EntityRendererRegistry.register(SBEntityTypes.SLASH_EFFECT, SlashEffectRenderer::new);
+        EntityRendererRegistry.register(SBEntityTypes.DRIVE, DriveRenderer::new);
     }
 }

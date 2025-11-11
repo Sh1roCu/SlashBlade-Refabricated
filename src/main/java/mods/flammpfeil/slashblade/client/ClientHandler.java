@@ -49,31 +49,31 @@ public class ClientHandler {
 
         RankRenderer.getInstance().register();
 
-        ItemProperties.register(SBItems.slashblade, ResourceLocation.parse("slashblade:user"),
+        ItemProperties.register(SBItems.SLASHBLADE, ResourceLocation.parse("slashblade:user"),
                 (itemStack, level, livingEntity, i) -> {
                     BladeModel.user = livingEntity;
                     return 0;
                 });
 
-        ItemProperties.register(SBItems.slashblade_bamboo, ResourceLocation.parse("slashblade:user"),
+        ItemProperties.register(SBItems.SLASHBLADE_BAMBOO, ResourceLocation.parse("slashblade:user"),
                 (itemStack, level, livingEntity, i) -> {
                     BladeModel.user = livingEntity;
                     return 0;
                 });
 
-        ItemProperties.register(SBItems.slashblade_silverbamboo, ResourceLocation.parse("slashblade:user"),
+        ItemProperties.register(SBItems.SLASHBLADE_SILVERBAMBOO, ResourceLocation.parse("slashblade:user"),
                 (itemStack, level, livingEntity, i) -> {
                     BladeModel.user = livingEntity;
                     return 0;
                 });
 
-        ItemProperties.register(SBItems.slashblade_white, ResourceLocation.parse("slashblade:user"),
+        ItemProperties.register(SBItems.SLASHBLADE_WHITE, ResourceLocation.parse("slashblade:user"),
                 (itemStack, level, livingEntity, i) -> {
                     BladeModel.user = livingEntity;
                     return 0;
                 });
 
-        ItemProperties.register(SBItems.slashblade_wood, ResourceLocation.parse("slashblade:user"),
+        ItemProperties.register(SBItems.SLASHBLADE_WOOD, ResourceLocation.parse("slashblade:user"),
                 (itemStack, level, livingEntity, i) -> {
                     BladeModel.user = livingEntity;
                     return 0;
@@ -89,11 +89,11 @@ public class ClientHandler {
     }
 
     private static final Set<Item> blades = new HashSet<>() {{
-        add(SBItems.slashblade);
-        add(SBItems.slashblade_white);
-        add(SBItems.slashblade_wood);
-        add(SBItems.slashblade_silverbamboo);
-        add(SBItems.slashblade_bamboo);
+        add(SBItems.SLASHBLADE);
+        add(SBItems.SLASHBLADE_WHITE);
+        add(SBItems.SLASHBLADE_WOOD);
+        add(SBItems.SLASHBLADE_SILVERBAMBOO);
+        add(SBItems.SLASHBLADE_BAMBOO);
     }};
 
     public static BakedModel Baked(BakedModel bakedModel, ModelModifier.AfterBake.Context context) {

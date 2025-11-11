@@ -242,7 +242,7 @@ public class BlandStandEventHandler {
                 continue;
             }
 
-            ItemStack orb = new ItemStack(SBItems.proudsoul_crystal);
+            ItemStack orb = new ItemStack(SBItems.PROUDSOUL_CRYSTAL);
             CustomData.update(DataComponents.CUSTOM_DATA, orb, tag -> tag.putString("SpecialEffectType", se.toString()));
             stack.shrink(pe.getShrinkCount());
 
@@ -304,7 +304,7 @@ public class BlandStandEventHandler {
                 return;
             }
 
-            ItemStack orb = new ItemStack(SBItems.proudsoul_sphere);
+            ItemStack orb = new ItemStack(SBItems.PROUDSOUL_SPHERE);
             CustomData.update(DataComponents.CUSTOM_DATA, orb, tag -> tag.putString("SpecialAttackType", state.getSlashArtsKey().toString()));
 
             stack.shrink(pe.getShrinkCount());
@@ -366,13 +366,13 @@ public class BlandStandEventHandler {
             }
 
             var probability = 1.0F;
-            if (stack.is(SBItems.proudsoul_tiny)) {
+            if (stack.is(SBItems.PROUDSOUL_TINY)) {
                 probability = 0.25F;
             }
-            if (stack.is(SBItems.proudsoul)) {
+            if (stack.is(SBItems.PROUDSOUL)) {
                 probability = 0.5F;
             }
-            if (stack.is(SBItems.proudsoul_ingot)) {
+            if (stack.is(SBItems.PROUDSOUL_INGOT)) {
                 probability = 0.75F;
             }
 

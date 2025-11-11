@@ -40,7 +40,7 @@ public class WaveEdge {
                 .add(VectorHelper.getVectorForRotation(0, playerIn.getViewYRot(0) + 90).scale(centerOffset.z))
                 .add(playerIn.getLookAngle().scale(centerOffset.z));
         for (int i = 0; i <= count; i += 1) {
-            EntityDrive drive = new EntityDrive(SBEntityTypes.Drive, playerIn.level());
+            EntityDrive drive = new EntityDrive(SBEntityTypes.DRIVE, playerIn.level());
 
             playerIn.level().addFreshEntity(drive);
             float speed = Mth.randomBetween(drive.level().getRandom(), minSpeed, maxSpeed);

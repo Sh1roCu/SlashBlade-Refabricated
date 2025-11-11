@@ -66,7 +66,7 @@ public class JudgementCut {
         }
 
         Vec3 pos = resultPos.orElseGet(() -> eyePos.add(user.getLookAngle().scale(airReach)));
-        EntityJudgementCut jc = new EntityJudgementCut(SBEntityTypes.JudgementCut, worldIn);
+        EntityJudgementCut jc = new EntityJudgementCut(SBEntityTypes.JUDGEMENT_CUT, worldIn);
         jc.setPos(pos.x, pos.y, pos.z);
         jc.setOwner(user);
         CapabilitySlashBlade.getBladeState(stack).ifPresent((state) -> jc.setColor(state.getColorCode()));
@@ -99,7 +99,7 @@ public class JudgementCut {
             if (entity instanceof LivingEntity) {
 
                 ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 10));
-                EntityJudgementCut judgementCut = new EntityJudgementCut(SBEntityTypes.JudgementCut, level);
+                EntityJudgementCut judgementCut = new EntityJudgementCut(SBEntityTypes.JUDGEMENT_CUT, level);
                 judgementCut.setPos(entity.getX(), entity.getY(), entity.getZ());
                 judgementCut.setOwner(owner);
                 CapabilitySlashBlade.getBladeState(stack)

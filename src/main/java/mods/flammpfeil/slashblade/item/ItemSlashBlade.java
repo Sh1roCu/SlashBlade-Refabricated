@@ -272,7 +272,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
                                 .contains(enchantment.location().toString()))
                         .toList();
                 for (int i = 0; i < count; i += 1) {
-                    ItemStack enchanted_soul = new ItemStack(SBItems.proudsoul_tiny);
+                    ItemStack enchanted_soul = new ItemStack(SBItems.PROUDSOUL_TINY);
                     var enchant = user.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(enchantments.get(user.getRandom().nextInt(0, enchantments.size())));
                     if (enchant.isPresent()) {
                         enchanted_soul.enchant(enchant.get(), 1);
@@ -284,7 +284,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
                     state.setProudSoulCount(state.getProudSoulCount() - 100);
                 }
             }
-            ItemStack soul = new ItemStack(SBItems.proudsoul_tiny);
+            ItemStack soul = new ItemStack(SBItems.PROUDSOUL_TINY);
 
             int count = state.getProudSoulCount() >= SlashBladeConfig.MAX_PROUDSOUL_DROP.get() * 100 ?
                     SlashBladeConfig.MAX_PROUDSOUL_DROP.get() : Math.max(1, state.getProudSoulCount() / 100);
@@ -293,7 +293,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
             state.setProudSoulCount(state.getProudSoulCount() - (count * 100));
 
             ItemEntity itementity = new ItemEntity(user.level(), user.getX(), user.getY(), user.getZ(), soul);
-            BladeItemEntity e = new BladeItemEntity(SBEntityTypes.BladeItem, user.level()) {
+            BladeItemEntity e = new BladeItemEntity(SBEntityTypes.BLADE_ITEM, user.level()) {
                 static final String isReleased = "isReleased";
 
                 @Override
@@ -713,7 +713,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
         if (!(entity instanceof BladeItemEntity)) {
             Level world = entity.level();
-            BladeItemEntity e = new BladeItemEntity(SBEntityTypes.BladeItem, world);
+            BladeItemEntity e = new BladeItemEntity(SBEntityTypes.BLADE_ITEM, world);
             e.restoreFrom(entity);
             e.init();
             entity.discard();

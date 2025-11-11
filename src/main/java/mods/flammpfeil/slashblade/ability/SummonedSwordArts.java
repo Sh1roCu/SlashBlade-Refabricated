@@ -129,7 +129,7 @@ public class SummonedSwordArts {
                 boolean sided = counter % 2 == 0;
 
                 EntityAbstractSummonedSword ss = new EntityAbstractSummonedSword(
-                        SBEntityTypes.SummonedSword, worldIn);
+                        SBEntityTypes.SUMMONED_SWORD, worldIn);
 
                 Vec3 pos = sender.getEyePosition(1.0f)
                         .add(VectorHelper.getVectorForRotation(0.0f, sender.getViewYRot(0) + 90).scale(sided ? 1 : -1));
@@ -232,7 +232,7 @@ public class SummonedSwordArts {
 
                 for (int i = 0; i < count; i++) {
                     EntitySpiralSwords ss = new EntitySpiralSwords(
-                            SBEntityTypes.SpiralSwords, worldIn);
+                            SBEntityTypes.SPIRAL_SWORDS, worldIn);
                     ss.setPos(entity.position());
                     ss.setOwner(entity);
                     ss.setColor(state.getColorCode());
@@ -291,7 +291,7 @@ public class SummonedSwordArts {
             }
 
             for (int i = 0; i < count; i++) {
-                EntityStormSwords ss = new EntityStormSwords(SBEntityTypes.StormSwords,
+                EntityStormSwords ss = new EntityStormSwords(SBEntityTypes.STORM_SWORDS,
                         worldIn);
 
                 ss.setPos(entity.position());
@@ -348,7 +348,7 @@ public class SummonedSwordArts {
 
             for (int i = 0; i < count; i++) {
                 EntityBlisteringSwords ss = new EntityBlisteringSwords(
-                        SBEntityTypes.BlisteringSwords, worldIn);
+                        SBEntityTypes.BLISTERING_SWORDS, worldIn);
 
                 ss.setPos(entity.position());
                 ss.setOwner(entity);
@@ -413,7 +413,7 @@ public class SummonedSwordArts {
 
             {// no random pos
                 EntityHeavyRainSwords ss = new EntityHeavyRainSwords(
-                        SBEntityTypes.HeavyRainSwords, worldIn);
+                        SBEntityTypes.HEAVY_RAIN_SWORDS, worldIn);
 
                 ss.setOwner(entity);
                 ss.setColor(state.getColorCode());
@@ -436,7 +436,7 @@ public class SummonedSwordArts {
             for (int i = 0; i < count; i++)
                 for (int l = 0; l < multiplier; l++) {
                     EntityHeavyRainSwords ss = new EntityHeavyRainSwords(
-                            SBEntityTypes.HeavyRainSwords, worldIn);
+                            SBEntityTypes.HEAVY_RAIN_SWORDS, worldIn);
 
                     ss.setOwner(entity);
                     ss.setColor(state.getColorCode());

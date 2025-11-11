@@ -30,10 +30,10 @@ public class SlashBladeItemTags extends FabricTagProvider.ItemTagProvider {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         this.getOrCreateTagBuilder(ItemTags.SWORDS).add(
-                SBItems.slashblade,
-                SBItems.slashblade_bamboo,
-                SBItems.slashblade_silverbamboo,
-                SBItems.slashblade_white,
-                SBItems.slashblade_wood);
+                SBItems.SLASHBLADE,
+                SBItems.SLASHBLADE_BAMBOO,
+                SBItems.SLASHBLADE_SILVERBAMBOO,
+                SBItems.SLASHBLADE_WHITE,
+                SBItems.SLASHBLADE_WOOD);
     }
 }

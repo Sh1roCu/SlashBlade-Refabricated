@@ -51,7 +51,7 @@ public class SakuraEnd {
                 .add(VectorHelper.getVectorForRotation(0, playerIn.getViewYRot(0) + 90).scale(centerOffset.z))
                 .add(playerIn.getLookAngle().scale(centerOffset.z));
 
-        EntitySlashEffect jc = new EntitySlashEffect(SBEntityTypes.SlashEffect, playerIn.level());
+        EntitySlashEffect jc = new EntitySlashEffect(SBEntityTypes.SLASH_EFFECT, playerIn.level());
 
         jc.setPos(pos.x, pos.y, pos.z);
         jc.setOwner(event.getUser());

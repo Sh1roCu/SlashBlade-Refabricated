@@ -26,7 +26,7 @@ public class JEICompat implements IModPlugin {
 
     @Override
     public void registerItemSubtypes(ISubtypeRegistration registration) {
-        registration.registerSubtypeInterpreter(SBItems.slashblade, new ISubtypeInterpreter<>() {
+        registration.registerSubtypeInterpreter(SBItems.SLASHBLADE, new ISubtypeInterpreter<>() {
             @Override
             public @NotNull Object getSubtypeData(ItemStack ingredient, UidContext context) {
                 return syncSlashBlade(ingredient, context);

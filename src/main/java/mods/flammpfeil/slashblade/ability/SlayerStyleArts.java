@@ -272,7 +272,7 @@ public class SlayerStyleArts {
 
     public void createSummonedSwordForAirTrick(ServerPlayer sender, Level worldIn, Entity target, ISlashBladeState state) {
         EntityAbstractSummonedSword ss = new EntityAbstractSummonedSword(
-                SBEntityTypes.SummonedSword, worldIn) {
+                SBEntityTypes.SUMMONED_SWORD, worldIn) {
 
             @Override
             protected void onHitEntity(EntityHitResult entityHitResult) {

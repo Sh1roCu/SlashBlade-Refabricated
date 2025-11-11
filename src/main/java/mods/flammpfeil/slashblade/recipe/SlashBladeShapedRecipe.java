@@ -57,7 +57,7 @@ public class SlashBladeShapedRecipe extends ShapedRecipe {
 
     public static ItemStack getResultBlade(ResourceLocation outputBlade) {
         Item bladeItem = BuiltInRegistries.ITEM.containsKey(outputBlade) ? BuiltInRegistries.ITEM.get(outputBlade)
-                : SBItems.slashblade;
+                : SBItems.SLASHBLADE;
 
         return bladeItem.getDefaultInstance();
     }
@@ -90,7 +90,7 @@ public class SlashBladeShapedRecipe extends ShapedRecipe {
     public @NotNull ItemStack assemble(@NotNull CraftingInput container, HolderLookup.@NotNull Provider provider) {
         var result = this.getResultItem(provider);
         if (!(result.getItem() instanceof ItemSlashBlade)) {
-            result = new ItemStack(SBItems.slashblade);
+            result = new ItemStack(SBItems.SLASHBLADE);
         }
 
         var resultState = CapabilitySlashBlade.getBladeState(result).orElseThrow(NullPointerException::new);

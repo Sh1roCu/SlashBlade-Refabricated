@@ -162,7 +162,7 @@ public class SlashBladeDefinition {
         if (BuiltInRegistries.ITEM.containsKey(this.item))
             return BuiltInRegistries.ITEM.get(this.item);
 
-        return SBItems.slashblade;
+        return SBItems.SLASHBLADE;
     }
 
     public ResourceLocation getCreativeGroup() {
