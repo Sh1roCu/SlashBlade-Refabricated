@@ -92,34 +92,34 @@ public class SlashBlade {
 
     public static class RegistryEvents {
 
-        public static final ResourceLocation BladeItemEntityLoc = new ResourceLocation(SlashBlade.MODID,
+        public static final ResourceLocation BLADE_ITEM_ENTITY_LOC = new ResourceLocation(SlashBlade.MODID,
                 classToString(BladeItemEntity.class));
 
-        public static final ResourceLocation BladeStandEntityLoc = new ResourceLocation(SlashBlade.MODID,
+        public static final ResourceLocation BLADE_STAND_ENTITY_LOC = new ResourceLocation(SlashBlade.MODID,
                 classToString(BladeStandEntity.class));
 
-        public static final ResourceLocation SummonedSwordLoc = new ResourceLocation(SlashBlade.MODID,
+        public static final ResourceLocation SUMMONED_SWORD_LOC = new ResourceLocation(SlashBlade.MODID,
                 classToString(EntityAbstractSummonedSword.class));
 
-        public static final ResourceLocation SpiralSwordsLoc = new ResourceLocation(SlashBlade.MODID,
+        public static final ResourceLocation SPIRAL_SWORDS_LOC = new ResourceLocation(SlashBlade.MODID,
                 classToString(EntitySpiralSwords.class));
 
-        public static final ResourceLocation StormSwordsLoc = new ResourceLocation(SlashBlade.MODID,
+        public static final ResourceLocation STORM_SWORDS_LOC = new ResourceLocation(SlashBlade.MODID,
                 classToString(EntityStormSwords.class));
 
-        public static final ResourceLocation BlisteringSwordsLoc = new ResourceLocation(SlashBlade.MODID,
+        public static final ResourceLocation BLISTERING_SWORDS_LOC = new ResourceLocation(SlashBlade.MODID,
                 classToString(EntityBlisteringSwords.class));
 
-        public static final ResourceLocation HeavyRainSwordsLoc = new ResourceLocation(SlashBlade.MODID,
+        public static final ResourceLocation HEAVY_RAIN_SWORDS_LOC = new ResourceLocation(SlashBlade.MODID,
                 classToString(EntityHeavyRainSwords.class));
 
-        public static final ResourceLocation JudgementCutLoc = new ResourceLocation(SlashBlade.MODID,
+        public static final ResourceLocation JUDGEMENT_CUT_LOC = new ResourceLocation(SlashBlade.MODID,
                 classToString(EntityJudgementCut.class));
 
-        public static final ResourceLocation SlashEffectLoc = new ResourceLocation(SlashBlade.MODID,
+        public static final ResourceLocation SLASH_EFFECT_LOC = new ResourceLocation(SlashBlade.MODID,
                 classToString(EntitySlashEffect.class));
 
-        public static final ResourceLocation DriveLoc = new ResourceLocation(SlashBlade.MODID,
+        public static final ResourceLocation DRIVE_LOC = new ResourceLocation(SlashBlade.MODID,
                 classToString(EntityDrive.class));
 
         private static String classToString(Class<? extends Entity> entityClass) {
