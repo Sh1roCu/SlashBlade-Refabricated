@@ -56,7 +56,7 @@ public class EntityBlisteringSwords extends EntityAbstractSummonedSword {
     @Override
     public void tick() {
         if (!itFired()) {
-            if (getVehicle() == null) {
+            if (getVehicle() == null && this.getOwner() != null) {
                 startRiding(this.getOwner(), true);
             }
         }
@@ -70,17 +70,17 @@ public class EntityBlisteringSwords extends EntityAbstractSummonedSword {
             faceEntityStandby();
             Entity vehicle = getVehicle();
             Vec3 dir = this.getViewVector(0);
-            if (!(vehicle instanceof LivingEntity)) {
+            if (!(vehicle instanceof LivingEntity sender)) {
                 this.shoot(dir.x, dir.y, dir.z, 3.0f, 1.0f);
                 return;
             }
 
-            LivingEntity sender = (LivingEntity) getVehicle();
             this.stopRiding();
 
             this.tickCount = 0;
 
-            Level worldIn = sender.level();
+            Level worldIn;
+            worldIn = sender.level();
             Entity lockTarget = null;
             if (sender instanceof LivingEntity) {
                 lockTarget = CapabilitySlashBlade.getBladeState(sender.getMainHandItem())
@@ -88,7 +88,8 @@ public class EntityBlisteringSwords extends EntityAbstractSummonedSword {
                         .map(state -> state.getTargetEntity(worldIn)).orElse(null);
             }
 
-            Optional<Entity> foundTarget = Stream
+            Optional<Entity> foundTarget;
+            foundTarget = Stream
                     .of(Optional.ofNullable(lockTarget),
                             RayTraceHelper
                                     .rayTrace(sender.level(), sender, sender.getEyePosition(1.0f),
@@ -98,11 +99,13 @@ public class EntityBlisteringSwords extends EntityAbstractSummonedSword {
                                         Entity target = er.getEntity();
 
                                         boolean isMatch = true;
-                                        if (target instanceof LivingEntity)
+                                        if (target instanceof LivingEntity) {
                                             isMatch = TargetSelector.test.test(sender, (LivingEntity) target);
+                                        }
 
-                                        if (target instanceof IShootable)
+                                        if (target instanceof IShootable) {
                                             isMatch = ((IShootable) target).getShooter() != sender;
+                                        }
 
                                         return isMatch;
                                     }).map(r -> ((EntityHitResult) r).getEntity()))
@@ -112,7 +115,8 @@ public class EntityBlisteringSwords extends EntityAbstractSummonedSword {
                     .orElseGet(() -> {
                         Vec3 start = sender.getEyePosition(1.0f);
                         Vec3 end = start.add(sender.getLookAngle().scale(40));
-                        HitResult result = worldIn.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER,
+                        HitResult result;
+                        result = worldIn.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER,
                                 ClipContext.Fluid.NONE, sender));
                         return result.getLocation();
                     });
