@@ -48,7 +48,7 @@ public class SlashBladeShapedRecipeBuilder extends CraftingRecipeBuilder impleme
     }
 
     public static SlashBladeShapedRecipeBuilder shaped(ResourceLocation blade) {
-        return shaped(SBItems.slashblade, 1).blade(blade);
+        return shaped(SBItems.SLASHBLADE, 1).blade(blade);
     }
 
     public static SlashBladeShapedRecipeBuilder shaped(ItemLike result) {

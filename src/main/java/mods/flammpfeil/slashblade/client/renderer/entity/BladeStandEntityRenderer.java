@@ -59,18 +59,18 @@ public class BladeStandEntityRenderer extends ItemFrameRenderer<BladeStandEntity
 
                 matrixStackIn.scale(2, 2, 2);
                 Item type = entity.currentType;
-                if (type == SBItems.bladestand_1) {
+                if (type == SBItems.BLADESTAND_1) {
                     matrixStackIn.mulPose(Axis.XP.rotationDegrees(-90f));
-                } else if (type == SBItems.bladestand_2) {
+                } else if (type == SBItems.BLADESTAND_2) {
                     matrixStackIn.mulPose(Axis.XP.rotationDegrees(-90f));
-                } else if (type == SBItems.bladestand_v) {
+                } else if (type == SBItems.BLADESTAND_V) {
                     matrixStackIn.mulPose(Axis.XP.rotationDegrees(-90f));
-                } else if (type == SBItems.bladestand_s) {
+                } else if (type == SBItems.BLADESTAND_S) {
                     matrixStackIn.mulPose(Axis.XP.rotationDegrees(-90f));
-                } else if (type == SBItems.bladestand_1w) {
+                } else if (type == SBItems.BLADESTAND_1_W) {
                     matrixStackIn.mulPose(Axis.YP.rotationDegrees(180f));
                     matrixStackIn.translate(0, 0, -0.15f);
-                } else if (type == SBItems.bladestand_2w) {
+                } else if (type == SBItems.BLADESTAND_2_W) {
                     matrixStackIn.mulPose(Axis.YP.rotationDegrees(180f));
                     matrixStackIn.translate(0, 0, -0.15f);
                 }
@@ -83,9 +83,9 @@ public class BladeStandEntityRenderer extends ItemFrameRenderer<BladeStandEntity
                 this.renderItem(entity, entity.currentTypeStack, matrixStackIn, bufferIn, packedLightIn);
                 matrixStackIn.popPose();
 
-                if (entity.currentType == SBItems.bladestand_1w || type == SBItems.bladestand_2w) {
+                if (entity.currentType == SBItems.BLADESTAND_1_W || type == SBItems.BLADESTAND_2_W) {
                     matrixStackIn.translate(0, 0, -0.19f);
-                } else if (entity.currentType == SBItems.bladestand_1) {
+                } else if (entity.currentType == SBItems.BLADESTAND_1) {
                 }
                 // blade render
                 matrixStackIn.mulPose(Axis.YP.rotationDegrees(-180f));

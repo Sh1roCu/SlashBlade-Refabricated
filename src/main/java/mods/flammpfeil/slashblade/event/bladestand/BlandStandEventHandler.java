@@ -11,7 +11,6 @@ import mods.flammpfeil.slashblade.recipe.RequestDefinition;
 import mods.flammpfeil.slashblade.recipe.SlashBladeIngredient;
 import mods.flammpfeil.slashblade.registry.SlashArtsRegistry;
 import mods.flammpfeil.slashblade.registry.SpecialEffectsRegistry;
-import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -230,7 +229,7 @@ public class BlandStandEventHandler {
                 continue;
             }
 
-            ItemStack orb = new ItemStack(SBItems.proudsoul_crystal);
+            ItemStack orb = new ItemStack(SBItems.PROUDSOUL_CRYSTAL);
             CompoundTag tag = new CompoundTag();
             tag.putString("SpecialEffectType", se.toString());
             orb.setTag(tag);
@@ -295,7 +294,7 @@ public class BlandStandEventHandler {
                 return;
             }
 
-            ItemStack orb = new ItemStack(SBItems.proudsoul_sphere);
+            ItemStack orb = new ItemStack(SBItems.PROUDSOUL_SPHERE);
             CompoundTag tag = new CompoundTag();
             tag.putString("SpecialAttackType", state.getSlashArtsKey().toString());
             orb.setTag(tag);
@@ -359,13 +358,13 @@ public class BlandStandEventHandler {
             }
 
             var probability = 1.0F;
-            if (stack.is(SBItems.proudsoul_tiny)) {
+            if (stack.is(SBItems.PROUDSOUL_TINY)) {
                 probability = 0.25F;
             }
-            if (stack.is(SBItems.proudsoul)) {
+            if (stack.is(SBItems.PROUDSOUL)) {
                 probability = 0.5F;
             }
-            if (stack.is(SBItems.proudsoul_ingot)) {
+            if (stack.is(SBItems.PROUDSOUL_INGOT)) {
                 probability = 0.75F;
             }
 

@@ -62,7 +62,7 @@ public class SlashBladeSmithingRecipe implements SmithingRecipe {
 
     private static ItemStack getResultBlade(ResourceLocation outputBlade) {
         Item bladeItem = BuiltInRegistries.ITEM.containsKey(outputBlade) ? BuiltInRegistries.ITEM.get(outputBlade)
-                : SBItems.slashblade;
+                : SBItems.SLASHBLADE;
 
         return bladeItem.getDefaultInstance();
     }
@@ -88,7 +88,7 @@ public class SlashBladeSmithingRecipe implements SmithingRecipe {
     public @NotNull ItemStack assemble(@NotNull Container container, @NotNull RegistryAccess access) {
         var result = this.getResultItem(access);
         if (!(result.getItem() instanceof ItemSlashBlade)) {
-            result = new ItemStack(SBItems.slashblade);
+            result = new ItemStack(SBItems.SLASHBLADE);
         }
 
         var resultState = CapabilitySlashBlade.BLADESTATE.maybeGet(result).orElseThrow(NullPointerException::new);

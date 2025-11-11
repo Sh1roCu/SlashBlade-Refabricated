@@ -20,7 +20,7 @@ public class SlashBladeCreativeGroup {
 
     private static final CreativeModeTab SLASHBLADE = FabricItemGroup.builder()
             .title(Component.translatable("itemGroup.slashblade")).icon(() -> {
-                ItemStack stack = new ItemStack(SBItems.slashblade);
+                ItemStack stack = new ItemStack(SBItems.SLASHBLADE);
                 CapabilitySlashBlade.BLADESTATE.maybeGet(stack).ifPresent(s -> {
                     s.setModel(new ResourceLocation(SlashBlade.MODID, "model/named/yamato.obj"));
                     s.setTexture(new ResourceLocation(SlashBlade.MODID, "model/named/yamato.png"));
@@ -28,27 +28,27 @@ public class SlashBladeCreativeGroup {
                 return stack;
             }).displayItems((features, output) -> {
 
-                output.accept(SBItems.proudsoul);
-                output.accept(SBItems.proudsoul_tiny);
-                output.accept(SBItems.proudsoul_ingot);
-                output.accept(SBItems.proudsoul_sphere);
+                output.accept(SBItems.PROUDSOUL);
+                output.accept(SBItems.PROUDSOUL_TINY);
+                output.accept(SBItems.PROUDSOUL_INGOT);
+                output.accept(SBItems.PROUDSOUL_SPHERE);
 
-                output.accept(SBItems.proudsoul_crystal);
-                output.accept(SBItems.proudsoul_trapezohedron);
+                output.accept(SBItems.PROUDSOUL_CRYSTAL);
+                output.accept(SBItems.PROUDSOUL_TRAPEZOHEDRON);
                 fillEnchantmentsSouls(output);
                 fillSASpheres(output);
-                output.accept(SBItems.bladestand_1);
-                output.accept(SBItems.bladestand_1w);
-                output.accept(SBItems.bladestand_2);
-                output.accept(SBItems.bladestand_2w);
-                output.accept(SBItems.bladestand_s);
-                output.accept(SBItems.bladestand_v);
+                output.accept(SBItems.BLADESTAND_1);
+                output.accept(SBItems.BLADESTAND_1_W);
+                output.accept(SBItems.BLADESTAND_2);
+                output.accept(SBItems.BLADESTAND_2_W);
+                output.accept(SBItems.BLADESTAND_S);
+                output.accept(SBItems.BLADESTAND_V);
 
-                output.accept(SBItems.slashblade_wood);
-                output.accept(SBItems.slashblade_bamboo);
-                output.accept(SBItems.slashblade_silverbamboo);
-                output.accept(SBItems.slashblade_white);
-                output.accept(SBItems.slashblade);
+                output.accept(SBItems.SLASHBLADE_WOOD);
+                output.accept(SBItems.SLASHBLADE_BAMBOO);
+                output.accept(SBItems.SLASHBLADE_SILVERBAMBOO);
+                output.accept(SBItems.SLASHBLADE_WHITE);
+                output.accept(SBItems.SLASHBLADE);
 
                 // fillBlades(features, output);
             }).build();
@@ -71,10 +71,10 @@ public class SlashBladeCreativeGroup {
 
     private static void fillEnchantmentsSouls(CreativeModeTab.Output output) {
         BuiltInRegistries.ENCHANTMENT.forEach(enchantment -> {
-            ItemStack blade = new ItemStack(SBItems.slashblade);
+            ItemStack blade = new ItemStack(SBItems.SLASHBLADE);
             //if (blade.canApplyAtEnchantingTable(enchantment)) {
             if (enchantment.canEnchant(blade)) {
-                ItemStack soul = new ItemStack(SBItems.proudsoul_tiny);
+                ItemStack soul = new ItemStack(SBItems.PROUDSOUL_TINY);
                 soul.enchant(enchantment, 1);
                 output.accept(soul);
             }
@@ -87,7 +87,7 @@ public class SlashBladeCreativeGroup {
             ResourceLocation key = SlashArtsRegistry.SLASH_ARTS.getKey(slashArts);
             if (slashArts.equals(SlashArtsRegistry.NONE) || key == null)
                 return;
-            ItemStack sphere = new ItemStack(SBItems.proudsoul_sphere);
+            ItemStack sphere = new ItemStack(SBItems.PROUDSOUL_SPHERE);
             CompoundTag tag = new CompoundTag();
             tag.putString("SpecialAttackType", key.toString());
             sphere.setTag(tag);

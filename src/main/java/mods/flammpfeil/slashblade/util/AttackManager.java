@@ -104,7 +104,7 @@ public class AttackManager {
                 .add(VectorHelper.getVectorForRotation(0, playerIn.getViewYRot(0) + 90).scale(centerOffset.z))
                 .add(playerIn.getLookAngle().scale(centerOffset.z));
 
-        EntitySlashEffect jc = new EntitySlashEffect(SBEntityTypes.SlashEffect, playerIn.level());
+        EntitySlashEffect jc = new EntitySlashEffect(SBEntityTypes.SLASH_EFFECT, playerIn.level());
         jc.setPos(pos.x, pos.y, pos.z);
         jc.setOwner(event.getUser());
         jc.setRotationRoll(event.getRoll());
@@ -155,7 +155,7 @@ public class AttackManager {
     }
 
     public static @NotNull EntitySlashEffect newVoidSlashEffect(LivingEntity living, Vec3 pos) {
-        EntitySlashEffect jc = new EntitySlashEffect(SBEntityTypes.SlashEffect, living.level()) {
+        EntitySlashEffect jc = new EntitySlashEffect(SBEntityTypes.SLASH_EFFECT, living.level()) {
 
             @Override
             public double getDamage() {

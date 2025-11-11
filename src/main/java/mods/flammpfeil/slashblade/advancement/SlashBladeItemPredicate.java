@@ -37,7 +37,7 @@ public class SlashBladeItemPredicate extends ItemPredicate {
         var name = this.getRequest().getName();
         boolean requestCheck = this.getRequest().test(stack);
         if (name.equals(SlashBlade.prefix("none")))
-            return requestCheck && stack.is(SBItems.slashblade);
+            return requestCheck && stack.is(SBItems.SLASHBLADE);
         if (BuiltInRegistries.ITEM.containsKey(name)) {
             return requestCheck && stack.is(BuiltInRegistries.ITEM.get(name));
         }

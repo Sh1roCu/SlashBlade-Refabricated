@@ -39,7 +39,7 @@ public class SlashBladeIngredient implements CustomIngredient {
     }
 
     public static SlashBladeIngredient of(RequestDefinition request) {
-        return new SlashBladeIngredient(Set.of(SBItems.slashblade), request);
+        return new SlashBladeIngredient(Set.of(SBItems.SLASHBLADE), request);
     }
 
     public static SlashBladeIngredient of(ItemLike item, ResourceLocation request) {
@@ -48,7 +48,7 @@ public class SlashBladeIngredient implements CustomIngredient {
     }
 
     public static SlashBladeIngredient of(ResourceLocation request) {
-        return new SlashBladeIngredient(Set.of(SBItems.slashblade),
+        return new SlashBladeIngredient(Set.of(SBItems.SLASHBLADE),
                 RequestDefinition.Builder.newInstance().name(request).build());
     }
 

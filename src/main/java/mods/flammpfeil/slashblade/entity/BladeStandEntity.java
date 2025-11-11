@@ -3,7 +3,6 @@ package mods.flammpfeil.slashblade.entity;
 import cn.sh1rocu.slashblade.api.extension.IEntityAdditionalSpawnData;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
-import mods.flammpfeil.slashblade.data.tag.SlashBladeItemTags;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.init.SBEntityTypes;
 import net.minecraft.core.BlockPos;
@@ -82,7 +81,7 @@ public class BladeStandEntity extends ItemFrame implements IEntityAdditionalSpaw
     }
 
     public static BladeStandEntity createInstanceFromPos(Level worldIn, BlockPos placePos, Direction dir, Item type) {
-        BladeStandEntity e = new BladeStandEntity(SBEntityTypes.BladeStand, worldIn);
+        BladeStandEntity e = new BladeStandEntity(SBEntityTypes.BLADE_STAND, worldIn);
 
         e.pos = placePos;
         e.setDirection(dir);

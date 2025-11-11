@@ -157,7 +157,7 @@ public class SlashBladeDefinition {
         @Nullable
         Item value = BuiltInRegistries.ITEM.get(this.item);
         if (value == null)
-            return SBItems.slashblade;
+            return SBItems.SLASHBLADE;
         return value;
     }
 

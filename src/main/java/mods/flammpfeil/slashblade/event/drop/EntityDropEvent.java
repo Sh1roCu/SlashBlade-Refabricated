@@ -54,7 +54,7 @@ public class EntityDropEvent {
             if (rand.nextFloat() > percent)
                 return;
             ItemEntity itementity = new ItemEntity(entity.level(), x, y, z, blade);
-            BladeItemEntity e = new BladeItemEntity(SBEntityTypes.BladeItem, entity.level());
+            BladeItemEntity e = new BladeItemEntity(SBEntityTypes.BLADE_ITEM, entity.level());
 
             e.restoreFrom(itementity);
             e.init();

@@ -22,7 +22,7 @@ public class BladeStandItem extends HangingEntityItem {
     }
 
     public BladeStandItem(Properties builder, boolean isWallType) {
-        super(SBEntityTypes.BladeStand, builder);
+        super(SBEntityTypes.BLADE_STAND, builder);
 
         this.isWallType = isWallType;
     }

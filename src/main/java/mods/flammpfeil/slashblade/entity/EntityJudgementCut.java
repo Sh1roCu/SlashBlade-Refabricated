@@ -217,7 +217,7 @@ public class EntityJudgementCut extends Projectile implements IShootable {
 
             final int count = 3;
             if (getIsCritical() && 0 < tickCount && tickCount <= count) {
-                EntitySlashEffect jc = new EntitySlashEffect(SBEntityTypes.SlashEffect, this.level());
+                EntitySlashEffect jc = new EntitySlashEffect(SBEntityTypes.SLASH_EFFECT, this.level());
                 jc.absMoveTo(this.getX(), this.getY(), this.getZ(), (360.0f / count) * tickCount + this.seed, 0);
                 jc.setRotationRoll(30);
 
