@@ -34,7 +34,7 @@ public class AcceleratedGroupObject implements IAcceleratedRenderer<Void> {
     public List<Face> faces;
 
     @Unique
-    private final Map<IBufferGraph, IMesh> meshes = new Object2ObjectOpenHashMap<>();
+    private final Map<IBufferGraph, IMesh> slashBladeResharped$meshes = new Object2ObjectOpenHashMap<>();
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true, remap = false)
     public void renderFaces(VertexConsumer tessellator, PoseStack matrixStack, int light, int color, CallbackInfo ci) {
@@ -43,11 +43,12 @@ public class AcceleratedGroupObject implements IAcceleratedRenderer<Void> {
                 && AcceleratedEntityRenderingFeature.shouldUseAcceleratedPipeline()
                 && (CoreFeature.isRenderingLevel()
                 || (CoreFeature.isRenderingGui() && AcceleratedEntityRenderingFeature.shouldAccelerateInGui())
-                || CoreFeature.isRenderingHand())
+                || CoreFeature.isRenderingHand()
+        )
                 && extension.isAccelerated()) {
             ci.cancel();
 
-            if (faces.size() > 0) {
+            if (!faces.isEmpty()) {
                 extension.doRender(this, null,
                         matrixStack.last().pose(),
                         matrixStack.last().normal(),
@@ -72,7 +73,7 @@ public class AcceleratedGroupObject implements IAcceleratedRenderer<Void> {
     ) {
 
         var extension = vertexConsumer.getAccelerated();
-        var mesh = meshes.get(extension);
+        var mesh = slashBladeResharped$meshes.get(extension);
 
         extension.beginTransform(transform, normal);
 
@@ -103,7 +104,7 @@ public class AcceleratedGroupObject implements IAcceleratedRenderer<Void> {
                 .getBuilder()
                 .build(culledMeshCollector);
 
-        meshes.put(extension, mesh);
+        slashBladeResharped$meshes.put(extension, mesh);
         mesh.write(
                 extension,
                 color,
