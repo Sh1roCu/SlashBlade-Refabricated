@@ -514,8 +514,9 @@ public class SlayerStyleArts {
             ((EntityExtension) player).sb$getPersistentData().putFloat(STORE_STEPUP_PATH, stepUp);
             AttributeInstance attribute = player.getAttribute(Attributes.STEP_HEIGHT);
             if (attribute != null) {
+                attribute.removeModifier(STEP_HEIGHT_MOD);
                 AttributeModifier modifier = new AttributeModifier(STEP_HEIGHT_MOD, stepUpBoost - stepUp, AttributeModifier.Operation.ADD_VALUE);
-                attribute.addOrUpdateTransientModifier(modifier);
+                attribute.addTransientModifier(modifier);
             }
         }
     }
@@ -653,8 +654,9 @@ public class SlayerStyleArts {
         if (stepUp < player.maxUpStep()) {
             AttributeInstance attribute = player.getAttribute(Attributes.STEP_HEIGHT);
             if (attribute != null) {
+                attribute.removeModifier(STEP_HEIGHT_MOD);
                 AttributeModifier modifier = new AttributeModifier(STEP_HEIGHT_MOD, stepUp - player.maxUpStep(), AttributeModifier.Operation.ADD_VALUE);
-                attribute.addOrUpdateTransientModifier(modifier);
+                attribute.addTransientModifier(modifier);
             }
         }
     }
