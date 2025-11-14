@@ -730,7 +730,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     @Environment(EnvType.CLIENT)
     @Override
     public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-        return SlashBladeTEISR.INSTANCE;
+        return SlashBladeTEISR.INSTANCE.get();
     }
 
     @Override

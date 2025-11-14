@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.client.renderer;
 
+import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
@@ -32,14 +33,16 @@ import net.minecraft.world.phys.Vec3;
 
 import java.awt.*;
 import java.util.EnumSet;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SlashBladeTEISR extends BlockEntityWithoutLevelRenderer {
 
-    public static final BlockEntityWithoutLevelRenderer INSTANCE = new SlashBladeTEISR(
-            Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-            Minecraft.getInstance().getEntityModels());
+    public static final Supplier<BlockEntityWithoutLevelRenderer> INSTANCE = Suppliers.memoize(() -> {
+        Minecraft client = Minecraft.getInstance();
+        return new SlashBladeTEISR(client.getBlockEntityRenderDispatcher(), client.getEntityModels());
+    });
 
     public SlashBladeTEISR(BlockEntityRenderDispatcher p_172550_, EntityModelSet p_172551_) {
         super(p_172550_, p_172551_);
