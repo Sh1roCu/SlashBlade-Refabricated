@@ -22,15 +22,11 @@ import net.minecraft.server.MinecraftServer;
 
 public class SlashBladeFabric implements ModInitializer {
 
-    private static MinecraftServer server;
-
     public static final HolderLookup.Provider REGISTRY_ACCESS = VanillaRegistries.createLookup();
 
     @Override
     public void onInitialize() {
         SlashBlade.init();
-        ServerLifecycleEvents.SERVER_STARTING.register((server) -> SlashBladeFabric.server = server);
-        ServerLifecycleEvents.SERVER_STOPPED.register((server) -> SlashBladeFabric.server = null);
         ItemGroupEvents.MODIFY_ENTRIES_ALL.register(SlashBladeCreativeGroup::onCreativeTagBuilding);
         BlandStandEventHandler.init();
         LivingDropsEvent.EVENT.register(EntityDropEvent::dropBlade);
@@ -41,10 +37,5 @@ public class SlashBladeFabric implements ModInitializer {
         SlashBladeRegistryEvent.PRE.register(SlashBladeEventHandler::onLoadingBlade);
         SlashBladeEvent.UPDATE.register(WitherEdge::onSlashBladeUpdate);
         SlashBladeEvent.HIT.register(WitherEdge::onSlashBladeHit);
-    }
-
-    @SuppressWarnings("")
-    public static MinecraftServer getServer() {
-        return server;
     }
 }

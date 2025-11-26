@@ -11,8 +11,6 @@ import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.item.SwordType;
 import mods.flammpfeil.slashblade.registry.slashblade.EnchantmentDefinition;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.Util;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
@@ -145,9 +143,7 @@ public class RequestDefinition {
         state.setKillCount(getKillCount());
         state.setRefine(getRefineCount());
 
-        var lookup = FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ?
-                SlashBladeFabric.REGISTRY_ACCESS.lookupOrThrow(Registries.ENCHANTMENT) :
-                SlashBladeFabric.getServer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+        var lookup = SlashBladeFabric.REGISTRY_ACCESS.lookupOrThrow(Registries.ENCHANTMENT);
         this.getEnchantments()
                 .forEach(enchantment -> blade.enchant(lookup.getOrThrow(
                                 ResourceKey.create(Registries.ENCHANTMENT, enchantment.getEnchantmentID())
