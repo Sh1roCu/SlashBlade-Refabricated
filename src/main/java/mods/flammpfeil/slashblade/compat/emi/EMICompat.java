@@ -37,12 +37,6 @@ public class EMICompat implements EmiPlugin {
         registry.addCategory(SLASHBLADE_SMITHING_CATEGORY);
         registry.addCategory(SLASHBLADE_SHAPED_CATEGORY);
 
-        // 不知道为啥1.21不会自动注册拔刀剑的自定义ShapedRecipe
-        findRecipesByType(RecipeType.CRAFTING).stream()
-                .filter(r -> r.value() instanceof SlashBladeShapedRecipe)
-                .map(r -> (SlashBladeShapedRecipe) r.value())
-                .forEach(recipe -> registry.addRecipe(new EmiShapedRecipe(recipe)));
-
         // 注册SlashBlade锻造配方
         HashSet<ResourceLocation> vanillaSmithing = new HashSet<>();
         List<RecipeHolder<SlashBladeSmithingRecipe>> smithingRecipes = findRecipesByType(RecipeType.SMITHING).stream()
