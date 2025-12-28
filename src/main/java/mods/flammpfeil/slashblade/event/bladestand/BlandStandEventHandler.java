@@ -199,11 +199,7 @@ public class BlandStandEventHandler {
         }
 
         CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-        if (data == null)
-            return;
-
-        CompoundTag crystalTag = data.copyTag();
-        if (crystalTag.contains("SpecialEffectType")) {
+        if (data != null && data.copyTag().contains("SpecialEffectType")) {
             return;
         }
 
