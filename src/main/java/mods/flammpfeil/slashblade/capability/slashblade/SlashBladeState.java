@@ -19,9 +19,8 @@ import org.joml.Math;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public class SlashBladeState implements ISlashBladeState {
@@ -334,8 +333,8 @@ public class SlashBladeState implements ISlashBladeState {
     }
 
     @Override
-    public List<ResourceLocation> getSpecialEffects() {
-        List<ResourceLocation> result = new ArrayList<>();
+    public Collection<ResourceLocation> getSpecialEffects() {
+        Collection<ResourceLocation> result = new HashSet<>();
         getBladeState().getList(SPECIAL_EFFECTS, Tag.TAG_STRING).forEach(tag -> {
             ResourceLocation se = ResourceLocation.tryParse(tag.getAsString());
             if (se != null && SpecialEffectsRegistry.SPECIAL_EFFECT.containsKey(se))
@@ -376,6 +375,7 @@ public class SlashBladeState implements ISlashBladeState {
         if (SpecialEffectsRegistry.SPECIAL_EFFECT.containsKey(se)) {
             return getBladeState().getList(SPECIAL_EFFECTS, Tag.TAG_STRING).contains(StringTag.valueOf(se.toString()));
         }
+        getBladeState().getList(SPECIAL_EFFECTS, Tag.TAG_STRING).remove(StringTag.valueOf(se.toString()));
         return false;
     }
 

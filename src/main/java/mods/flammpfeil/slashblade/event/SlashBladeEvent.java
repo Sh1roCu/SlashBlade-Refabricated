@@ -50,6 +50,11 @@ public abstract class SlashBladeEvent extends BaseEvent {
             callback.onBladeStandAttack(event);
         }
     }, HIGHEST, HIGH, Event.DEFAULT_PHASE, LOW, LOWEST);
+    public static final Event<BladeStandTick> BLADE_STAND_TICK = EventFactory.createArrayBacked(BladeStandTick.class, callbacks -> event -> {
+        for (BladeStandTick callback : callbacks) {
+            callback.onBladeStandTick(event);
+        }
+    });
     public static final Event<Hit> HIT = EventFactory.createArrayBacked(Hit.class, callbacks -> event -> {
         for (Hit callback : callbacks) {
             callback.onHit(event);
@@ -204,6 +209,20 @@ public abstract class SlashBladeEvent extends BaseEvent {
 
         public DamageSource getDamageSource() {
             return damageSource;
+        }
+
+    }
+
+    public static class BladeStandTickEvent extends SlashBladeEvent {
+        private final BladeStandEntity bladeStand;
+
+        public BladeStandTickEvent(ItemStack blade, ISlashBladeState state, BladeStandEntity bladeStand) {
+            super(blade, state);
+            this.bladeStand = bladeStand;
+        }
+
+        public BladeStandEntity getBladeStand() {
+            return bladeStand;
         }
 
     }
@@ -406,6 +425,10 @@ public abstract class SlashBladeEvent extends BaseEvent {
 
     public interface BladeStandAttack {
         void onBladeStandAttack(BladeStandAttackEvent event);
+    }
+
+    public interface BladeStandTick {
+        void onBladeStandTick(BladeStandTickEvent event);
     }
 
     public interface Hit {
