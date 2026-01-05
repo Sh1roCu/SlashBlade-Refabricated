@@ -203,8 +203,10 @@ public class SlashBladeTEISR extends BlockEntityWithoutLevelRenderer {
         if (!(stack.getItem() instanceof ItemSlashBladeDetune)) {
             String key = cap.get().getTranslationKey();
             if (!key.isBlank()) {
-                ResourceLocation bladeName =
-                        ResourceLocation.tryParse(key.substring(5).replaceFirst(Pattern.quote("."), Matcher.quoteReplacement(":")));
+                ResourceLocation bladeName = ResourceLocation.tryParse(key.substring(5)
+                        .replaceFirst(Pattern.quote("."), Matcher.quoteReplacement(":"))
+                        // 附属包会存在namespace:path1/path2这种格式的ResourceLocation，需要将'.'替换为'/'
+                        .replace(".", "/"));
                 SlashBladeDefinition slashBladeDefinition = BladeModelManager.getClientSlashBladeRegistry().get(bladeName);
 
                 if (slashBladeDefinition != null)
@@ -223,8 +225,10 @@ public class SlashBladeTEISR extends BlockEntityWithoutLevelRenderer {
         if (!(stack.getItem() instanceof ItemSlashBladeDetune)) {
             String key = cap.get().getTranslationKey();
             if (!key.isBlank()) {
-                ResourceLocation bladeName =
-                        ResourceLocation.tryParse(key.substring(5).replaceFirst(Pattern.quote("."), Matcher.quoteReplacement(":")));
+                ResourceLocation bladeName = ResourceLocation.tryParse(key.substring(5)
+                        .replaceFirst(Pattern.quote("."), Matcher.quoteReplacement(":"))
+                        // 附属包会存在namespace:path1/path2这种格式的ResourceLocation，需要将'.'替换为'/'
+                        .replace(".", "/"));
                 SlashBladeDefinition slashBladeDefinition = BladeModelManager.getClientSlashBladeRegistry().get(bladeName);
                 if (slashBladeDefinition != null)
                     name = slashBladeDefinition.getRenderDefinition().getTextureName().toString();
