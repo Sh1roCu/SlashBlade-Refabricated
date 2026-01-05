@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.client.renderer.model;
 
+import cn.sh1rocu.slashblade.mixin.accessor.MinecraftAccessor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
@@ -69,7 +70,7 @@ public class BladeFirstPersonRender {
             matrixStack.mulPose(Axis.XP.rotationDegrees(-mc.player.getXRot()));
 
             // layer.disableOffhandRendering();
-            float partialTicks = mc.getFrameTime();
+            float partialTicks = mc.isPaused() ? ((MinecraftAccessor) mc).sb$getPausePartialTick() : mc.getFrameTime();
             layer.render(matrixStack, bufferIn, combinedLightIn, mc.player, 0, 0, partialTicks, 0, 0, 0);
         }
     }

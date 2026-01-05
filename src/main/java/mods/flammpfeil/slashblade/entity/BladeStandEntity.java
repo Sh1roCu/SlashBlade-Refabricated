@@ -27,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 
 import javax.annotation.Nullable;
 
@@ -172,5 +173,33 @@ public class BladeStandEntity extends ItemFrame implements IEntityAdditionalSpaw
     @Override
     public boolean survives() {
         return true;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        ItemStack blade = this.getItem();
+        if (blade.isEmpty()) return;
+        ISlashBladeState state = CapabilitySlashBlade.BLADESTATE.maybeGet(blade).orElseThrow(NullPointerException::new);
+        SlashBladeEvent.BLADE_STAND_TICK.invoker().onBladeStandTick(new SlashBladeEvent.BladeStandTickEvent(blade, state, this));
+    }
+
+    @Override
+    protected void recalculateBoundingBox() {
+        if (this.direction != null) {
+            double d0 = 2D / 16D;
+            double d1 = (double) this.pos.getX() + 0.5D - (double) this.direction.getStepX() * d0;
+            double d2 = (double) this.pos.getY() + 0.5D - (double) this.direction.getStepY() * d0;
+            double d3 = (double) this.pos.getZ() + 0.5D - (double) this.direction.getStepZ() * d0;
+            this.setPosRaw(d1, d2, d3);
+            double d4 = this.getWidth();
+            double d5 = this.getHeight();
+            double d6 = this.getWidth();
+
+            d4 /= 32.0D;
+            d5 /= 32.0D;
+            d6 /= 32.0D;
+            this.setBoundingBox(new AABB(d1 - d4, d2 - d5, d3 - d6, d1 + d4, d2 + d5, d3 + d6));
+        }
     }
 }

@@ -33,6 +33,7 @@
     "accessor.AdvancementWidgetAccessor",
     "accessor.EntityRendererAccessor",
     "accessor.LivingEntityRendererAccessor",
+    "accessor.MinecraftAccessor",
     "client.ClientLevelMixin",
     "client.EntityRenderDispatcherMixin",
     "client.ItemEntityRendererMixin",
