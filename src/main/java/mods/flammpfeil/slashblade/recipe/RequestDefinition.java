@@ -18,10 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class RequestDefinition {
 
@@ -101,7 +98,7 @@ public class RequestDefinition {
         });
 
         buffer.writeCollection(this.getDefaultType(), (buf, request) -> {
-            buf.writeUtf(request.name().toLowerCase());
+            buf.writeUtf(request.name().toLowerCase(Locale.ENGLISH));
         });
     }
 
@@ -111,7 +108,7 @@ public class RequestDefinition {
         int kill = buffer.readInt();
         int refine = buffer.readInt();
         var enchantments = buffer.readList((buf) -> new EnchantmentDefinition(buf.readResourceLocation(), buf.readByte()));
-        var types = buffer.readList((buf) -> SwordType.valueOf(buf.readUtf().toUpperCase()));
+        var types = buffer.readList((buf) -> SwordType.valueOf(buf.readUtf().toUpperCase(Locale.ENGLISH)));
         return new RequestDefinition(name, proud, kill, refine, enchantments, types);
     }
 

@@ -5,12 +5,13 @@ import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.EnumSet;
+import java.util.Locale;
 
 public enum SwordType {
     NONE, EDGEFRAGMENT, BROKEN, ENCHANTED, BEWITCHED, FIERCEREDGE, NOSCABBARD, SEALED, UNBREAKABLE, SOULEATER;
 
-    public static final Codec<SwordType> CODEC = Codec.STRING.xmap(string -> SwordType.valueOf(string.toUpperCase()),
-            instance -> instance.name().toLowerCase());
+    public static final Codec<SwordType> CODEC = Codec.STRING.xmap(string -> SwordType.valueOf(string.toUpperCase(Locale.ENGLISH)),
+            instance -> instance.name().toLowerCase(Locale.ENGLISH));
 
     public static EnumSet<SwordType> from(ItemStack itemStackIn) {
         EnumSet<SwordType> types = EnumSet.noneOf(SwordType.class);
