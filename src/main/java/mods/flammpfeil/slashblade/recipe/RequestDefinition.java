@@ -9,6 +9,7 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
+import mods.flammpfeil.slashblade.capability.slashblade.SlashBladeState;
 import mods.flammpfeil.slashblade.item.SwordType;
 import mods.flammpfeil.slashblade.registry.slashblade.EnchantmentDefinition;
 import net.minecraft.Util;
@@ -24,6 +25,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class RequestDefinition {
 
@@ -108,18 +110,18 @@ public class RequestDefinition {
         }).orElseThrow();
     }
 
-    public void toNetwork(FriendlyByteBuf buffer) {
-        buffer.writeResourceLocation(this.getName());
-        buffer.writeInt(this.getProudSoulCount());
-        buffer.writeInt(this.getKillCount());
-        buffer.writeInt(this.getRefineCount());
-        buffer.writeCollection(this.getEnchantments(), (buf, request) -> {
-            buf.writeResourceLocation(request.getEnchantmentID());
-            buf.writeByte(request.getEnchantmentLevel());
+    public static void toNetwork(RegistryFriendlyByteBuf buffer, RequestDefinition request) {
+        buffer.writeResourceLocation(request.getName());
+        buffer.writeInt(request.getProudSoulCount());
+        buffer.writeInt(request.getKillCount());
+        buffer.writeInt(request.getRefineCount());
+        buffer.writeCollection(request.getEnchantments(), (buf, enchantment) -> {
+            buf.writeResourceLocation(enchantment.getEnchantmentID());
+            buf.writeByte(enchantment.getEnchantmentLevel());
         });
 
-        buffer.writeCollection(this.getDefaultType(), (buf, request) -> {
-            buf.writeUtf(request.name().toLowerCase());
+        buffer.writeCollection(request.getDefaultType(), (buf, swordType) -> {
+            buf.writeUtf(swordType.name().toLowerCase(Locale.ENGLISH));
         });
     }
 
@@ -129,13 +131,12 @@ public class RequestDefinition {
         int kill = buffer.readInt();
         int refine = buffer.readInt();
         var enchantments = buffer.readList((buf) -> new EnchantmentDefinition(buf.readResourceLocation(), buf.readByte()));
-        var types = buffer.readList((buf) -> SwordType.valueOf(buf.readUtf().toUpperCase()));
+        var types = buffer.readList((buf) -> SwordType.valueOf(buf.readUtf().toUpperCase(Locale.ENGLISH)));
         return new RequestDefinition(name, proud, kill, refine, enchantments, types);
     }
 
     public void initItemStack(ItemStack blade) {
-        var state = CapabilitySlashBlade.getBladeState(blade).orElse(null);
-        if (state == null) return;
+        var state = CapabilitySlashBlade.getBladeState(blade).orElse(new SlashBladeState(blade));
         state.setNonEmpty();
         if (!this.name.equals(SlashBlade.prefix("none")))
             state.setTranslationKey(getTranslationKey());

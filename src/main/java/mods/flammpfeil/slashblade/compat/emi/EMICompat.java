@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.Blocks;
 import java.util.HashSet;
 import java.util.List;
 
+// FIXME: 拔刀剑在EMI的配方界面渲染不正常，部分作为材料的剑，其SwordType含有broken，但不会渲染为破损状态
 @EmiEntrypoint
 public class EMICompat implements EmiPlugin {
 

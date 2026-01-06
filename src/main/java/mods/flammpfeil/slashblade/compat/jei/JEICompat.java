@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+// FIXME: 拔刀剑在JEI的物品界面渲染不正常，耐久值会改变；在JEI的配方界面渲染正常
 @JeiPlugin
 public class JEICompat implements IModPlugin {
 
