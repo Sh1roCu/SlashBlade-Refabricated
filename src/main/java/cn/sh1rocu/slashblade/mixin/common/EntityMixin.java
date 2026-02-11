@@ -97,13 +97,6 @@ public abstract class EntityMixin implements EntityExtension {
         }
     }
 
-    @Inject(method = "save", at = @At("HEAD"))
-    private void save(CompoundTag nbt, CallbackInfoReturnable<CompoundTag> cir) {
-        if (sb$persistentData != null) {
-            nbt.put("NeoForgeData", sb$persistentData);
-        }
-    }
-
     @Inject(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;readAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
     private void sb$loadPersistentData(CompoundTag nbt, CallbackInfo ci) {
         if (nbt.contains("NeoForgeData", 10)) {
