@@ -31,7 +31,7 @@ public abstract class EntityMixin implements EntityExtension {
 
     @Unique
     private Collection<ItemEntity> sb$captureDrops = null;
-    
+
     @WrapWithCondition(
             method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;",
             at = @At(
@@ -94,13 +94,6 @@ public abstract class EntityMixin implements EntityExtension {
     private void sb$savePersistentData(CompoundTag nbt, CallbackInfoReturnable<CompoundTag> cir) {
         if (this.sb$persistentData != null) {
             nbt.put("ForgeData", this.sb$persistentData.copy());
-        }
-    }
-
-    @Inject(method = "save", at = @At("HEAD"))
-    private void save(CompoundTag nbt, CallbackInfoReturnable<CompoundTag> cir) {
-        if (sb$persistentData != null) {
-            nbt.put("ForgeData", sb$persistentData);
         }
     }
 
