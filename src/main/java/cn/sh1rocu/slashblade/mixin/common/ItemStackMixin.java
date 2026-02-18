@@ -23,7 +23,7 @@ public abstract class ItemStackMixin {
     @Inject(method = "setDamageValue", at = @At("HEAD"), cancellable = true)
     public void sb$itemSetDamage(int damage, CallbackInfo ci) {
         if (getItem() instanceof ItemSlashBladeExtension blade) {
-            blade.setDamage((ItemStack) (Object) this, damage);
+            blade.sb$setDamage((ItemStack) (Object) this, damage);
             ci.cancel();
         }
     }
@@ -31,7 +31,7 @@ public abstract class ItemStackMixin {
     @ModifyArg(method = "hurtAndBreak", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;hurt(ILnet/minecraft/util/RandomSource;Lnet/minecraft/server/level/ServerPlayer;)Z"))
     public <T extends LivingEntity> int sb$modifyBreakAmount(int amount, @Local T entity, @Local Consumer<T> onBroken) {
         if (this.getItem() instanceof ItemSlashBladeExtension blade) {
-            return blade.damageItem((ItemStack) (Object) this, amount, entity, onBroken);
+            return blade.sb$damageItem((ItemStack) (Object) this, amount, entity, onBroken);
         }
         return amount;
     }
@@ -39,14 +39,14 @@ public abstract class ItemStackMixin {
     @Inject(method = "getMaxDamage", at = @At("HEAD"), cancellable = true)
     public void sb$itemMaxDamage(CallbackInfoReturnable<Integer> cir) {
         if (getItem() instanceof ItemSlashBladeExtension blade) {
-            cir.setReturnValue(blade.getMaxDamage((ItemStack) (Object) this));
+            cir.setReturnValue(blade.sb$getMaxDamage((ItemStack) (Object) this));
         }
     }
 
     @Inject(method = "getDamageValue", at = @At("HEAD"), cancellable = true)
     public void sb$itemDamage(CallbackInfoReturnable<Integer> cir) {
         if (getItem() instanceof ItemSlashBladeExtension blade) {
-            cir.setReturnValue(blade.getDamage((ItemStack) (Object) this));
+            cir.setReturnValue(blade.sb$getDamage((ItemStack) (Object) this));
         }
     }
 }

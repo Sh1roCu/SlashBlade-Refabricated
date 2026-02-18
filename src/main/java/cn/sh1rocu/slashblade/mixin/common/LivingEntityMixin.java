@@ -156,7 +156,7 @@ public abstract class LivingEntityMixin extends Entity implements EntityExtensio
     private void sb$swingHand(InteractionHand hand, boolean bl, CallbackInfo ci) {
         ItemStack stack = getItemInHand(hand);
         if (!stack.isEmpty() && stack.getItem() instanceof ItemSlashBladeExtension blade) {
-            if (blade.onEntitySwing(stack, (LivingEntity) (Object) this))
+            if (blade.sb$onEntitySwing(stack, (LivingEntity) (Object) this))
                 ci.cancel();
         }
     }

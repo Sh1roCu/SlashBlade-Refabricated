@@ -45,7 +45,7 @@ public class EnchantmentHelperMixin {
     ) {
         Enchantment enchantment = sb$currentEnchantment;
         if (enchantment != null && stack.getItem() instanceof IEnchantment ex) {
-            return ex.canApplyAtEnchantingTable(stack, enchantment);
+            return ex.sb$canApplyAtEnchantingTable(stack, enchantment);
         }
         return original.call(category, item);
     }

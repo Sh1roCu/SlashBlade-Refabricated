@@ -81,10 +81,10 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+    public boolean sb$canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         if (exEnchantment.contains(enchantment))
             return true;
-        return IEnchantment.super.canApplyAtEnchantingTable(stack, enchantment);
+        return IEnchantment.super.sb$canApplyAtEnchantingTable(stack, enchantment);
     }
 
     @Override
@@ -180,7 +180,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
     }
 
     @Override
-    public boolean onLeftClickEntity(ItemStack itemstack, Player playerIn, Entity entity) {
+    public boolean sb$onLeftClickEntity(ItemStack itemstack, Player playerIn, Entity entity) {
         Optional<ISlashBladeState> stateHolder = CapabilitySlashBlade.BLADESTATE.maybeGet(itemstack)
                 .filter((state) -> !state.onClick());
 
@@ -198,7 +198,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
     public static final String BREAK_ACTION_TIMEOUT = "BreakActionTimeout";
 
     @Override
-    public void setDamage(ItemStack stack, int damage) {
+    public void sb$setDamage(ItemStack stack, int damage) {
         int maxDamage = stack.getMaxDamage();
         if (maxDamage < 0)
             return;
@@ -214,7 +214,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
     }
 
     @Override
-    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
+    public <T extends LivingEntity> int sb$damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
         if (stack.getMaxDamage() <= 0)
             return 0;
 
@@ -506,12 +506,12 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
     // damage ----------------------------------------------------------
 
     @Override
-    public int getDamage(ItemStack stack) {
+    public int sb$getDamage(ItemStack stack) {
         return CapabilitySlashBlade.BLADESTATE.maybeGet(stack).filter(s -> !s.isEmpty()).map(ISlashBladeState::getDamage).orElse(0);
     }
 
     @Override
-    public int getMaxDamage(ItemStack stack) {
+    public int sb$getMaxDamage(ItemStack stack) {
         return CapabilitySlashBlade.BLADESTATE.maybeGet(stack).filter(s -> !s.isEmpty()).map(ISlashBladeState::getMaxDamage).orElse(this.getTier().getUses());
     }
 
@@ -679,7 +679,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
      * @return true = cancel : false = swing
      */
     @Override
-    public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
+    public boolean sb$onEntitySwing(ItemStack stack, LivingEntity entity) {
         return CapabilitySlashBlade.BLADESTATE.maybeGet(stack).filter(s -> s.getLastActionTime() == entity.level().getGameTime())
                 .isEmpty();
     }
@@ -693,7 +693,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
      * 原来的方法替换掉落实体时无法Copy假物品实体相关的NBT，因为获取物品指令是先生成的物品实体再设置的假物品
      */
     @Override
-    public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
+    public boolean sb$onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
         if (!(entity instanceof BladeItemEntity)) {
             Level world = entity.level();
             BladeItemEntity e = new BladeItemEntity(SBEntityTypes.BLADE_ITEM, world);
