@@ -102,7 +102,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     }
 
     @Override
-    public @NotNull ItemAttributeModifiers getDefaultAttributeModifiers(@NotNull ItemStack stack) {
+    public @NotNull ItemAttributeModifiers sb$getDefaultAttributeModifiers(@NotNull ItemStack stack) {
         var builder = ItemAttributeModifiers.builder();
 
         builder.add(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_ID, attackSpeedIn, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
@@ -188,7 +188,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     }
 
     @Override
-    public boolean onLeftClickEntity(ItemStack itemstack, Player playerIn, Entity entity) {
+    public boolean sb$onLeftClickEntity(ItemStack itemstack, Player playerIn, Entity entity) {
         Optional<ISlashBladeState> stateHolder = CapabilitySlashBlade.getBladeState(itemstack)
                 .filter((state) -> !state.onClick());
 
@@ -206,7 +206,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     public static final String BREAK_ACTION_TIMEOUT = "BreakActionTimeout";
 
     @Override
-    public void setDamage(ItemStack stack, int damage) {
+    public void sb$setDamage(ItemStack stack, int damage) {
         int maxDamage = stack.getMaxDamage();
         if (maxDamage < 0)
             return;
@@ -222,7 +222,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     }
 
     @Override
-    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, @Nullable T entity, Consumer<Item> onBroken) {
+    public <T extends LivingEntity> int sb$damageItem(ItemStack stack, int amount, @Nullable T entity, Consumer<Item> onBroken) {
         if (stack.getMaxDamage() <= 0)
             return 0;
 
@@ -524,12 +524,12 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     // damage ----------------------------------------------------------
 
     @Override
-    public int getDamage(ItemStack stack) {
+    public int sb$getDamage(ItemStack stack) {
         return CapabilitySlashBlade.getBladeState(stack).filter(s -> !s.isEmpty()).map(ISlashBladeState::getDamage).orElse(0);
     }
 
     @Override
-    public int getMaxDamage(ItemStack stack) {
+    public int sb$getMaxDamage(ItemStack stack) {
         return CapabilitySlashBlade.getBladeState(stack).filter(s -> !s.isEmpty()).map(ISlashBladeState::getMaxDamage).orElse(this.getTier().getUses());
     }
 
@@ -696,7 +696,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
      * @return true = cancel : false = swing
      */
     @Override
-    public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
+    public boolean sb$onEntitySwing(ItemStack stack, LivingEntity entity) {
         return CapabilitySlashBlade.getBladeState(stack).filter(s -> s.getLastActionTime() == entity.level().getGameTime())
                 .isEmpty();
     }
@@ -710,7 +710,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
      * 原来的方法替换掉落实体时无法Copy假物品实体相关的NBT，因为获取物品指令是先生成的物品实体再设置的假物品
      */
     @Override
-    public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
+    public boolean sb$onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
         if (!(entity instanceof BladeItemEntity)) {
             Level world = entity.level();
             BladeItemEntity e = new BladeItemEntity(SBEntityTypes.BLADE_ITEM, world);

@@ -19,31 +19,31 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 public interface ItemSlashBladeExtension {
-    default boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
+    default boolean sb$onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
         return false;
     }
 
-    default void setDamage(ItemStack stack, int damage) {
+    default void sb$setDamage(ItemStack stack, int damage) {
         stack.set(DataComponents.DAMAGE, Mth.clamp(damage, 0, stack.getMaxDamage()));
     }
 
-    default <T extends LivingEntity> int damageItem(ItemStack stack, int amount, @Nullable T entity, Consumer<Item> onBroken) {
+    default <T extends LivingEntity> int sb$damageItem(ItemStack stack, int amount, @Nullable T entity, Consumer<Item> onBroken) {
         return amount;
     }
 
-    default int getDamage(ItemStack stack) {
+    default int sb$getDamage(ItemStack stack) {
         return Mth.clamp(stack.getOrDefault(DataComponents.DAMAGE, 0), 0, stack.getMaxDamage());
     }
 
-    default int getMaxDamage(ItemStack stack) {
+    default int sb$getMaxDamage(ItemStack stack) {
         return stack.getOrDefault(DataComponents.MAX_DAMAGE, 0);
     }
 
-    default boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
+    default boolean sb$onEntitySwing(ItemStack stack, LivingEntity entity) {
         return false;
     }
 
-    default boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
+    default boolean sb$onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
         return false;
     }
 
@@ -52,7 +52,7 @@ public interface ItemSlashBladeExtension {
 
     Rarity getRarity(ItemStack stack);
 
-    default @NotNull ItemAttributeModifiers getDefaultAttributeModifiers(@NotNull ItemStack stack) {
+    default @NotNull ItemAttributeModifiers sb$getDefaultAttributeModifiers(@NotNull ItemStack stack) {
         return ((Item) this).getDefaultAttributeModifiers();
     }
 }

@@ -33,7 +33,7 @@ public abstract class ItemStackMixin {
     @Inject(method = "setDamageValue", at = @At("HEAD"), cancellable = true)
     private void sb$itemSetDamage(int damage, CallbackInfo ci) {
         if (getItem() instanceof ItemSlashBladeExtension blade) {
-            blade.setDamage((ItemStack) (Object) this, damage);
+            blade.sb$setDamage((ItemStack) (Object) this, damage);
             ci.cancel();
         }
     }
@@ -41,7 +41,7 @@ public abstract class ItemStackMixin {
     @ModifyVariable(method = "hurtAndBreak(ILnet/minecraft/server/level/ServerLevel;Lnet/minecraft/server/level/ServerPlayer;Ljava/util/function/Consumer;)V", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     private int sb$modifyBreakAmount(int amount, @Local(argsOnly = true) ServerPlayer entity, @Local(argsOnly = true) Consumer<Item> onBroken) {
         if (this.getItem() instanceof ItemSlashBladeExtension blade) {
-            return blade.damageItem((ItemStack) (Object) this, amount, entity, onBroken);
+            return blade.sb$damageItem((ItemStack) (Object) this, amount, entity, onBroken);
         }
         return amount;
     }
@@ -49,14 +49,14 @@ public abstract class ItemStackMixin {
     @Inject(method = "getMaxDamage", at = @At("HEAD"), cancellable = true)
     private void sb$itemMaxDamage(CallbackInfoReturnable<Integer> cir) {
         if (getItem() instanceof ItemSlashBladeExtension blade) {
-            cir.setReturnValue(blade.getMaxDamage((ItemStack) (Object) this));
+            cir.setReturnValue(blade.sb$getMaxDamage((ItemStack) (Object) this));
         }
     }
 
     @Inject(method = "getDamageValue", at = @At("HEAD"), cancellable = true)
     private void sb$itemDamage(CallbackInfoReturnable<Integer> cir) {
         if (getItem() instanceof ItemSlashBladeExtension blade) {
-            cir.setReturnValue(blade.getDamage((ItemStack) (Object) this));
+            cir.setReturnValue(blade.sb$getDamage((ItemStack) (Object) this));
         }
     }
 
@@ -70,7 +70,7 @@ public abstract class ItemStackMixin {
     @Inject(method = "<init>(Lnet/minecraft/world/level/ItemLike;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("TAIL"))
     private void sb$initItemStack(ItemLike itemLike, int i, PatchedDataComponentMap patchedDataComponentMap, CallbackInfo ci) {
         if (itemLike.asItem() instanceof ItemSlashBladeExtension blade) {
-            this.set(DataComponents.ATTRIBUTE_MODIFIERS, blade.getDefaultAttributeModifiers((ItemStack) (Object) this));
+            this.set(DataComponents.ATTRIBUTE_MODIFIERS, blade.sb$getDefaultAttributeModifiers((ItemStack) (Object) this));
         }
     }
 }

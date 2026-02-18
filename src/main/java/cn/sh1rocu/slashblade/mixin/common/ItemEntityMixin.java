@@ -19,7 +19,7 @@ public abstract class ItemEntityMixin {
     public void sb$onHeadTick(CallbackInfo ci) {
         ItemStack stack = getItem();
         ItemEntity self = (ItemEntity) (Object) this;
-        if (stack.getItem() instanceof BaseItemExtension extension && extension.onEntityItemUpdate(stack, self)) {
+        if (stack.getItem() instanceof BaseItemExtension extension && extension.sb$onEntityItemUpdate(stack, self)) {
             ci.cancel();
         }
     }
@@ -29,7 +29,7 @@ public abstract class ItemEntityMixin {
     public void sb$tick(CallbackInfo ci) {
         ItemStack stack = this.getItem();
         if (stack.getItem() instanceof ItemSlashBladeExtension blade) {
-            if (blade.onEntityItemUpdate(stack, (ItemEntity) (Object) this))
+            if (blade.sb$onEntityItemUpdate(stack, (ItemEntity) (Object) this))
                 ci.cancel();
         }
     }
