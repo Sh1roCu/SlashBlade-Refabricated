@@ -17,7 +17,9 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
+import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.BakedModel;
@@ -125,7 +127,11 @@ public class ClientHandler {
         return new BladeModel(bakedModel, bakery);
     }
 
-    public static void addLayers(Map<EntityType<?>, EntityRenderer<?>> renderers, Map<String, EntityRenderer<? extends Player>> skinMap) {
+    public static void addLayers(
+            Map<EntityType<?>, EntityRenderer<?>> renderers,
+            Map<String, EntityRenderer<? extends Player>> skinMap,
+            EntityRendererProvider.Context context,
+            EntityModelSet entityModelSet) {
         addPlayerLayer(skinMap, "default");
         addPlayerLayer(skinMap, "slim");
 
