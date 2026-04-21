@@ -95,14 +95,16 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
+    // dependencies of all Porting-Lib modules
+    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:core:3.1.0-beta.79-fix+1.21.1-fix"))
+    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:gametest:3.1.0-beta.79-fix+1.21.1-fix"))
 
-    // PortingLib莫名其妙改成不自动include依赖的其他模块了，减这点包体意义在哪¿
-    // 改就算了，maven不publish完整的jar又是何意¿ 配上这FabricLoom不读取JarInJar的逆天设计，一用一个不吱声
-    // fork了一份，修复了buildSrc导致的gametest模块的逆天bug（需要一个modid为空的mod¿¿），并publish了完整的jar（all）
-    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:all:3.1.0-beta.79-fix+1.21.1"))
-//    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:obj_loader:3.1.0-beta.79+1.21.1"))
-//    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:items:3.1.0-beta.79+1.21.1"))
-//    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:entity:3.1.0-beta.79+1.21.1"))
+    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:obj_loader:3.1.0-beta.79-fix+1.21.1-fix"))
+    // dependencies of obj_loader
+    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:model_loader:3.1.0-beta.79-fix+1.21.1-fix"))
+    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:render_types:3.1.0-beta.79-fix+1.21.1-fix"))
+
+    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:entity:3.1.0-beta.79-fix+1.21.1-fix"))
 
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
     annotationProcessor 'com.google.code.findbugs:jsr305:3.0.2'
