@@ -105,6 +105,8 @@ dependencies {
     modImplementation(include("io.github.fabricators_of_create.Porting-Lib:render_types:3.1.0-beta.79-fix+1.21.1-fix"))
 
     modImplementation(include("io.github.fabricators_of_create.Porting-Lib:entity:3.1.0-beta.79-fix+1.21.1-fix"))
+    // dependencies of entity
+    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:mixin_extensions:3.1.0-beta.79-fix+1.21.1-fix"))
 
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
     annotationProcessor 'com.google.code.findbugs:jsr305:3.0.2'
