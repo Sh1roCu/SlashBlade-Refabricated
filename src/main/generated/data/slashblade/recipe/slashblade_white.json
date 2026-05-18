@@ -19,33 +19,6 @@
     "BG "
   ],
   "result": {
-    "components": {
-      "minecraft:attribute_modifiers": {
-        "modifiers": [
-          {
-            "type": "minecraft:generic.attack_speed",
-            "amount": 0.0,
-            "id": "minecraft:base_attack_speed",
-            "operation": "add_value",
-            "slot": "mainhand"
-          },
-          {
-            "type": "minecraft:player.entity_interaction_range",
-            "amount": 2.5,
-            "id": "slashblade:player_reach_amplifier",
-            "operation": "add_value",
-            "slot": "mainhand"
-          },
-          {
-            "type": "minecraft:generic.attack_damage",
-            "amount": 3.0,
-            "id": "minecraft:base_attack_damage",
-            "operation": "add_value",
-            "slot": "mainhand"
-          }
-        ]
-      }
-    },
     "count": 1,
     "id": "slashblade:slashblade"
   }

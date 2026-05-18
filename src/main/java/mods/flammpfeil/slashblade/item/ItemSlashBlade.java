@@ -432,11 +432,14 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
             (ComboStateRegistry.COMBO_STATE.get(state.getComboSeq()) != null
                     ? ComboStateRegistry.COMBO_STATE.get(state.getComboSeq())
                     : ComboStateRegistry.NONE).holdAction(player);
-            var swordType = SwordType.from(stack);
-            if (state.isBroken() || state.isSealed() || !(swordType.contains(SwordType.ENCHANTED)))
+            int ticks = player.getTicksUsingItem();
+
+            SlashBladeEvent.ChargeActionEvent event = new SlashBladeEvent.ChargeActionEvent(player, ticks, state);
+            SlashBladeEvent.CHARGE_ACTION.invoker().onChargeAction(event);
+            if (event.isCanceled()) {
                 return;
+            }
             if (!player.level().isClientSide()) {
-                int ticks = player.getTicksUsingItem();
                 int fullChargeTicks = state.getFullChargeTicks(player);
                 if (0 < ticks) {
                     if (ticks == fullChargeTicks) {// state.getFullChargeTicks(player)){

@@ -244,6 +244,7 @@ public class EntityJudgementCut extends Projectile implements IShootable {
     }
 
     /*
+     * @Override
      * protected void onHitEntity(EntityRayTraceResult p_213868_1_) { Entity
      * targetEntity = p_213868_1_.getEntity(); float f =
      * (float)this.getMotion().length(); int i = MathHelper.ceil(Math.max((double)f

@@ -9,6 +9,7 @@ import mods.flammpfeil.slashblade.capability.mobeffect.CapabilityMobEffect;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.entity.EntityAbstractSummonedSword;
+import mods.flammpfeil.slashblade.event.ability.SprintMoveEvent;
 import mods.flammpfeil.slashblade.event.handler.InputCommandEvent;
 import mods.flammpfeil.slashblade.init.SBEntityTypes;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
@@ -133,7 +134,12 @@ public class SlayerStyleArts {
         if (!isHandled && sender.onGround() &&
                 current.contains(InputCommand.SPRINT)
                 && current.stream().anyMatch(MOVE_COMMAND::contains)) {
-            isHandled = handleSprintMove(sender, current);
+            SprintMoveEvent sprintEvent = new SprintMoveEvent(sender, current);
+            SprintMoveEvent.EVENT.invoker().post(sprintEvent);
+
+            if (!sprintEvent.isCanceled()) {
+                handleSprintMove(sender, current);
+            }
 
         }
     }
@@ -202,15 +208,15 @@ public class SlayerStyleArts {
         float moveForward = current.contains(InputCommand.FORWARD) ^ current.contains(InputCommand.BACK)
                 ?
                 (current.contains(InputCommand.FORWARD) ?
-                        1.0F :
-                        -1.0F) :
+                 1.0F :
+                 -1.0F) :
                 0.0F;
 
         float moveStrafe = current.contains(InputCommand.LEFT) ^ current.contains(InputCommand.RIGHT)
                 ?
                 (current.contains(InputCommand.LEFT) ?
-                        1.0F :
-                        -1.0F) :
+                 1.0F :
+                 -1.0F) :
                 0.0F;
 
         return new Vec3(moveStrafe, 0, moveForward);
