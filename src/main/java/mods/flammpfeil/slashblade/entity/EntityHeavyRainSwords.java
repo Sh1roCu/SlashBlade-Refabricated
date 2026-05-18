@@ -53,10 +53,8 @@ public class EntityHeavyRainSwords extends EntityAbstractSummonedSword {
     @Override
     public void tick() {
         if (!itFired()) {
-            if (level().isClientSide()) {
-                if (getVehicle() == null && this.getOwner() != null) {
-                    startRiding(this.getOwner(), true);
-                }
+            if (getVehicle() == null && this.getOwner() != null) {
+                startRiding(this.getOwner(), true);
             }
         }
 
