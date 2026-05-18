@@ -19,8 +19,9 @@ import org.joml.Math;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.*;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class SlashBladeState implements ISlashBladeState {
@@ -32,8 +33,14 @@ public class SlashBladeState implements ISlashBladeState {
         setNonEmpty();
     }
 
+    @Override
     public CompoundTag getBladeState() {
         return blade.getOrDefault(CapabilitySlashBlade.BLADESTATE_COMPONENT, CustomData.EMPTY).copyTag();
+    }
+
+    @Override
+    public void setBladeState(CompoundTag tag) {
+        CustomData.set(CapabilitySlashBlade.BLADESTATE_COMPONENT, blade, tag);
     }
 
     private void updateBladeState(Consumer<CompoundTag> consumer) {

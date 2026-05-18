@@ -67,6 +67,8 @@ public interface ISlashBladeState {
 
     CompoundTag getBladeState();
 
+    void setBladeState(CompoundTag tag);
+
     long getLastActionTime();
 
     void setLastActionTime(long lastActionTime);
