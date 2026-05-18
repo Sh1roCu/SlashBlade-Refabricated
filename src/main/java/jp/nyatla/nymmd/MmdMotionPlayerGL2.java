@@ -1,9 +1,6 @@
 package jp.nyatla.nymmd;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import jp.nyatla.nymmd.types.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -199,7 +196,8 @@ public class MmdMotionPlayerGL2 extends MmdMotionPlayer {
             // 頂点インデックスを指定してポリゴン描画
             // GL11.glDrawElements(GL11.GL_TRIANGLES, mt_ptr.indices);
 
-            // Tesselator.getInstance().end();
+            MeshData data = wr.buildOrThrow();
+            BufferUploader.drawWithShader(data);
         }
 
         GL11.glPopClientAttrib();
