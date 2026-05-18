@@ -11,6 +11,11 @@ public abstract class ItemProudSoul extends Item implements BaseItemExtension {
     }
 
     @Override
+    public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
+        return false;
+    }
+
+    @Override
     public boolean isFoil(ItemStack item) {
         return true;
     }

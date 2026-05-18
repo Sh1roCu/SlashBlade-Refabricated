@@ -1,7 +1,7 @@
 package cn.sh1rocu.slashblade.api.extension;
 
 public interface ItemEntityRendererExtension {
-    boolean sb$shouldSpreadItems();
+    boolean shouldSpreadItems();
 
-    boolean sb$shouldBob();
+    boolean shouldBob();
 }

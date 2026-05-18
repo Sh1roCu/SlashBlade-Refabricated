@@ -29,12 +29,12 @@ public class BladeItemEntityRenderer extends ItemEntityRenderer implements ItemE
     }
 
     @Override
-    public boolean sb$shouldSpreadItems() {
+    public boolean shouldSpreadItems() {
         return false;
     }
 
     @Override
-    public boolean sb$shouldBob() {
+    public boolean shouldBob() {
         return false;
     }
 

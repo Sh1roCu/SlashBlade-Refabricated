@@ -3,13 +3,14 @@ package cn.sh1rocu.slashblade.mixin.client;
 import cn.sh1rocu.slashblade.api.extension.ItemEntityRendererExtension;
 import net.minecraft.client.renderer.entity.ItemEntityRenderer;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(ItemEntityRenderer.class)
-public class ItemEntityRendererMixin implements ItemEntityRendererExtension {
+public class ItemEntityRendererMixin {
     @ModifyVariable(method = "render(Lnet/minecraft/world/entity/item/ItemEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/model/ItemTransforms;getTransform(Lnet/minecraft/world/item/ItemDisplayContext;)Lnet/minecraft/client/renderer/block/model/ItemTransform;", ordinal = 0), ordinal = 3)
     private float sb$onlyBobIfRequired(float original) {
         if (sb$shouldBob())
@@ -27,13 +28,19 @@ public class ItemEntityRendererMixin implements ItemEntityRendererExtension {
         }
     }
 
-    @Override
+    @Unique
     public boolean sb$shouldSpreadItems() {
+        if (this instanceof ItemEntityRendererExtension extension) {
+            return extension.shouldSpreadItems();
+        }
         return true;
     }
 
-    @Override
+    @Unique
     public boolean sb$shouldBob() {
+        if (this instanceof ItemEntityRendererExtension extension) {
+            return extension.shouldBob();
+        }
         return true;
     }
 }
