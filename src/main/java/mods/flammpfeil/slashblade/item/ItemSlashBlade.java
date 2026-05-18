@@ -102,7 +102,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     }
 
     @Override
-    public @NotNull ItemAttributeModifiers sb$getDefaultAttributeModifiers(@NotNull ItemStack stack) {
+    public @NotNull ItemAttributeModifiers getDefaultAttributeModifiers(@NotNull ItemStack stack) {
         var builder = ItemAttributeModifiers.builder();
 
         builder.add(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_ID, attackSpeedIn, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);

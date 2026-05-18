@@ -1,18 +1,18 @@
 package cn.sh1rocu.slashblade.mixin.common;
 
 import cn.sh1rocu.slashblade.api.extension.ItemSlashBladeExtension;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
-import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -67,10 +67,33 @@ public abstract class ItemStackMixin {
         }
     }
 
-    @Inject(method = "<init>(Lnet/minecraft/world/level/ItemLike;ILnet/minecraft/core/component/PatchedDataComponentMap;)V", at = @At("TAIL"))
-    private void sb$initItemStack(ItemLike itemLike, int i, PatchedDataComponentMap patchedDataComponentMap, CallbackInfo ci) {
-        if (itemLike.asItem() instanceof ItemSlashBladeExtension blade) {
-            this.set(DataComponents.ATTRIBUTE_MODIFIERS, blade.sb$getDefaultAttributeModifiers((ItemStack) (Object) this));
+    @ModifyExpressionValue(
+            method = "forEachModifier(Lnet/minecraft/world/entity/EquipmentSlotGroup;Ljava/util/function/BiConsumer;)V",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/item/ItemStack;getOrDefault(Lnet/minecraft/core/component/DataComponentType;Ljava/lang/Object;)Ljava/lang/Object;"
+            )
+    )
+    private Object sb$getDefaultAttributeModifiers(Object original) {
+        return sb$modifyAttributes((ItemStack) (Object) this, (ItemAttributeModifiers) original);
+    }
+
+    @ModifyExpressionValue(
+            method = "forEachModifier(Lnet/minecraft/world/entity/EquipmentSlot;Ljava/util/function/BiConsumer;)V",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/item/ItemStack;getOrDefault(Lnet/minecraft/core/component/DataComponentType;Ljava/lang/Object;)Ljava/lang/Object;"
+            )
+    )
+    private Object sb$getDefaultAttributeModifiers_(Object original) {
+        return sb$modifyAttributes((ItemStack) (Object) this, (ItemAttributeModifiers) original);
+    }
+
+    @Unique
+    private static ItemAttributeModifiers sb$modifyAttributes(ItemStack stack, ItemAttributeModifiers original) {
+        if (stack.getItem() instanceof ItemSlashBladeExtension blade) {
+            return blade.getDefaultAttributeModifiers(stack);
         }
+        return original;
     }
 }

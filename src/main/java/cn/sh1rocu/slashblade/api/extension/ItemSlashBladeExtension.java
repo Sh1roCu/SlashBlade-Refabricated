@@ -52,7 +52,5 @@ public interface ItemSlashBladeExtension {
 
     Rarity getRarity(ItemStack stack);
 
-    default @NotNull ItemAttributeModifiers sb$getDefaultAttributeModifiers(@NotNull ItemStack stack) {
-        return ((Item) this).getDefaultAttributeModifiers();
-    }
+    @NotNull ItemAttributeModifiers getDefaultAttributeModifiers(@NotNull ItemStack stack);
 }
