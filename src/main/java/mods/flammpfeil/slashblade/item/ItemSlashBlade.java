@@ -83,10 +83,10 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
     }
 
     @Override
-    public boolean sb$canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         if (exEnchantment.contains(enchantment))
             return true;
-        return IEnchantment.super.sb$canApplyAtEnchantingTable(stack, enchantment);
+        return enchantment.category.canEnchant(stack.getItem());
     }
 
     @Override

@@ -14,7 +14,7 @@ public class EnchantmentMixin {
     private void sb$canApplyAtEnchantingTable(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
         Enchantment self = (Enchantment) (Object) this;
         if (itemStack.getItem() instanceof IEnchantment item) {
-            cir.setReturnValue(item.sb$canApplyAtEnchantingTable(itemStack, self));
+            cir.setReturnValue(item.canApplyAtEnchantingTable(itemStack, self));
         }
     }
 }
