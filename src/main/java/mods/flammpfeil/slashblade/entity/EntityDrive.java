@@ -265,6 +265,7 @@ public class EntityDrive extends EntityAbstractSummonedSword {
         return this.damage;
     }
 
+    @Override
     protected void onHitEntity(EntityHitResult entityHitResult) {
         Entity targetEntity = entityHitResult.getEntity();
         float damageValue = (float) this.getDamage();

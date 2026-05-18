@@ -457,6 +457,7 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
 
     }
 
+    @Override
     protected void onHit(HitResult raytraceResultIn) {
         HitResult.Type type = raytraceResultIn.getType();
         switch (type) {
@@ -471,6 +472,7 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
         }
     }
 
+    @Override
     protected void onHitBlock(BlockHitResult blockraytraceresult) {
         BlockState blockstate = this.level().getBlockState(blockraytraceresult.getBlockPos());
         this.inBlockState = blockstate;
@@ -492,6 +494,7 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
         }
     }
 
+    @Override
     protected void onHitEntity(EntityHitResult entityHitResult) {
         Entity targetEntity = entityHitResult.getEntity();
 
