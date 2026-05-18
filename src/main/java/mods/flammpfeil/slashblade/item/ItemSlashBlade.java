@@ -215,7 +215,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
         state.setDamage(damage);
     }
 
-    private <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
+    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
         if (stack.getMaxDamage() <= 0)
             return 0;
 
