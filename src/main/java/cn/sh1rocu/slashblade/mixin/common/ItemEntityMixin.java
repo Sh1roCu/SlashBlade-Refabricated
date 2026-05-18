@@ -29,7 +29,7 @@ public abstract class ItemEntityMixin {
     public void sb$tick(CallbackInfo ci) {
         ItemStack stack = this.getItem();
         if (stack.getItem() instanceof ItemSlashBladeExtension blade) {
-            if (blade.sb$onEntityItemUpdate(stack, (ItemEntity) (Object) this))
+            if (blade.onEntityItemUpdate(stack, (ItemEntity) (Object) this))
                 ci.cancel();
         }
     }

@@ -41,7 +41,7 @@ public class AttackHelper {
         } else {
             ItemStack stack = player.getMainHandItem();
             return stack.isEmpty() || (stack.getItem() instanceof ItemSlashBladeExtension blade &&
-                    !blade.sb$onLeftClickEntity(stack, player, target));
+                    !blade.onLeftClickEntity(stack, player, target));
         }
     }
 

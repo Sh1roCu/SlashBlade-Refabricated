@@ -7,39 +7,20 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.function.Consumer;
-
 public interface ItemSlashBladeExtension {
-    default boolean sb$onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
-        return false;
-    }
+    boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity);
 
-    default void sb$setDamage(ItemStack stack, int damage) {
-        stack.getOrCreateTag().putInt("Damage", Math.max(0, damage));
-    }
+    void setDamage(ItemStack stack, int damage);
 
-    default <T extends LivingEntity> int sb$damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
-        return amount;
-    }
+    int getDamage(ItemStack stack);
 
-    default int sb$getDamage(ItemStack stack) {
-        return !stack.hasTag() ? 0 : stack.getTag().getInt("Damage");
-    }
+    int getMaxDamage(ItemStack stack);
 
-    default int sb$getMaxDamage(ItemStack stack) {
-        return ((Item) this).getMaxDamage();
-    }
+    boolean onEntitySwing(ItemStack stack, LivingEntity entity);
 
-    default boolean sb$onEntitySwing(ItemStack stack, LivingEntity entity) {
-        return false;
-    }
-
-    default boolean sb$onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
-        return false;
-    }
+    boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity);
 
     @Environment(EnvType.CLIENT)
     BlockEntityWithoutLevelRenderer getCustomRenderer();

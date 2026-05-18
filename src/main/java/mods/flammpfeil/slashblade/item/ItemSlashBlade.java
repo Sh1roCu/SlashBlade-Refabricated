@@ -24,6 +24,7 @@ import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
 import mods.flammpfeil.slashblade.util.InputCommand;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.Minecraft;
@@ -76,8 +77,9 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
     public static final List<Enchantment> exEnchantment = List.of(Enchantments.SOUL_SPEED, Enchantments.POWER_ARROWS,
             Enchantments.FALL_PROTECTION, Enchantments.FIRE_PROTECTION, Enchantments.THORNS);
 
-    public ItemSlashBlade(Tier tier, int attackDamageIn, float attackSpeedIn, Properties builder) {
-        super(tier, attackDamageIn, attackSpeedIn, builder);
+    public ItemSlashBlade(Tier tier, int attackDamageIn, float attackSpeedIn, FabricItemSettings builder) {
+        super(tier, attackDamageIn, attackSpeedIn, builder.customDamage((stack, amount, entity, breakCallback) ->
+                ((ItemSlashBlade) stack.getItem()).damageItem(stack, amount, entity, breakCallback)));
     }
 
     @Override
@@ -180,7 +182,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
     }
 
     @Override
-    public boolean sb$onLeftClickEntity(ItemStack itemstack, Player playerIn, Entity entity) {
+    public boolean onLeftClickEntity(ItemStack itemstack, Player playerIn, Entity entity) {
         Optional<ISlashBladeState> stateHolder = CapabilitySlashBlade.BLADESTATE.maybeGet(itemstack)
                 .filter((state) -> !state.onClick());
 
@@ -198,7 +200,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
     public static final String BREAK_ACTION_TIMEOUT = "BreakActionTimeout";
 
     @Override
-    public void sb$setDamage(ItemStack stack, int damage) {
+    public void setDamage(ItemStack stack, int damage) {
         int maxDamage = stack.getMaxDamage();
         if (maxDamage < 0)
             return;
@@ -213,8 +215,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
         state.setDamage(damage);
     }
 
-    @Override
-    public <T extends LivingEntity> int sb$damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
+    private <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
         if (stack.getMaxDamage() <= 0)
             return 0;
 
@@ -506,12 +507,12 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
     // damage ----------------------------------------------------------
 
     @Override
-    public int sb$getDamage(ItemStack stack) {
+    public int getDamage(ItemStack stack) {
         return CapabilitySlashBlade.BLADESTATE.maybeGet(stack).filter(s -> !s.isEmpty()).map(ISlashBladeState::getDamage).orElse(0);
     }
 
     @Override
-    public int sb$getMaxDamage(ItemStack stack) {
+    public int getMaxDamage(ItemStack stack) {
         return CapabilitySlashBlade.BLADESTATE.maybeGet(stack).filter(s -> !s.isEmpty()).map(ISlashBladeState::getMaxDamage).orElse(this.getTier().getUses());
     }
 
@@ -679,7 +680,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
      * @return true = cancel : false = swing
      */
     @Override
-    public boolean sb$onEntitySwing(ItemStack stack, LivingEntity entity) {
+    public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
         return CapabilitySlashBlade.BLADESTATE.maybeGet(stack).filter(s -> s.getLastActionTime() == entity.level().getGameTime())
                 .isEmpty();
     }
@@ -693,7 +694,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
      * 原来的方法替换掉落实体时无法Copy假物品实体相关的NBT，因为获取物品指令是先生成的物品实体再设置的假物品
      */
     @Override
-    public boolean sb$onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
+    public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
         if (!(entity instanceof BladeItemEntity)) {
             Level world = entity.level();
             BladeItemEntity e = new BladeItemEntity(SBEntityTypes.BLADE_ITEM, world);
