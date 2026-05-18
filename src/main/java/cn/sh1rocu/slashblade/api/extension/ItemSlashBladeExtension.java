@@ -27,10 +27,6 @@ public interface ItemSlashBladeExtension {
         stack.set(DataComponents.DAMAGE, Mth.clamp(damage, 0, stack.getMaxDamage()));
     }
 
-    default <T extends LivingEntity> int sb$damageItem(ItemStack stack, int amount, @Nullable T entity, Consumer<Item> onBroken) {
-        return amount;
-    }
-
     default int sb$getDamage(ItemStack stack) {
         return Mth.clamp(stack.getOrDefault(DataComponents.DAMAGE, 0), 0, stack.getMaxDamage());
     }

@@ -84,7 +84,9 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     protected float attackSpeedIn;
 
     public ItemSlashBlade(Tier tier, int attackDamageIn, float attackSpeedIn, Properties builder) {
-        super(tier, builder);
+        super(tier, builder.customDamage((stack, amount, entity, slot, breakCallback) -> ((ItemSlashBlade) stack.getItem()).damageItem(
+                stack, amount, entity, breakCallback
+        )));
         this.attackDamageIn = attackDamageIn;
         this.attackSpeedIn = attackSpeedIn;
     }
@@ -221,8 +223,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
         state.setDamage(damage);
     }
 
-    @Override
-    public <T extends LivingEntity> int sb$damageItem(ItemStack stack, int amount, @Nullable T entity, Consumer<Item> onBroken) {
+    private <T extends LivingEntity> int damageItem(ItemStack stack, int amount, @Nullable T entity, Runnable onBroken) {
         if (stack.getMaxDamage() <= 0)
             return 0;
 
@@ -241,9 +242,8 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
         }
 
         if (current != cap.isBroken()) {
-            onBroken.accept(stack.getItem());
+            onBroken.run();
             if (entity instanceof ServerPlayer player) {
-                // stack.getShareTag();
                 CriteriaTriggers.CONSUME_ITEM.trigger(player, stack);
             }
 
@@ -257,25 +257,28 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
         return amount;
     }
 
-    public static Consumer<Item> getOnBroken(ItemStack stack, LivingEntity user) {
-        return (item) -> {
-            user.onEquippedItemBroken(item, EquipmentSlot.MAINHAND);
-
+    public static Consumer<LivingEntity> getOnBroken(ItemStack stack) {
+        return (user) -> {
             var state = CapabilitySlashBlade.getBladeState(stack).orElseThrow(NullPointerException::new);
             if (stack.isEnchanted()) {
                 int count = state.getProudSoulCount() >= SlashBladeConfig.MAX_ENCHANTED_PROUDSOUL_DROP.get() * 100 ?
                         SlashBladeConfig.MAX_ENCHANTED_PROUDSOUL_DROP.get() : Math.max(1, state.getProudSoulCount() / 100);
-                List<ResourceKey<Enchantment>> enchantments = user.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).listElementIds()
+                List<Holder.Reference<Enchantment>> enchantments = user.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).listElements()
                         .filter(enchantment ->
-                                stack.canBeEnchantedWith(user.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(enchantment), EnchantingContext.ACCEPTABLE))
+                                stack.canBeEnchantedWith(enchantment, EnchantingContext.ACCEPTABLE) ||
+                                        stack.canBeEnchantedWith(enchantment, EnchantingContext.PRIMARY))
                         .filter(enchantment -> !SlashBladeConfig.NON_DROPPABLE_ENCHANTMENT.get()
-                                .contains(enchantment.location().toString()))
+                                .contains(enchantment.key().location().toString()))
                         .toList();
+                if (enchantments.isEmpty()) {
+                    return;
+                }
+
                 for (int i = 0; i < count; i += 1) {
                     ItemStack enchanted_soul = new ItemStack(SBItems.PROUDSOUL_TINY);
-                    var enchant = user.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(enchantments.get(user.getRandom().nextInt(0, enchantments.size())));
-                    if (enchant.isPresent()) {
-                        enchanted_soul.enchant(enchant.get(), 1);
+                    var enchant = enchantments.get(user.getRandom().nextInt(0, enchantments.size()));
+                    if (enchant != null) {
+                        enchanted_soul.enchant(enchant, 1);
                         ItemEntity itemEntity = new ItemEntity(user.level(), user.getX(), user.getY(), user.getZ(),
                                 enchanted_soul);
                         itemEntity.setDefaultPickUpDelay();
@@ -354,7 +357,10 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
             cs.hitEffect(target, attacker);
             if (attacker.level() instanceof ServerLevel serverLevel) {
                 var serverPlayer = attacker instanceof ServerPlayer sp ? sp : null;
-                stack.hurtAndBreak(1, serverLevel, serverPlayer, ItemSlashBlade.getOnBroken(stack, attacker));
+                stack.hurtAndBreak(1, serverLevel, serverPlayer, item -> {
+                    attacker.onEquippedItemBroken(item, EquipmentSlot.MAINHAND);
+                    ItemSlashBlade.getOnBroken(stack).accept(attacker);
+                });
             }
         });
 
@@ -368,7 +374,10 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
             CapabilitySlashBlade.getBladeState(stack).ifPresent((s) -> {
                 if (entityLiving.level() instanceof ServerLevel serverLevel) {
                     var serverPlayer = entityLiving instanceof ServerPlayer sp ? sp : null;
-                    stack.hurtAndBreak(1, serverLevel, serverPlayer, ItemSlashBlade.getOnBroken(stack, entityLiving));
+                    stack.hurtAndBreak(1, serverLevel, serverPlayer, item -> {
+                        entityLiving.onEquippedItemBroken(item, EquipmentSlot.MAINHAND);
+                        ItemSlashBlade.getOnBroken(stack).accept(entityLiving);
+                    });
                 }
             });
         }
@@ -402,7 +411,10 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
                         else {
                             if (entityLiving.level() instanceof ServerLevel serverLevel) {
                                 var serverPlayer = entityLiving instanceof ServerPlayer sp ? sp : null;
-                                stack.hurtAndBreak(1, serverLevel, serverPlayer, ItemSlashBlade.getOnBroken(stack, entityLiving));
+                                stack.hurtAndBreak(1, serverLevel, serverPlayer, item -> {
+                                    entityLiving.onEquippedItemBroken(item, EquipmentSlot.MAINHAND);
+                                    ItemSlashBlade.getOnBroken(stack).accept(entityLiving);
+                                });
                             }
                         }
                     }

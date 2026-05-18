@@ -38,14 +38,6 @@ public abstract class ItemStackMixin {
         }
     }
 
-    @ModifyVariable(method = "hurtAndBreak(ILnet/minecraft/server/level/ServerLevel;Lnet/minecraft/server/level/ServerPlayer;Ljava/util/function/Consumer;)V", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-    private int sb$modifyBreakAmount(int amount, @Local(argsOnly = true) ServerPlayer entity, @Local(argsOnly = true) Consumer<Item> onBroken) {
-        if (this.getItem() instanceof ItemSlashBladeExtension blade) {
-            return blade.sb$damageItem((ItemStack) (Object) this, amount, entity, onBroken);
-        }
-        return amount;
-    }
-
     @Inject(method = "getMaxDamage", at = @At("HEAD"), cancellable = true)
     private void sb$itemMaxDamage(CallbackInfoReturnable<Integer> cir) {
         if (getItem() instanceof ItemSlashBladeExtension blade) {
