@@ -3,45 +3,27 @@ package cn.sh1rocu.slashblade.api.extension;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Consumer;
 
 public interface ItemSlashBladeExtension {
-    default boolean sb$onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
-        return false;
-    }
+    boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity);
 
-    default void sb$setDamage(ItemStack stack, int damage) {
-        stack.set(DataComponents.DAMAGE, Mth.clamp(damage, 0, stack.getMaxDamage()));
-    }
+    void setDamage(ItemStack stack, int damage);
 
-    default int sb$getDamage(ItemStack stack) {
-        return Mth.clamp(stack.getOrDefault(DataComponents.DAMAGE, 0), 0, stack.getMaxDamage());
-    }
+    int getDamage(ItemStack stack);
 
-    default int sb$getMaxDamage(ItemStack stack) {
-        return stack.getOrDefault(DataComponents.MAX_DAMAGE, 0);
-    }
+    int getMaxDamage(ItemStack stack);
 
-    default boolean sb$onEntitySwing(ItemStack stack, LivingEntity entity) {
-        return false;
-    }
+    boolean onEntitySwing(ItemStack stack, LivingEntity entity);
 
-    default boolean sb$onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
-        return false;
-    }
+    boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity);
 
     @Environment(EnvType.CLIENT)
     BlockEntityWithoutLevelRenderer getCustomRenderer();

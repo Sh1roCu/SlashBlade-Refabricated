@@ -2,9 +2,7 @@ package cn.sh1rocu.slashblade.mixin.common;
 
 import cn.sh1rocu.slashblade.api.extension.ItemSlashBladeExtension;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
@@ -15,11 +13,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.function.Consumer;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
@@ -33,7 +28,7 @@ public abstract class ItemStackMixin {
     @Inject(method = "setDamageValue", at = @At("HEAD"), cancellable = true)
     private void sb$itemSetDamage(int damage, CallbackInfo ci) {
         if (getItem() instanceof ItemSlashBladeExtension blade) {
-            blade.sb$setDamage((ItemStack) (Object) this, damage);
+            blade.setDamage((ItemStack) (Object) this, damage);
             ci.cancel();
         }
     }
@@ -41,14 +36,14 @@ public abstract class ItemStackMixin {
     @Inject(method = "getMaxDamage", at = @At("HEAD"), cancellable = true)
     private void sb$itemMaxDamage(CallbackInfoReturnable<Integer> cir) {
         if (getItem() instanceof ItemSlashBladeExtension blade) {
-            cir.setReturnValue(blade.sb$getMaxDamage((ItemStack) (Object) this));
+            cir.setReturnValue(blade.getMaxDamage((ItemStack) (Object) this));
         }
     }
 
     @Inject(method = "getDamageValue", at = @At("HEAD"), cancellable = true)
     private void sb$itemDamage(CallbackInfoReturnable<Integer> cir) {
         if (getItem() instanceof ItemSlashBladeExtension blade) {
-            cir.setReturnValue(blade.sb$getDamage((ItemStack) (Object) this));
+            cir.setReturnValue(blade.getDamage((ItemStack) (Object) this));
         }
     }
 

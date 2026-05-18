@@ -42,7 +42,7 @@ public abstract class PlayerMixin extends LivingEntity {
     public void sb$itemAttack(Entity targetEntity, CallbackInfo ci) {
         Item item = getMainHandItem().getItem();
         if ((item instanceof ItemSlashBladeExtension blade)) {
-            if (blade.sb$onLeftClickEntity(getMainHandItem(), (Player) (Object) this, targetEntity))
+            if (blade.onLeftClickEntity(getMainHandItem(), (Player) (Object) this, targetEntity))
                 ci.cancel();
         }
     }
