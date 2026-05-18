@@ -54,7 +54,7 @@ public class EntityHeavyRainSwords extends EntityAbstractSummonedSword {
     public void tick() {
         if (!itFired()) {
             if (level().isClientSide()) {
-                if (getVehicle() == null) {
+                if (getVehicle() == null && this.getOwner() != null) {
                     startRiding(this.getOwner(), true);
                 }
             }
@@ -126,14 +126,8 @@ public class EntityHeavyRainSwords extends EntityAbstractSummonedSword {
         super.onHitEntity(entityHitResult);
     }
 
-    int ON_GROUND_LIFE_TIME = 20;
-    int ticksInGround = 0;
-
-    protected void tryDespawn() {
-        ++this.ticksInGround;
-        if (ON_GROUND_LIFE_TIME <= this.ticksInGround) {
-            this.burst();
-        }
-
+    @Override
+    protected int getOnGroundLifeTime() {
+        return 20;
     }
 }

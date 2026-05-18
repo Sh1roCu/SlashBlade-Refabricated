@@ -228,7 +228,11 @@ public interface ISlashBladeState extends Component {
         if (current == null)
             return ComboStateRegistry.getId(ComboStateRegistry.NONE);
 
-        ResourceLocation next = current.getNext(user);
+        var event = new SlashBladeEvent.NextComboEvent(user.getMainHandItem(), this, user, current.getNext(user));
+        SlashBladeEvent.NEXT_COMBO.invoker().onNextCombo(event);
+        ResourceLocation next = event.getNextCombo();
+        if (event.isCanceled())
+            return ComboStateRegistry.getId(ComboStateRegistry.NONE);
         if (!next.equals(ComboStateRegistry.getId(ComboStateRegistry.NONE)) && next.equals(currentloc))
             return ComboStateRegistry.getId(ComboStateRegistry.NONE);
 
@@ -287,9 +291,9 @@ public interface ISlashBladeState extends Component {
 
         ResourceLocation csloc = this.getSlashArts().doArts(type, user);
 
-        SlashBladeEvent.ChargeActionEvent event = new SlashBladeEvent.ChargeActionEvent(user, elapsed, this, csloc,
+        SlashBladeEvent.PerformSlashArtEvent event = new SlashBladeEvent.PerformSlashArtEvent(user, elapsed, this, csloc,
                 type);
-        SlashBladeEvent.CHARGE_ACTION.invoker().onChargeAction(event);
+        SlashBladeEvent.PERFORM_SLASH_ART.invoker().onPerformSlashArt(event);
         if (event.isCanceled()) {
             return ComboStateRegistry.getId(ComboStateRegistry.NONE);
         }
@@ -335,7 +339,11 @@ public interface ISlashBladeState extends Component {
         while (!current.equals(ComboStateRegistry.getId(ComboStateRegistry.NONE)) && currentCS.getTimeoutMS() < time) {
             time -= currentCS.getTimeoutMS();
 
-            current = currentCS.getNextOfTimeout(user);
+            var event = new SlashBladeEvent.NextOfTimeOutComboEvent(user.getMainHandItem(), this, user, currentCS.getNextOfTimeout(user));
+            SlashBladeEvent.NEXT_OF_TIME_OUT_COMBO.invoker().onNextOfTimeOutCombo(event);
+            current = event.getNextCombo();
+            if (event.isCanceled())
+                current = ComboStateRegistry.getId(ComboStateRegistry.NONE);
             this.updateComboSeq(user, current);
         }
 

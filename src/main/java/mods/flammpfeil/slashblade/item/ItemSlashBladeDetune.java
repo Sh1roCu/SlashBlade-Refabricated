@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade.item;
 import mods.flammpfeil.slashblade.capability.slashblade.SimpleSlashBladeState;
 import mods.flammpfeil.slashblade.capability.slashblade.SlashBladeState;
 import mods.flammpfeil.slashblade.init.DefaultResources;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +19,7 @@ public class ItemSlashBladeDetune extends ItemSlashBlade {
     private final float baseAttack;
     private boolean isDestructable;
 
-    public ItemSlashBladeDetune(Tier tier, int attackDamageIn, float attackSpeedIn, Properties builder) {
+    public ItemSlashBladeDetune(Tier tier, int attackDamageIn, float attackSpeedIn, FabricItemSettings builder) {
         super(tier, attackDamageIn, attackSpeedIn, builder);
         this.baseAttack = attackDamageIn;
         this.isDestructable = false;

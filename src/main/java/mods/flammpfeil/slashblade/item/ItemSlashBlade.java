@@ -403,11 +403,14 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
             (ComboStateRegistry.COMBO_STATE.get(state.getComboSeq()) != null
                     ? ComboStateRegistry.COMBO_STATE.get(state.getComboSeq())
                     : ComboStateRegistry.NONE).holdAction(player);
-            var swordType = SwordType.from(stack);
-            if (state.isBroken() || state.isSealed() || !(swordType.contains(SwordType.ENCHANTED)))
+            int ticks = player.getTicksUsingItem();
+
+            SlashBladeEvent.ChargeActionEvent event = new SlashBladeEvent.ChargeActionEvent(player, ticks, state);
+            SlashBladeEvent.CHARGE_ACTION.invoker().onChargeAction(event);
+            if (event.isCanceled()) {
                 return;
+            }
             if (!player.level().isClientSide()) {
-                int ticks = player.getTicksUsingItem();
                 int fullChargeTicks = state.getFullChargeTicks(player);
                 if (0 < ticks) {
                     if (ticks == fullChargeTicks) {// state.getFullChargeTicks(player)){
@@ -585,7 +588,8 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level worldIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level
+            worldIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
         CapabilitySlashBlade.BLADESTATE.maybeGet(stack).ifPresent(s -> {
             this.appendSwordType(stack, worldIn, tooltip, flagIn); // √
             this.appendProudSoulCount(tooltip, stack, s);
@@ -617,7 +621,8 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
     }
 
     @Environment(EnvType.CLIENT)
-    public void appendProudSoulCount(List<Component> tooltip, @NotNull ItemStack stack, @NotNull ISlashBladeState s) {
+    public void appendProudSoulCount(List<Component> tooltip, @NotNull ItemStack
+            stack, @NotNull ISlashBladeState s) {
         int proudsoul = s.getProudSoulCount();
         if (proudsoul > 0) {
             MutableComponent countComponent = Component.translatable("slashblade.tooltip.proud_soul", proudsoul)
@@ -661,7 +666,8 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
     }
 
     @Environment(EnvType.CLIENT)
-    public void appendSwordType(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendSwordType(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag
+            flagIn) {
         var swordType = SwordType.from(stack);
         boolean goldenFlag = swordType.containsAll(List.of(SwordType.SOULEATER, SwordType.FIERCEREDGE));
         if (swordType.contains(SwordType.SEALED)) return;

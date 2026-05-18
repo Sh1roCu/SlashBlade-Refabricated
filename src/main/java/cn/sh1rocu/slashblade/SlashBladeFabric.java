@@ -26,6 +26,7 @@ public class SlashBladeFabric implements ModInitializer {
         RegistryHandler.registerSerializers();
         LivingAttackEvent.ATTACK.register(SlashBladeEventHandler::onLivingOnFire);
         SlashBladeRegistryEvent.PRE.register(SlashBladeEventHandler::onLoadingBlade);
+        SlashBladeEvent.CHARGE_ACTION.register(SlashBladeEventHandler::onChargeBlade);
         SlashBladeEvent.UPDATE.register(WitherEdge::onSlashBladeUpdate);
         SlashBladeEvent.HIT.register(WitherEdge::onSlashBladeHit);
     }
