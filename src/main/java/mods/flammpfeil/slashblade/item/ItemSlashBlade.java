@@ -223,7 +223,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
         state.setDamage(damage);
     }
 
-    private <T extends LivingEntity> int damageItem(ItemStack stack, int amount, @Nullable T entity, Runnable onBroken) {
+    public  <T extends LivingEntity> int damageItem(ItemStack stack, int amount, @Nullable T entity, Runnable onBroken) {
         if (stack.getMaxDamage() <= 0)
             return 0;
 
