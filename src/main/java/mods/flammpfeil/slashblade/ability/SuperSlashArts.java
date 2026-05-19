@@ -126,9 +126,10 @@ public class SuperSlashArts {
             if (!entity.onGround())
                 return;
 
+            ItemStack blade = mainHandItem.copy();
             mainHandItem.hurtAndBreak(mainHandItem.getMaxDamage() / 2, entity.serverLevel(), entity, item -> {
                         entity.onEquippedItemBroken(item, EquipmentSlot.MAINHAND);
-                        ItemSlashBlade.getOnBroken(mainHandItem).accept(entity);
+                        ItemSlashBlade.getOnBroken(blade).accept(entity);
                     }
             );
 

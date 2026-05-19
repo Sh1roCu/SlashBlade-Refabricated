@@ -186,9 +186,10 @@ public class Guard {
         if (!isJust && !isHighRank && victim.level() instanceof ServerLevel serverLevel) {
             slashBlade.ifPresent(s -> {
                 var serverPlayer = victim instanceof ServerPlayer sp ? sp : null;
+                ItemStack blade = stack.copy();
                 stack.hurtAndBreak(1, serverLevel, serverPlayer, item -> {
                     victim.onEquippedItemBroken(item, EquipmentSlot.MAINHAND);
-                    ItemSlashBlade.getOnBroken(stack).accept(victim);
+                    ItemSlashBlade.getOnBroken(blade).accept(victim);
                 });
             });
         }

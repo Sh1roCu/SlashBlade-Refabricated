@@ -223,7 +223,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
         state.setDamage(damage);
     }
 
-    public  <T extends LivingEntity> int damageItem(ItemStack stack, int amount, @Nullable T entity, Runnable onBroken) {
+    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, @Nullable T entity, Runnable onBroken) {
         if (stack.getMaxDamage() <= 0)
             return 0;
 
@@ -357,9 +357,10 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
             cs.hitEffect(target, attacker);
             if (attacker.level() instanceof ServerLevel serverLevel) {
                 var serverPlayer = attacker instanceof ServerPlayer sp ? sp : null;
+                ItemStack blade = stack.copy();
                 stack.hurtAndBreak(1, serverLevel, serverPlayer, item -> {
                     attacker.onEquippedItemBroken(item, EquipmentSlot.MAINHAND);
-                    ItemSlashBlade.getOnBroken(stack).accept(attacker);
+                    ItemSlashBlade.getOnBroken(blade).accept(attacker);
                 });
             }
         });
@@ -374,9 +375,10 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
             CapabilitySlashBlade.getBladeState(stack).ifPresent((s) -> {
                 if (entityLiving.level() instanceof ServerLevel serverLevel) {
                     var serverPlayer = entityLiving instanceof ServerPlayer sp ? sp : null;
+                    ItemStack blade = stack.copy();
                     stack.hurtAndBreak(1, serverLevel, serverPlayer, item -> {
                         entityLiving.onEquippedItemBroken(item, EquipmentSlot.MAINHAND);
-                        ItemSlashBlade.getOnBroken(stack).accept(entityLiving);
+                        ItemSlashBlade.getOnBroken(blade).accept(entityLiving);
                     });
                 }
             });
@@ -411,9 +413,10 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
                         else {
                             if (entityLiving.level() instanceof ServerLevel serverLevel) {
                                 var serverPlayer = entityLiving instanceof ServerPlayer sp ? sp : null;
+                                ItemStack blade = stack.copy();
                                 stack.hurtAndBreak(1, serverLevel, serverPlayer, item -> {
                                     entityLiving.onEquippedItemBroken(item, EquipmentSlot.MAINHAND);
-                                    ItemSlashBlade.getOnBroken(stack).accept(entityLiving);
+                                    ItemSlashBlade.getOnBroken(blade).accept(entityLiving);
                                 });
                             }
                         }
