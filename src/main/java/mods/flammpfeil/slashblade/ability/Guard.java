@@ -21,7 +21,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -186,11 +185,7 @@ public class Guard {
         if (!isJust && !isHighRank && victim.level() instanceof ServerLevel serverLevel) {
             slashBlade.ifPresent(s -> {
                 var serverPlayer = victim instanceof ServerPlayer sp ? sp : null;
-                ItemStack blade = stack.copy();
-                stack.hurtAndBreak(1, serverLevel, serverPlayer, item -> {
-                    victim.onEquippedItemBroken(item, EquipmentSlot.MAINHAND);
-                    ItemSlashBlade.getOnBroken(blade).accept(victim);
-                });
+                stack.hurtAndBreak(1, serverLevel, serverPlayer, ItemSlashBlade.getOnBroken(stack, victim));
             });
         }
 

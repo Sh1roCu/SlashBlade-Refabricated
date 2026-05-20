@@ -14,7 +14,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.timers.TimerCallback;
@@ -126,11 +125,7 @@ public class SuperSlashArts {
             if (!entity.onGround())
                 return;
 
-            ItemStack blade = mainHandItem.copy();
-            mainHandItem.hurtAndBreak(mainHandItem.getMaxDamage() / 2, entity.serverLevel(), entity, item -> {
-                        entity.onEquippedItemBroken(item, EquipmentSlot.MAINHAND);
-                        ItemSlashBlade.getOnBroken(blade).accept(entity);
-                    }
+            mainHandItem.hurtAndBreak(mainHandItem.getMaxDamage() / 2, entity.serverLevel(), entity, ItemSlashBlade.getOnBroken(mainHandItem, entity)
             );
 
             Map.Entry<Integer, ResourceLocation> currentloc = state.resolvCurrentComboStateTicks(entity);
