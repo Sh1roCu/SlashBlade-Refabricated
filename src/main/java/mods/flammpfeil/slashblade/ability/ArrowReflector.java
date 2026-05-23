@@ -33,15 +33,18 @@ public class ArrowReflector {
             Vec3 dir = attacker.getLookAngle();
 
             do {
-                if (!(attacker instanceof LivingEntity))
+                if (!(attacker instanceof LivingEntity living)) {
                     break;
+                }
 
-                ItemStack stack = ((LivingEntity) attacker).getMainHandItem();
+                ItemStack stack = living.getMainHandItem();
 
-                if (stack.isEmpty())
+                if (stack.isEmpty()) {
                     break;
-                if (!(stack.getItem() instanceof ItemSlashBlade))
+                }
+                if (!(stack.getItem() instanceof ItemSlashBlade)) {
                     break;
+                }
 
                 Entity target = CapabilitySlashBlade.BLADESTATE.maybeGet(stack)
                         .map(s -> s.getTargetEntity(attacker.level())).orElse(null);
