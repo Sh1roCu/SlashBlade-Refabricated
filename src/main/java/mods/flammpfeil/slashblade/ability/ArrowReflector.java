@@ -82,7 +82,7 @@ public class ArrowReflector {
             ComboState currentCS = ComboStateRegistry.COMBO_STATE.get(current) != null
                     ? ComboStateRegistry.COMBO_STATE.get(current)
                     : ComboStateRegistry.NONE;
-            if (old != current) {
+            if (!old.equals(current)) {
                 ComboState oldCS = ComboStateRegistry.COMBO_STATE.get(current);
                 ticks -= (int) TimeValueHelper.getTicksFromMSec(oldCS.getTimeoutMS());
             }
