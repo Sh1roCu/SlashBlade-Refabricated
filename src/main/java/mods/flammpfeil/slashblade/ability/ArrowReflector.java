@@ -87,11 +87,16 @@ public class ArrowReflector {
                     : ComboStateRegistry.NONE;
             if (!old.equals(current)) {
                 ComboState oldCS = ComboStateRegistry.COMBO_STATE.get(current);
-                ticks -= (int) TimeValueHelper.getTicksFromMSec(oldCS.getTimeoutMS());
+                if (oldCS != null) {
+                    ticks -= (int) TimeValueHelper.getTicksFromMSec(oldCS.getTimeoutMS());
+                }
             }
 
-            double period = TimeValueHelper.getTicksFromFrames(currentCS.getEndFrame() - currentCS.getStartFrame())
-                    * (1.0f / currentCS.getSpeed());
+            double period = 0;
+            if (currentCS != null) {
+                period = TimeValueHelper.getTicksFromFrames(currentCS.getEndFrame() - currentCS.getStartFrame())
+                        * (1.0f / currentCS.getSpeed());
+            }
 
             if (ticks < period) {
                 List<Entity> founds = TargetSelector.getReflectableEntitiesWithinAABB(attacker);
