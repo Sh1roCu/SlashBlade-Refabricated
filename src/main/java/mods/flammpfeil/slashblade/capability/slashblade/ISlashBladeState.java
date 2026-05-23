@@ -28,10 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.AbstractMap;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public interface ISlashBladeState extends Component {
     // action state
@@ -132,7 +129,7 @@ public interface ISlashBladeState extends Component {
             result = SlashArtsRegistry.SLASH_ARTS.containsKey(key) ? SlashArtsRegistry.SLASH_ARTS.get(key)
                     : SlashArtsRegistry.JUDGEMENT_CUT;
 
-        if (key == SlashArtsRegistry.SLASH_ARTS.getKey(SlashArtsRegistry.NONE))
+        if (Objects.equals(key, SlashArtsRegistry.SLASH_ARTS.getKey(SlashArtsRegistry.NONE)))
             result = null;
 
         return result != null ? result : SlashArtsRegistry.JUDGEMENT_CUT;
@@ -266,7 +263,7 @@ public interface ISlashBladeState extends Component {
             return ComboStateRegistry.getId(ComboStateRegistry.NONE);
 
         // Uninterrupted
-        if (currentloc.getValue() != ComboStateRegistry.getId(ComboStateRegistry.NONE) && current.getNext(user) == currentloc.getValue())
+        if (!currentloc.getValue().equals(ComboStateRegistry.getId(ComboStateRegistry.NONE)) && current.getNext(user).equals(currentloc.getValue()))
             return ComboStateRegistry.getId(ComboStateRegistry.NONE);
 
         int fullChargeTicks = getFullChargeTicks(user);
@@ -301,7 +298,7 @@ public interface ISlashBladeState extends Component {
         csloc = event.getComboState();
         ComboState cs = ComboStateRegistry.COMBO_STATE.get(csloc);
 
-        if (csloc != ComboStateRegistry.getId(ComboStateRegistry.NONE) && !currentloc.getValue().equals(csloc)) {
+        if (!csloc.equals(ComboStateRegistry.getId(ComboStateRegistry.NONE)) && !currentloc.getValue().equals(csloc)) {
 
             if (current.getPriority() > cs.getPriority()) {
                 if (type == SlashArts.ArtsType.Jackpot)

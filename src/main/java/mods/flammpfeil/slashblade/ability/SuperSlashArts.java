@@ -134,7 +134,7 @@ public class SuperSlashArts {
 
             ResourceLocation csloc = state.getSlashArts().doArts(SlashArts.ArtsType.Super, entity);
             ComboState cs = ComboStateRegistry.COMBO_STATE.get(csloc);
-            if (csloc != ComboStateRegistry.getId(ComboStateRegistry.NONE) && !currentloc.getValue().equals(csloc)) {
+            if (!csloc.equals(ComboStateRegistry.getId(ComboStateRegistry.NONE)) && !currentloc.getValue().equals(csloc)) {
 
                 if (currentCS.getPriority() > cs.getPriority()) {
                     state.updateComboSeq(entity, csloc);
