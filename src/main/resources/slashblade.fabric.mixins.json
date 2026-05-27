@@ -31,6 +31,7 @@
     "accessor.LivingEntityRendererAccessor",
     "client.ClientLevelMixin",
     "client.EntityRenderDispatcherMixin",
+    "client.ItemInHandRendererMixin",
     "client.ItemEntityRendererMixin",
     "client.LivingEntityRendererMixin",
     "client.MinecraftMixin",

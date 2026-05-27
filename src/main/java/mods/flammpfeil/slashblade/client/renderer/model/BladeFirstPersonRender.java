@@ -58,17 +58,21 @@ public class BladeFirstPersonRender {
             return;
 
         try (MSAutoCloser msac = MSAutoCloser.pushMatrix(matrixStack)) {
-            PoseStack.Pose me = matrixStack.last();
-            me.pose().identity();
-            me.normal().identity();
 
             float partialTicks = mc.getTimer().getGameTimeDeltaPartialTick(false);
 
-            matrixStack.mulPose(Axis.YP.rotationDegrees(180.0F - Mth.lerp(partialTicks, player.yRotO, player.getYRot())));
-
-            matrixStack.translate(0.0f, 0.0f, -0.5f);
+            matrixStack.translate(-0.12f, 1.0f, 0.5f);
             matrixStack.mulPose(Axis.ZP.rotationDegrees(180.0f));
             matrixStack.scale(1.2F, 1.0F, 1.0F);
+
+            // tilt slightly around Z(roll)
+            matrixStack.mulPose(Axis.ZP.rotationDegrees(-10.0f));
+
+            // rotate slightly outward around Y
+            matrixStack.mulPose(Axis.YP.rotationDegrees(0.9f));
+
+            // tilt slightly around X to lift blade (pitch)
+            matrixStack.mulPose(Axis.XP.rotationDegrees(-10.0F));
 
             // no sync pitch
             matrixStack.mulPose(Axis.XP.rotationDegrees(-Mth.clamp(player.getXRot(), -60F, 10F)));
