@@ -5,6 +5,7 @@ import com.mojang.math.Axis;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.client.renderer.layers.LayerMainBlade;
 import mods.flammpfeil.slashblade.client.renderer.util.MSAutoCloser;
+import mods.flammpfeil.slashblade.compat.iris.IrisCompat;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -64,7 +65,11 @@ public class BladeFirstPersonRender {
 
             float partialTicks = mc.getTimer().getGameTimeDeltaPartialTick(false);
 
-            matrixStack.mulPose(Axis.YP.rotationDegrees(180.0F - Mth.lerp(partialTicks, player.yRotO, player.getYRot())));
+            if (IrisCompat.isUsingRenderPack()) {
+                matrixStack.mulPose(Axis.XP.rotationDegrees(player.getXRot()));
+            } else {
+                matrixStack.mulPose(Axis.YP.rotationDegrees(180.0F - Mth.lerp(partialTicks, player.yRotO, player.getYRot())));
+            }
 
             matrixStack.translate(0.0f, 0.0f, -0.5f);
             matrixStack.mulPose(Axis.ZP.rotationDegrees(180.0f));

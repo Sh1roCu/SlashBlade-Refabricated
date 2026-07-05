@@ -7,6 +7,7 @@ import mods.flammpfeil.slashblade.ability.LockOnManager;
 import mods.flammpfeil.slashblade.client.ClientHandler;
 import mods.flammpfeil.slashblade.client.renderer.entity.*;
 import mods.flammpfeil.slashblade.client.renderer.event.PreloadedModelEvent;
+import mods.flammpfeil.slashblade.compat.iris.IrisCompat;
 import mods.flammpfeil.slashblade.event.handler.BlockPickCanceller;
 import mods.flammpfeil.slashblade.event.handler.MoveInputHandler;
 import mods.flammpfeil.slashblade.init.SBEntityTypes;
@@ -31,6 +32,8 @@ public class SlashBladeFabricClient implements ClientModInitializer, ModelLoadin
                 BuiltinItemRendererRegistry.INSTANCE.register(clientEx,
                         (stack, mode, matrices, vertexConsumers, light, overlay) ->
                                 ((ItemSlashBladeExtension) clientEx).getCustomRenderer().renderByItem(stack, mode, matrices, vertexConsumers, light, overlay)));
+
+        IrisCompat.init();
 
         EntityAddedLayerCallback.EVENT.register(ClientHandler::addLayers);
         ClientTickEvents.END_CLIENT_TICK.register(MoveInputHandler::onPlayerPostTick);

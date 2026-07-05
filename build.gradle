@@ -144,6 +144,12 @@ dependencies {
     compileOnly "org.projectlombok:lombok:1.18.38"
     annotationProcessor "org.projectlombok:lombok:1.18.38"
     modImplementation "maven.modrinth:accrelatedrendering-refabricated:1.0.5-1.21.1-fabric.1"
+
+    modRuntimeOnly "maven.modrinth:sodium:mc1.21.1-0.6.13-fabric"
+    modImplementation "maven.modrinth:iris:1.8.8+1.21.1-fabric"
+    runtimeOnly "org.antlr:antlr4-runtime:4.13.1"
+    runtimeOnly "io.github.douira:glsl-transformer:2.0.1"
+    runtimeOnly "org.anarres:jcpp:1.4.14"
 }
 
 processResources {
