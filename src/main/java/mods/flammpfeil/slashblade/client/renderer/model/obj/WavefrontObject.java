@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.opengl.GL11;
 
 import java.io.BufferedReader;
@@ -46,7 +46,7 @@ public class WavefrontObject {
     private GroupObject currentGroupObject;
     private final String fileName;
 
-    public WavefrontObject(ResourceLocation resource) throws ModelFormatException {
+    public WavefrontObject(Identifier resource) throws ModelFormatException {
         this.fileName = resource.toString();
 
         try {

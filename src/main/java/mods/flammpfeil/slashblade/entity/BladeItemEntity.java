@@ -9,15 +9,18 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
 
 public class BladeItemEntity extends ItemEntity implements EntityExtension {
     private static final EntityDataAccessor<String> DATA_MODEL = SynchedEntityData.defineId(BladeItemEntity.class,
@@ -36,32 +39,34 @@ public class BladeItemEntity extends ItemEntity implements EntityExtension {
         builder.define(DATA_TEXTURE, DefaultResources.resourceDefaultTexture.toString());
     }
 
-    public ResourceLocation getModel() {
-        return ResourceLocation.tryParse(this.getEntityData().get(DATA_MODEL));
+    public Identifier getModel() {
+        return Identifier.tryParse(this.getEntityData().get(DATA_MODEL));
     }
 
-    public void setModel(ResourceLocation model) {
+    public void setModel(Identifier model) {
         this.getEntityData().set(DATA_MODEL, model.toString());
     }
 
-    public ResourceLocation getTexture() {
-        return ResourceLocation.tryParse(this.getEntityData().get(DATA_TEXTURE));
+    public Identifier getTexture() {
+        return Identifier.tryParse(this.getEntityData().get(DATA_TEXTURE));
     }
 
-    public void setTexture(ResourceLocation texture) {
+    public void setTexture(Identifier texture) {
         this.getEntityData().set(DATA_TEXTURE, texture.toString());
     }
 
     public void init() {
         this.setInvulnerable(true);
 
-        CompoundTag compoundnbt = this.saveWithoutId(new CompoundTag());
+        var output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, this.registryAccess());
+        this.saveWithoutId(output);
+        CompoundTag compoundnbt = output.buildResult();
         compoundnbt.remove("Dimension");
         compoundnbt.putShort("Health", (short) 100);
-        if (compoundnbt.getShort("PickupDelay") != (short) 32767) {
+        if (compoundnbt.getShortOr("PickupDelay", (short) 0) != (short) 32767) {
             compoundnbt.putShort("Age", Short.MIN_VALUE);
         }
-        this.load(compoundnbt);
+        this.load(TagValueInput.create(ProblemReporter.DISCARDING, this.registryAccess(), compoundnbt));
     }
 
     @Override
@@ -106,7 +111,7 @@ public class BladeItemEntity extends ItemEntity implements EntityExtension {
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource ds) {
+    public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource ds) {
         super.causeFallDamage(distance, damageMultiplier, ds);
 
         int i = Mth.ceil(distance);

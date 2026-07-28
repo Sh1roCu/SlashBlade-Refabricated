@@ -11,9 +11,7 @@
         "name": "slashblade:agito_rust"
       }
     },
-    "S": {
-      "item": "slashblade:proudsoul"
-    }
+    "S": "slashblade:proudsoul"
   },
   "pattern": [
     " S ",
@@ -21,7 +19,6 @@
     " S "
   ],
   "result": {
-    "count": 1,
     "id": "slashblade:slashblade"
   }
 }

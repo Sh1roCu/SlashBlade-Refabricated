@@ -1,14 +1,14 @@
 package mods.flammpfeil.slashblade.capability.inputstate;
 
-import org.ladysnake.cca.api.v3.component.Component;
 import mods.flammpfeil.slashblade.event.Scheduler;
 import mods.flammpfeil.slashblade.util.InputCommand;
 import net.minecraft.world.entity.LivingEntity;
+import org.ladysnake.cca.api.v8.component.CardinalComponent;
 
 import java.util.EnumMap;
 import java.util.EnumSet;
 
-public interface IInputState extends Component {
+public interface IInputState extends CardinalComponent {
     EnumSet<InputCommand> getCommands();
 
     Scheduler getScheduler();

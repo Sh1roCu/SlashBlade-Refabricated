@@ -1,15 +1,9 @@
 {
   "type": "slashblade:proudsoul",
   "ingredients": [
-    {
-      "item": "slashblade:proudsoul"
-    },
-    {
-      "item": "slashblade:proudsoul"
-    },
-    {
-      "item": "minecraft:iron_ingot"
-    }
+    "slashblade:proudsoul",
+    "slashblade:proudsoul",
+    "minecraft:iron_ingot"
   ],
   "result": {
     "id": "slashblade:proudsoul_ingot"

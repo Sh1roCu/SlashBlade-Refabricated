@@ -2,16 +2,13 @@ package mods.flammpfeil.slashblade.entity;
 
 import cn.sh1rocu.slashblade.api.extension.EntityExtension;
 import cn.sh1rocu.slashblade.util.PotionUtils;
-import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
+import cn.sh1rocu.slashblade.util.SoundUtil;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import mods.flammpfeil.slashblade.ability.StunManager;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.util.AttackManager;
 import mods.flammpfeil.slashblade.util.EnumSetConverter;
-import mods.flammpfeil.slashblade.util.NBTHelper;
 import mods.flammpfeil.slashblade.util.TargetSelector;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
@@ -20,7 +17,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -41,6 +38,8 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -125,29 +124,37 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
+    public void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
 
-        NBTHelper.getNBTCoupler(compound).put("Color", this.getColor()).put("life", (short) this.ticksInGround)
-                .put("inBlockState", (this.inBlockState != null ? NbtUtils.writeBlockState(this.inBlockState) : null))
-                .put("inGround", this.inGround).put("damage", this.damage).put("crit", this.getIsCritical())
-                .put("clip", this.isNoClip()).put("PierceLevel", this.getPierce()).put("model", this.getModelName())
-                .put("Delay", this.getDelay());
+        output.putInt("Color", this.getColor());
+        output.putInt("life", this.ticksInGround);
+        output.storeNullable("inBlockState", CompoundTag.CODEC, (this.inBlockState != null ? NbtUtils.writeBlockState(this.inBlockState) : null));
+        output.putBoolean("inGround", this.inGround);
+        output.putDouble("damage", this.damage);
+        output.putBoolean("crit", this.getIsCritical());
+        output.putBoolean("clip", this.isNoClip());
+        output.putByte("PierceLevel", this.getPierce());
+        output.putString("model", this.getModelName());
+        output.putInt("Delay", this.getDelay());
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
+    public void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
 
-        NBTHelper.getNBTCoupler(compound).get("Color", this::setColor)
-                .get("life", ((Integer v) -> this.ticksInGround = v))
-                .get("inBlockState",
-                        ((CompoundTag v) -> this.inBlockState = NbtUtils
-                                .readBlockState(this.level().holderLookup(Registries.BLOCK), v)))
-                .get("inGround", ((Boolean v) -> this.inGround = v))
-                .get("damage", ((Double v) -> this.damage = v), this.damage).get("crit", this::setIsCritical)
-                .get("clip", this::setNoClip).get("PierceLevel", this::setPierce).get("model", this::setModelName)
-                .get("Delay", this::setDelay);
+        this.setColor(input.getIntOr("Color", 0x3333FF));
+        this.ticksInGround = input.getIntOr("life", 0);
+        input.read("inBlockState", CompoundTag.CODEC).ifPresent(tag ->
+                this.inBlockState = NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK), tag)
+        );
+        this.inGround = input.getBooleanOr("inGround", false);
+        this.damage = input.getDoubleOr("damage", 0);
+        this.setIsCritical(input.getBooleanOr("crit", false));
+        this.setNoClip(input.getBooleanOr("clip", false));
+        this.setPierce(input.getByteOr("PierceLevel", (byte) 0));
+        this.setModelName(input.getStringOr("model", defaultModelName));
+        this.setDelay(input.getIntOr("Delay", 0));
     }
 
     @Override
@@ -167,7 +174,6 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public boolean shouldRenderAtSqrDistance(double distance) {
         double d0 = this.getBoundingBox().getSize() * 10.0D;
         if (Double.isNaN(d0)) {
@@ -179,23 +185,18 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public void lerpTo(double x, double y, double z, float yaw, float pitch, int i) {
-        this.setPos(x, y, z);
-        this.setRot(yaw, pitch);
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void lerpMotion(double x, double y, double z) {
-        this.setDeltaMovement(x, y, z);
+    public void lerpMotion(Vec3 movement) {
+        this.setDeltaMovement(movement);
         if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
+            double x = movement.x;
+            double y = movement.y;
+            double z = movement.z;
             float f = Mth.sqrt((float) (x * x + z * z));
             this.setXRot((float) (Mth.atan2(y, f) * (double) (180F / (float) Math.PI)));
             this.setYRot((float) (Mth.atan2(x, z) * (double) (180F / (float) Math.PI)));
             this.xRotO = this.getXRot();
             this.yRotO = this.getYRot();
-            this.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+            this.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
             this.ticksInGround = 0;
         }
 
@@ -352,8 +353,8 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
                         entity = ((EntityHitResult) raytraceresult).getEntity();
                     }
                     Entity shooter = this.getShooter();
-                    if (entity instanceof LivingEntity && shooter instanceof LivingEntity) {
-                        if (!TargetSelector.test.test((LivingEntity) shooter, (LivingEntity) entity)) {
+                    if (entity instanceof LivingEntity && shooter instanceof LivingEntity && shooter.level() instanceof ServerLevel serverlevel) {
+                        if (!TargetSelector.test.test(serverlevel, (LivingEntity) shooter, (LivingEntity) entity)) {
                             if (this.alreadyHits == null)
                                 this.alreadyHits = new IntOpenHashSet(5);
                             this.alreadyHits.add(entity.getId());
@@ -365,7 +366,8 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
                 if (raytraceresult != null && !(disallowedHitBlock && raytraceresult.getType() == HitResult.Type.BLOCK)
                     /*&& !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)*/) {
                     this.onHit(raytraceresult);
-                    this.hasImpulse = true;
+                    // TODO?
+                    // this.hasImpulse = true;
                 }
 
                 if (this.getPierce() <= 0) {
@@ -431,7 +433,7 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
             }
 
             // this.setPosition(this.getPosX(), this.getPosY(), this.getPosZ());
-            this.checkInsideBlocks();
+            this.applyEffectsFromBlocks();
         }
 
         if (!this.level().isClientSide() && ticksInGround <= 0 && 100 < this.tickCount && !this.isPassenger()) {
@@ -519,9 +521,9 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
             damagesource = this.damageSources().indirectMagic(this, shooter);
             if (shooter instanceof LivingEntity) {
                 Entity hits = targetEntity;
-                if (targetEntity instanceof PartEntity) {
-                    hits = ((PartEntity<?>) targetEntity).getParent();
-                }
+//                if (targetEntity instanceof PartEntity) {
+//                    hits = ((PartEntity<?>) targetEntity).getParent();
+//                }
                 ((LivingEntity) shooter).setLastHurtMob(hits);
             }
         }
@@ -538,11 +540,11 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
             scale = (float) (AttackManager.getSlashBladeDamageScale(living) * SLASHBLADE_DAMAGE_MULTIPLIER.get());
         }
         float damageValue = i * scale;
-        if (targetEntity.hurt(damagesource, damageValue)) {
+        if (targetEntity.level() instanceof ServerLevel serverLevel && targetEntity.hurtServer(serverLevel, damagesource, damageValue)) {
             Entity hits = targetEntity;
-            if (targetEntity instanceof PartEntity) {
-                hits = ((PartEntity<?>) targetEntity).getParent();
-            }
+//            if (targetEntity instanceof PartEntity) {
+//                hits = ((PartEntity<?>) targetEntity).getParent();
+//            }
 
             if (hits instanceof LivingEntity targetLivingEntity) {
 
@@ -562,7 +564,7 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
 
                 if (shooter != null && targetLivingEntity != shooter && targetLivingEntity instanceof Player
                         && shooter instanceof ServerPlayer) {
-                    ((ServerPlayer) shooter).playNotifySound(this.getHitEntityPlayerSound(), SoundSource.PLAYERS, 0.18F,
+                    SoundUtil.playNotifySound(((ServerPlayer) shooter), this.getHitEntityPlayerSound(), SoundSource.PLAYERS, 0.18F,
                             0.45F);
                 }
             }
@@ -678,8 +680,8 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
             MobEffect effect = holder.value();
             if (effect.isInstantenous()) {
                 Entity shooter = this.getShooter();
-                if (shooter != null) {
-                    effect.applyInstantenousEffect(this, shooter, focusEntity, effectinstance.getAmplifier(),
+                if (shooter != null && this.level() instanceof ServerLevel serverLevel) {
+                    effect.applyInstantenousEffect(serverLevel, this, shooter, focusEntity, effectinstance.getAmplifier(),
                             factor);
                 }
             } else {
@@ -747,27 +749,27 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
 
     public String getModelName() {
         String name = this.entityData.get(MODEL);
-        if (name == null || name.length() == 0) {
+        if (name.isEmpty()) {
             name = defaultModelName;
         }
         return name;
     }
 
-    private static final ResourceLocation defaultModel = ResourceLocation.parse(defaultModelName + ".obj");
-    private static final ResourceLocation defaultTexture = ResourceLocation.parse(defaultModelName + ".png");
+    private static final Identifier defaultModel = Identifier.parse(defaultModelName + ".obj");
+    private static final Identifier defaultTexture = Identifier.parse(defaultModelName + ".png");
 
-    public ResourceLocation getModelLoc() {
+    public Identifier getModelLoc() {
         String name = getModelName();
         if (name.isEmpty())
             return defaultModel;
-        return ResourceLocation.parse(name + ".obj");
+        return Identifier.parse(name + ".obj");
     }
 
-    public ResourceLocation getTextureLoc() {
+    public Identifier getTextureLoc() {
         String name = getModelName();
         if (name.isEmpty())
             return defaultTexture;
-        return ResourceLocation.parse(name + ".png");
+        return Identifier.parse(name + ".png");
     }
 
     @Override

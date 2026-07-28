@@ -43,7 +43,7 @@ public class EntitySpiralSwords extends EntityAbstractSummonedSword {
     public void tick() {
         if (!itFired()) {
             if (getVehicle() == null && this.getOwner() != null) {
-                startRiding(this.getOwner(), true);
+                startRiding(this.getOwner(), true, true);
             }
         }
 
@@ -108,7 +108,8 @@ public class EntitySpiralSwords extends EntityAbstractSummonedSword {
             /*&& !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)*/) {
             this.onHit(raytraceresult);
             this.resetAlreadyHits();
-            this.hasImpulse = true;
+            // TODO?
+            // this.hasImpulse = true;
         }
     }
 

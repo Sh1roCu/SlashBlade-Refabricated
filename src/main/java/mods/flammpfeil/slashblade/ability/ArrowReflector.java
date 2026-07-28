@@ -6,11 +6,11 @@ import mods.flammpfeil.slashblade.registry.ComboStateRegistry;
 import mods.flammpfeil.slashblade.registry.combo.ComboState;
 import mods.flammpfeil.slashblade.util.TargetSelector;
 import mods.flammpfeil.slashblade.util.TimeValueHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
@@ -80,13 +80,13 @@ public class ArrowReflector {
             if (ticks == 0)
                 return;
 
-            ResourceLocation old = s.getComboSeq();
-            ResourceLocation current = s.resolvCurrentComboState(attacker);
-            ComboState currentCS = ComboStateRegistry.COMBO_STATE.get(current) != null
-                    ? ComboStateRegistry.COMBO_STATE.get(current)
+            Identifier old = s.getComboSeq();
+            Identifier current = s.resolvCurrentComboState(attacker);
+            ComboState currentCS = ComboStateRegistry.COMBO_STATE.get(current).isPresent()
+                    ? ComboStateRegistry.COMBO_STATE.getValue(current)
                     : ComboStateRegistry.NONE;
             if (!old.equals(current)) {
-                ComboState oldCS = ComboStateRegistry.COMBO_STATE.get(current);
+                ComboState oldCS = ComboStateRegistry.COMBO_STATE.getValue(current);
                 if (oldCS != null) {
                     ticks -= (int) TimeValueHelper.getTicksFromMSec(oldCS.getTimeoutMS());
                 }

@@ -98,7 +98,7 @@ public class JudgementCut {
         for (Entity entity : founds) {
             if (entity instanceof LivingEntity) {
 
-                ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 10));
+                ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 40, 10));
                 EntityJudgementCut judgementCut = new EntityJudgementCut(SBEntityTypes.JUDGEMENT_CUT, level);
                 judgementCut.setPos(entity.getX(), entity.getY(), entity.getZ());
                 judgementCut.setOwner(owner);

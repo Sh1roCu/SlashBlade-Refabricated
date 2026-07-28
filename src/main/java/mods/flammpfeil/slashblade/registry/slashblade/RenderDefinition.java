@@ -5,13 +5,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import mods.flammpfeil.slashblade.client.renderer.CarryType;
 import mods.flammpfeil.slashblade.init.DefaultResources;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class RenderDefinition {
     public static final Codec<RenderDefinition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ResourceLocation.CODEC.optionalFieldOf("texture", DefaultResources.resourceDefaultTexture)
+            Identifier.CODEC.optionalFieldOf("texture", DefaultResources.resourceDefaultTexture)
                     .forGetter(RenderDefinition::getTextureName),
-            ResourceLocation.CODEC.optionalFieldOf("model", DefaultResources.resourceDefaultModel)
+            Identifier.CODEC.optionalFieldOf("model", DefaultResources.resourceDefaultModel)
                     .forGetter(RenderDefinition::getModelName),
             Codec.INT.optionalFieldOf("summon_sword_color", 0xFF3333FF)
                     .forGetter(RenderDefinition::getSummonedSwordColor),
@@ -20,13 +20,13 @@ public class RenderDefinition {
                     .forGetter(RenderDefinition::getStandbyRenderType))
             .apply(instance, RenderDefinition::new));
 
-    private final ResourceLocation TextureName;
-    private final ResourceLocation ModelName;
+    private final Identifier TextureName;
+    private final Identifier ModelName;
     private final int SummonedSwordColor;
     private final boolean SummonedSwordColorInverse;
     private final CarryType StandbyRenderType;
 
-    private RenderDefinition(ResourceLocation texture, ResourceLocation model, int color, boolean colorInverse,
+    private RenderDefinition(Identifier texture, Identifier model, int color, boolean colorInverse,
             CarryType standby) {
         this.TextureName = texture;
         this.ModelName = model;
@@ -35,11 +35,11 @@ public class RenderDefinition {
         this.StandbyRenderType = standby;
     }
 
-    public ResourceLocation getModelName() {
+    public Identifier getModelName() {
         return ModelName;
     }
 
-    public ResourceLocation getTextureName() {
+    public Identifier getTextureName() {
         return TextureName;
     }
 
@@ -56,8 +56,8 @@ public class RenderDefinition {
     }
 
     public static class Builder {
-        private ResourceLocation TextureName;
-        private ResourceLocation ModelName;
+        private Identifier TextureName;
+        private Identifier ModelName;
         private int SummonedSwordColor;
         private boolean SummonedSwordColorInverse;
         private CarryType StandbyRenderType;
@@ -74,12 +74,12 @@ public class RenderDefinition {
             return new Builder();
         }
 
-        public Builder textureName(ResourceLocation TextureName) {
+        public Builder textureName(Identifier TextureName) {
             this.TextureName = TextureName;
             return this;
         }
 
-        public Builder modelName(ResourceLocation ModelName) {
+        public Builder modelName(Identifier ModelName) {
             this.ModelName = ModelName;
             return this;
         }

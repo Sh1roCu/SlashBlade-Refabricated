@@ -3,9 +3,10 @@ package mods.flammpfeil.slashblade.compat.playerAnim;
 import cn.sh1rocu.slashblade.util.LazyOptional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import dev.kosmx.playerAnim.api.TransformType;
-import dev.kosmx.playerAnim.api.layered.IAnimation;
-import dev.kosmx.playerAnim.core.util.Vec3f;
+import com.zigythebird.playeranimcore.animation.AnimationData;
+import com.zigythebird.playeranimcore.animation.layered.IAnimation;
+import com.zigythebird.playeranimcore.bones.PlayerAnimBone;
+import com.zigythebird.playeranimcore.math.Vec3f;
 import jp.nyatla.nymmd.MmdException;
 import jp.nyatla.nymmd.MmdMotionPlayerGL2;
 import jp.nyatla.nymmd.MmdPmdModelMc;
@@ -15,11 +16,12 @@ import jp.nyatla.nymmd.types.MmdVector3;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.client.renderer.model.BladeMotionManager;
 import mods.flammpfeil.slashblade.util.TimeValueHelper;
-import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
 import org.joml.Quaterniond;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,7 +30,7 @@ import java.util.Map;
 public class VmdAnimation implements IAnimation {
     static final LazyOptional<MmdPmdModelMc> alex = LazyOptional.of(() -> {
         try {
-            return new MmdPmdModelMc(ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID, "model/pa/alex.pmd"));
+            return new MmdPmdModelMc(Identifier.fromNamespaceAndPath(SlashBlade.MODID, "model/pa/alex.pmd"));
         } catch (MmdException | IOException e) {
             e.printStackTrace();
         }
@@ -51,7 +53,7 @@ public class VmdAnimation implements IAnimation {
 
     int currentTick;
 
-    final ResourceLocation loc;
+    final Identifier loc;
     double start;
     double end;
     double span;
@@ -76,7 +78,7 @@ public class VmdAnimation implements IAnimation {
     static final List<String> arms = Lists.newArrayList("leftArm", "rightArm");
     static final List<String> legs = Lists.newArrayList("leftLeg", "rightLeg");
 
-    public VmdAnimation(ResourceLocation loc, double start, double end, boolean loop) {
+    public VmdAnimation(Identifier loc, double start, double end, boolean loop) {
         this.loc = loc;
         this.start = start;
         this.end = end;
@@ -109,7 +111,7 @@ public class VmdAnimation implements IAnimation {
     }
 
     @Override
-    public void tick() {
+    public void tick(AnimationData data) {
         if (this.isRunning) {
             this.currentTick++;
 
@@ -140,23 +142,21 @@ public class VmdAnimation implements IAnimation {
     }
 
     @Override
-    public @NotNull Vec3f get3DTransform(@NotNull String modelName, @NotNull TransformType type, float tickDelta,
-                                         @NotNull Vec3f value0) {
-        this.setupAnim(tickDelta);
+    public void get3DTransform(@NonNull PlayerAnimBone value0) {
+        this.setupAnim(Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true));
+
+        String modelName = value0.name;
 
         double motionScale = 1.0 / 16.0;
         float bodyScale = (float) motionScale;
         float finalizeScale = 2.0f;
 
-        Vector3f blend = new Vector3f(value0.getX(), value0.getY(), value0.getZ());
-
-        if (type != TransformType.POSITION
-                && ((!this.blendArms && arms.contains(modelName)) || (!this.blendLegs && legs.contains(modelName)))) {
-            blend.mul(0);
+        if (((!this.blendArms && arms.contains(modelName)) || (!this.blendLegs && legs.contains(modelName)))) {
+            value0.rotation.mul(0);
         }
 
         if (!motionPlayer.isPresent())
-            return value0;
+            return;
         MmdMotionPlayerGL2 mmp = motionPlayer.orElse(null);
 
         String boneName = modelName;
@@ -167,35 +167,32 @@ public class VmdAnimation implements IAnimation {
         PmdBone bone = mmp.getBoneByName(boneName);
 
         if (bone != null) {
-            switch (type) {
-                case POSITION: {
-                    MmdVector3 org = bone.m_vec3Position;
-                    Vector3f tmp = new Vector3f(org.x, org.y, org.z);
-                    if (modelName.equals("body")) {
-                        tmp = tmp.mul(bodyScale);
-                    } else {
-                        tmp = tmp.mul(1, -1, 1);
-                    }
-
-                    tmp.mul(finalizeScale).add(blend);
-                    return new Vec3f(tmp.x, tmp.y, tmp.z);
+            {
+                MmdVector3 org = bone.m_vec3Position;
+                Vector3f tmp = new Vector3f(org.x, org.y, org.z);
+                if (modelName.equals("body")) {
+                    tmp = tmp.mul(bodyScale);
+                } else {
+                    tmp = tmp.mul(1, -1, 1);
                 }
-                case ROTATION: {
-                    Quaterniond qt = new Quaterniond(bone.m_vec4Rotate.x, bone.m_vec4Rotate.y, bone.m_vec4Rotate.z,
-                            bone.m_vec4Rotate.w);
-                    Vector3d tmp = QuaternionToEulerZYX(qt);
 
-                    if (modelName.equals("body")) {
-                        tmp = tmp.mul(1, -1, -1);
-                    } else {
-                        tmp = tmp.mul(-1, 1, -1);
-                    }
+                tmp.mul(finalizeScale).add(value0.position);
+                value0.position.set(tmp);
+            }
 
-                    tmp.add(blend);
-                    return new Vec3f((float) tmp.x, (float) tmp.y, (float) tmp.z);
+            {
+                Quaterniond qt = new Quaterniond(bone.m_vec4Rotate.x, bone.m_vec4Rotate.y, bone.m_vec4Rotate.z,
+                        bone.m_vec4Rotate.w);
+                Vector3d tmp = QuaternionToEulerZYX(qt);
+
+                if (modelName.equals("body")) {
+                    tmp = tmp.mul(1, -1, -1);
+                } else {
+                    tmp = tmp.mul(-1, 1, -1);
                 }
-                default:
-                    break;
+
+                tmp.add(value0.rotation);
+                value0.rotation.set(tmp);
             }
         }
         /**/
@@ -225,7 +222,6 @@ public class VmdAnimation implements IAnimation {
          * } } } /
          **/
 
-        return value0;
     }
 
     Vector3d QuaternionToEulerZYX(Quaterniond qt) {
@@ -282,6 +278,10 @@ public class VmdAnimation implements IAnimation {
     }
 
     @Override
+    public void setupAnim(AnimationData data) {
+        this.setupAnim(data.getPartialTick());
+    }
+
     public void setupAnim(float tickDelta) {
         if (!motionPlayer.isPresent())
             return;

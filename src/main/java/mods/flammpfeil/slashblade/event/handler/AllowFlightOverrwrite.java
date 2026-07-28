@@ -21,6 +21,6 @@ public class AllowFlightOverrwrite {
     }
 
     public void onFMLServerAboutToStartEvent(MinecraftServer server) {
-        server.setFlightAllowed(true);
+        server.allowFlight();
     }
 }

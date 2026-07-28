@@ -1,14 +1,11 @@
 package mods.flammpfeil.slashblade.event.client;
 
-import cn.sh1rocu.slashblade.api.event.RenderPlayerEvents;
-import com.mojang.blaze3d.vertex.PoseStack;
+import cn.sh1rocu.slashblade.api.RenderStateKeys;
+import cn.sh1rocu.slashblade.api.event.RenderPlayerEvent;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
@@ -25,32 +22,33 @@ public class SneakingMotionCanceller {
     }
 
     public void register() {
-        RenderPlayerEvents.PRE.register((Player player, PlayerRenderer renderer, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight) -> {
-            this.onRenderPlayerEventPre(player, renderer, partialTick, poseStack, buffer, packedLight);
-            return false;
-        });
+        RenderPlayerEvent.PRE.register(this::onRenderPlayerEventPre);
     }
 
-    public void onRenderPlayerEventPre(Player player, PlayerRenderer renderer, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        ItemStack stack = player.getMainHandItem();
+    @SuppressWarnings("rawtypes")
+    public void onRenderPlayerEventPre(RenderPlayerEvent.Pre event) {
+        AvatarRenderState player = (AvatarRenderState) event.getRenderState();
+        var renderer = event.getRenderer();
+        ItemStack stack = player.getMainHandItemStack();
 
         if (stack.isEmpty())
             return;
         if (CapabilitySlashBlade.getBladeState(stack).isEmpty())
             return;
 
-        if (!renderer.getModel().crouching)
+        if (!player.isCrouching)
             return;
 
         final Minecraft instance = Minecraft.getInstance();
-        if (instance.options.getCameraType() == CameraType.FIRST_PERSON && instance.player == player)
+        if (instance.options.getCameraType() == CameraType.FIRST_PERSON &&
+                instance.player.getId() == player.getDataOrDefault(RenderStateKeys.ENTITY_ID, -99))
             return;
 
-        renderer.getModel().crouching = false;
+        player.isCrouching = false;
 
         Vec3 offset = renderer
-                .getRenderOffset((AbstractClientPlayer) player, packedLight).scale(-1);
+                .getRenderOffset(player).scale(-1);
 
-        poseStack.translate(offset.x, offset.y, offset.z);
+        event.getPoseStack().translate(offset.x, offset.y, offset.z);
     }
 }

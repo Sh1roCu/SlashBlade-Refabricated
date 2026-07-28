@@ -3,11 +3,11 @@ package mods.flammpfeil.slashblade.entity;
 import cn.sh1rocu.slashblade.api.extension.EntityExtension;
 import cn.sh1rocu.slashblade.util.PotionUtils;
 import mods.flammpfeil.slashblade.init.SBEntityTypes;
-import mods.flammpfeil.slashblade.util.*;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import mods.flammpfeil.slashblade.util.AttackManager;
+import mods.flammpfeil.slashblade.util.EnumSetConverter;
+import mods.flammpfeil.slashblade.util.KnockBacks;
+import mods.flammpfeil.slashblade.util.TargetSelector;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -22,6 +22,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -79,21 +81,27 @@ public class EntityJudgementCut extends Projectile implements IShootable {
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
+    protected void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
 
-        NBTHelper.getNBTCoupler(compound).put("Color", this.getColor()).put("Rank", this.getRank())
-                .put("damage", this.damage).put("crit", this.getIsCritical()).put("clip", this.isNoClip())
-                .put("Lifetime", this.getLifetime());
+        output.putInt("Color", this.getColor());
+        output.putFloat("Rank", this.getRank());
+        output.putDouble("damage", this.damage);
+        output.putBoolean("crit", this.getIsCritical());
+        output.putBoolean("clip", this.isNoClip());
+        output.putInt("Lifetime", this.getLifetime());
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
+    protected void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
 
-        NBTHelper.getNBTCoupler(compound).get("Color", this::setColor).get("Rank", this::setRank)
-                .get("damage", ((Double v) -> this.damage = v), this.damage).get("crit", this::setIsCritical)
-                .get("clip", this::setNoClip).get("Lifetime", this::setLifetime);
+        this.setColor(input.getIntOr("Color", 0x3333FF));
+        this.setRank(input.getFloatOr("Rank", 0));
+        this.damage = input.getDoubleOr("damage", 0);
+        this.setIsCritical(input.getBooleanOr("crit", false));
+        this.setNoClip(input.getBooleanOr("clip", false));
+        this.setLifetime(input.getIntOr("Lifetime", 0));
     }
 
     @Override
@@ -102,7 +110,6 @@ public class EntityJudgementCut extends Projectile implements IShootable {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public boolean shouldRenderAtSqrDistance(double distance) {
         double d0 = this.getBoundingBox().getSize() * 10.0D;
         if (Double.isNaN(d0)) {
@@ -114,15 +121,7 @@ public class EntityJudgementCut extends Projectile implements IShootable {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public void lerpTo(double x, double y, double z, float yaw, float pitch, int i) {
-        this.setPos(x, y, z);
-        this.setRot(yaw, pitch);
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void lerpMotion(double x, double y, double z) {
+    public void lerpMotion(Vec3 movement) {
         this.setDeltaMovement(0, 0, 0);
     }
 
@@ -208,7 +207,7 @@ public class EntityJudgementCut extends Projectile implements IShootable {
             final int count = 3;
             if (getIsCritical() && 0 < tickCount && tickCount <= count) {
                 EntitySlashEffect jc = new EntitySlashEffect(SBEntityTypes.SLASH_EFFECT, this.level());
-                jc.absMoveTo(this.getX(), this.getY(), this.getZ(), (360.0f / count) * tickCount + this.seed, 0);
+                jc.absSnapTo(this.getX(), this.getY(), this.getZ(), (360.0f / count) * tickCount + this.seed, 0);
                 jc.setRotationRoll(30);
 
                 jc.setOwner(this.getShooter());
@@ -371,8 +370,8 @@ public class EntityJudgementCut extends Projectile implements IShootable {
         for (MobEffectInstance effectinstance : getPotionEffects()) {
             var holder = effectinstance.getEffect();
             MobEffect effect = holder.value();
-            if (effect.isInstantenous()) {
-                effect.applyInstantenousEffect(this, this.getShooter(), focusEntity, effectinstance.getAmplifier(),
+            if (effect.isInstantenous() && this.level() instanceof ServerLevel serverLevel) {
+                effect.applyInstantenousEffect(serverLevel, this, this.getShooter(), focusEntity, effectinstance.getAmplifier(),
                         factor);
             } else {
                 int duration = (int) (factor * (double) effectinstance.getDuration() + 0.5D);

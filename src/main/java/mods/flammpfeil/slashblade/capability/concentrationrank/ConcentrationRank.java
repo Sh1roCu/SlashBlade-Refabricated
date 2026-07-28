@@ -1,11 +1,9 @@
 package mods.flammpfeil.slashblade.capability.concentrationrank;
 
-import mods.flammpfeil.slashblade.util.NBTHelper;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.damagesource.DamageSource;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class ConcentrationRank implements IConcentrationRank {
 
@@ -61,18 +59,19 @@ public class ConcentrationRank implements IConcentrationRank {
     }
 
     @Override
-    public float getRankPointModifier(ResourceLocation combo) {
+    public float getRankPointModifier(Identifier combo) {
         return 0.1f;
     }
 
     @Override
-    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
-        NBTHelper.getNBTCoupler(tag)
-                .get("rawPoint", this::setRawRankPoint).get("lastupdate", this::setLastUpdate);
+    public void readData(ValueInput readView) {
+        this.setRawRankPoint(readView.getLongOr("rawPoint", 0));
+        this.setLastUpdate(readView.getLongOr("lastupdate", 0));
     }
 
     @Override
-    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
-        NBTHelper.getNBTCoupler(tag).put("rawPoint", getRawRankPoint()).put("lastupdate", getLastUpdate());
+    public void writeData(ValueOutput writeView) {
+        writeView.putLong("rawPoint", this.getRawRankPoint());
+        writeView.putLong("lastupdate", this.getLastUpdate());
     }
 }

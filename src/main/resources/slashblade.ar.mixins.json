@@ -1,14 +1,14 @@
 {
   "package": "mods.flammpfeil.slashblade.mixin.client.compat.ar",
   "plugin": "mods.flammpfeil.slashblade.mixin.client.compat.ar.ARMixinPlugin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "required": true,
   "minVersion": "0.8",
   "refmap": "slashblade.refmap.json",
   "mixins": [
   ],
   "client": [
-    "AcceleratedGroupObject"
+    //"AcceleratedGroupObject"
   ],
   "injectors": {
     "defaultRequire": 1

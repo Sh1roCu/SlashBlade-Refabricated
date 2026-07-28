@@ -4,9 +4,8 @@ import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.event.Scheduler;
 import mods.flammpfeil.slashblade.util.EnumSetConverter;
 import mods.flammpfeil.slashblade.util.InputCommand;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -34,13 +33,13 @@ public class InputState implements IInputState {
     }
 
     @Override
-    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
+    public void readData(ValueInput readView) {
         getCommands().clear();
-        getCommands().addAll(EnumSetConverter.convertToEnumSet(InputCommand.class, tag.getInt(KEY)));
+        getCommands().addAll(EnumSetConverter.convertToEnumSet(InputCommand.class, readView.getIntOr(KEY, 0)));
     }
 
     @Override
-    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
-        tag.putInt(KEY, EnumSetConverter.convertToInt(getCommands()));
+    public void writeData(ValueOutput writeView) {
+        writeView.putInt(KEY, EnumSetConverter.convertToInt(getCommands()));
     }
 }

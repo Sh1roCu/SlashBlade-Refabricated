@@ -25,8 +25,13 @@ public class MixinBlockBehaviour {
     @Inject(at = @At("HEAD"), method = "getCollisionShape(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/shapes/CollisionContext;)Lnet/minecraft/world/phys/shapes/VoxelShape;", cancellable = true)
     public void getCollisionShape(BlockGetter p_60743_, BlockPos p_60744_, CollisionContext p_60745_,
                                   CallbackInfoReturnable<VoxelShape> callback) {
-        if (!(asState().is(BlockTags.LEAVES)))
+        try {
+            if (!asState().is(BlockTags.LEAVES))
+                return;
+        } catch (IllegalStateException e) {
             return;
+        }
+
         if (p_60745_.isDescending())
             return;
 
@@ -47,8 +52,12 @@ public class MixinBlockBehaviour {
     @Inject(at = @At("HEAD"), method = "getVisualShape(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/shapes/CollisionContext;)Lnet/minecraft/world/phys/shapes/VoxelShape;", cancellable = true)
     public void getVisualShape(BlockGetter p_60743_, BlockPos p_60744_, CollisionContext p_60745_,
                                CallbackInfoReturnable<VoxelShape> callback) {
-        if (!(asState().is(BlockTags.LEAVES)))
+        try {
+            if (!asState().is(BlockTags.LEAVES))
+                return;
+        } catch (IllegalStateException e) {
             return;
+        }
 
         callback.setReturnValue(((BlockBehaviorAccessor) Blocks.SCAFFOLDING).sb$getVisualShape(Blocks.SCAFFOLDING.defaultBlockState(), p_60743_,
                 p_60744_, p_60745_));

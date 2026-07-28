@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.11.8'
+    id 'net.fabricmc.fabric-loom' version '1.16-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -18,7 +18,7 @@ fabricApi {
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/slashblade.accesswidener")
+    accessWidenerPath = file("src/main/resources/slashblade.classtweaker")
     mixin {
         defaultRefmapName = "slashblade.refmap.json"
     }
@@ -79,71 +79,56 @@ repositories {
     // Patchouli
     maven { url = 'https://maven.blamejared.com' }
     maven {
-        // 个人仓库，包含fork的PortingLib
         url = "https://raw.github.com/Sh1roCu/Sh1roCu_MCRepo/master/repository"
+    }
+    maven {
+        name = "RedlanceMinecraft"
+        url = "https://repo.redlance.org/public"
     }
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    //mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    mappings loom.layered() {
-        officialMojangMappings()
-        //parchment("org.parchmentmc.data:parchment-${project.parchment_minecraft_version}:${project.parchment_mappings_version}@zip")
-    }
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-    // dependencies of all Porting-Lib modules
-    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:core:3.1.0-beta.79-fix+1.21.1-fix"))
-    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:gametest:3.1.0-beta.79-fix+1.21.1-fix"))
-
-    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:obj_loader:3.1.0-beta.79-fix+1.21.1-fix"))
-    // dependencies of obj_loader
-    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:model_loader:3.1.0-beta.79-fix+1.21.1-fix"))
-    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:render_types:3.1.0-beta.79-fix+1.21.1-fix"))
-
-    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:entity:3.1.0-beta.79-fix+1.21.1-fix"))
-    // dependencies of entity
-    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:mixin_extensions:3.1.0-beta.79-fix+1.21.1-fix"))
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
     annotationProcessor 'com.google.code.findbugs:jsr305:3.0.2'
 
     // CCA
-    modImplementation(include("org.ladysnake.cardinal-components-api:cardinal-components-base:${project.cca_version}"))
+    implementation(include("org.ladysnake.cardinal-components-api:cardinal-components-base:${project.cca_version}"))
     // CCA的item在1.21已弃用，使用原版的DataComponent代替
-    // modImplementation(include("org.ladysnake.cardinal-components-api:cardinal-components-item:${project.cca_version}"))
-    modImplementation(include("org.ladysnake.cardinal-components-api:cardinal-components-entity:${project.cca_version}"))
+    // implementation(include("org.ladysnake.cardinal-components-api:cardinal-components-item:${project.cca_version}"))
+    implementation(include("org.ladysnake.cardinal-components-api:cardinal-components-entity:${project.cca_version}"))
 
-    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.1.3"
+    api "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:26.1.4"
 
-    modImplementation "dev.kosmx.player-anim:player-animation-lib-fabric:2.0.1+1.21.1"
-    //假人(含前置)
-    modRuntimeOnly "curse.maven:selene-499980:7068423"
-    modRuntimeOnly "curse.maven:mmmmmmmmmmmm-225738:6826532"
+    implementation "com.zigythebird.playeranim:PlayerAnimationLibFabric:1.2.4+mc.26.1"
+
     // compile against the JEI API but do not include it at runtime
-    modCompileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
-    modCompileOnly "mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}"
     // at runtime, use the full JEI jar for Fabric
-    modRuntimeOnly "mezz.jei:jei-${minecraft_version}-fabric:${jei_version}"
+    implementation "mezz.jei:jei-${minecraft_version}-fabric:${jei_version}"
 
     //暮色森林
-//    modCompileOnly ""
+//    compileOnly ""
 
-    modCompileOnly("vazkii.patchouli:Patchouli:1.21-87-FABRIC")
-    modRuntimeOnly("vazkii.patchouli:Patchouli:1.21-87-FABRIC")
+    implementation("vazkii.patchouli:patchouli-fabric:26.1-94")
 
-    modCompileOnly "curse.maven:emi-580555:6420930"
-    modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
-    modCompileOnly "dev.emi:emi-fabric:${emi_version}"
+//    compileOnly "curse.maven:emi-580555:6420930"
+//    compileOnly "dev.emi:emi-fabric:${emi_version}:api"
+//    compileOnly "dev.emi:emi-fabric:${emi_version}"
 
-    modRuntimeOnly "curse.maven:nbtedit-reborn-678133:6125442"
+    runtimeOnly "maven.modrinth:ankinbt:Rn3wocxw"
 
-    compileOnly "org.projectlombok:lombok:1.18.38"
-    annotationProcessor "org.projectlombok:lombok:1.18.38"
-    modImplementation "maven.modrinth:accrelatedrendering-refabricated:1.0.5-1.21.1-fabric.1"
+//    compileOnly "org.projectlombok:lombok:1.18.38"
+//    annotationProcessor "org.projectlombok:lombok:1.18.38"
+//    implementation "maven.modrinth:accrelatedrendering-refabricated:1.0.5-1.21.1-fabric.1"
+
+    compileOnly "maven.modrinth:iris:1.10.9+26.1-fabric"
 }
 
 processResources {
@@ -159,7 +144,7 @@ processResources {
     }
 }
 
-def targetJavaVersion = 21
+def targetJavaVersion = 25
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {

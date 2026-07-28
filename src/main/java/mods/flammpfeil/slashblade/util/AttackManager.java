@@ -39,7 +39,7 @@ import static mods.flammpfeil.slashblade.SlashBladeConfig.SLASHBLADE_DAMAGE_MULT
 public class AttackManager {
     public static boolean isPowered(LivingEntity entity) {
         ItemStack blade = entity.getMainHandItem();
-        boolean result = entity.hasEffect(MobEffects.DAMAGE_BOOST) || entity.hasEffect(MobEffects.HUNGER);
+        boolean result = entity.hasEffect(MobEffects.STRENGTH) || entity.hasEffect(MobEffects.HUNGER);
         if (CapabilitySlashBlade.getBladeState(blade).isPresent()) {
             var state = CapabilitySlashBlade.getBladeState(blade).orElseThrow(NullPointerException::new);
             var event = new SlashBladeEvent.PowerBladeEvent(blade, state, entity, result);

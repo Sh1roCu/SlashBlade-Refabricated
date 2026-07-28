@@ -1,8 +1,5 @@
 package cn.sh1rocu.slashblade.api.extension;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -30,9 +27,6 @@ public interface ItemSlashBladeExtension {
     boolean onEntitySwing(ItemStack stack, LivingEntity entity);
 
     boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity);
-
-    @Environment(EnvType.CLIENT)
-    BlockEntityWithoutLevelRenderer getCustomRenderer();
 
     Rarity getRarity(ItemStack stack);
 

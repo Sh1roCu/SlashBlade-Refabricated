@@ -40,7 +40,7 @@ public class InputCommandEvent extends BaseEvent {
     EnumSet<InputCommand> old;
     EnumSet<InputCommand> current;
 
-    public static final Event<Callback> CALLBACK = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+    public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
         for (Callback callback : callbacks) {
             callback.onInput(event);
         }
@@ -54,7 +54,7 @@ public class InputCommandEvent extends BaseEvent {
                                                   EnumSet<InputCommand> current) {
         InputCommandEvent event = new InputCommandEvent(player, state, old, current);
 
-        CALLBACK.invoker().onInput(event);
+        EVENT.invoker().onInput(event);
         return event;
     }
 }

@@ -14,7 +14,9 @@ import mods.flammpfeil.slashblade.util.*;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -22,25 +24,24 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
 import java.util.List;
 
 public class ComboStateRegistry {
-    private static final ResourceLocation RAPID_SLASH_REACH_MOD = SlashBlade.prefix("rapid_slash_reach");
+    private static final Identifier RAPID_SLASH_REACH_MOD = SlashBlade.prefix("rapid_slash_reach");
 
     public static void init() {
 
     }
 
-    public static ResourceLocation getId(ComboState state) {
+    public static Identifier getId(ComboState state) {
         return COMBO_STATE.getKey(state);
     }
 
     public static final Registry<ComboState> COMBO_STATE = FabricRegistryBuilder
-            .createSimple(ComboState.REGISTRY_KEY)
+            .create(ComboState.REGISTRY_KEY)
             .attribute(RegistryAttribute.SYNCED)
             .buildAndRegister();
 
@@ -643,7 +644,8 @@ public class ComboStateRegistry {
                         entityIn.setDeltaMovement(motion.x, 0.6f, motion.z);
 
                         entityIn.setOnGround(false);
-                        entityIn.hasImpulse = true;
+                        // TODO?
+                        // entityIn.hasImpulse = true;
                     }).build());
     public static final ComboState UPPERSLASH_JUMP_END = Registry.register(COMBO_STATE, SlashBlade.prefix("upperslash_jump_end"),
             ComboState.Builder.newInstance().startAndEnd(1713, 1717).priority(90)
@@ -783,14 +785,18 @@ public class ComboStateRegistry {
                         mai.removeModifier(rsr);
                     }).addTickAction((e) -> {
                         long elapsed = ComboState.getElapsed(e);
-
                         if (elapsed == 0) {
                             e.level().playSound(null, e.getX(), e.getY(), e.getZ(),
                                     SoundEvents.ARMOR_EQUIP_IRON, SoundSource.PLAYERS, 1.0F, 1.0F);
                         }
 
-                        if (elapsed <= 3 && e.onGround())
+                        if (elapsed <= 3 && e.onGround()) {
                             e.moveRelative(e.isInWater() ? 0.35f : 0.8f, new Vec3(0, 0, 1));
+                            if (e instanceof ServerPlayer sp) {
+                                sp.connection.send(new ClientboundSetEntityMotionPacket(sp));
+                            }
+
+                        }
 
                         if (2 <= elapsed && elapsed < 6) {
                             float roll = -45 + 90 * e.getRandom().nextFloat();
@@ -842,7 +848,8 @@ public class ComboStateRegistry {
                     .nextOfTimeout(entity -> SlashBlade.prefix("rising_star_end")).clickAction((entityIn) -> {
                         entityIn.setDeltaMovement(0, 0.6, 0);
                         entityIn.setOnGround(false);
-                        entityIn.hasImpulse = true;
+                        // TODO?
+                        // entityIn.hasImpulse = true;
                         AttackManager.doSlash(entityIn, -57, Vec3.ZERO, false, false, 0.6f, KnockBacks.toss);
                     })
                     .addTickAction(ComboState.TimeLineTickAction.getBuilder()
@@ -874,7 +881,8 @@ public class ComboStateRegistry {
                                 yMotion = 0.6;
 
                                 entityIn.setOnGround(false);
-                                entityIn.hasImpulse = true;
+                                // TODO?
+                                // entityIn.hasImpulse = true;
                             }
 
                             entityIn.setDeltaMovement(0, yMotion, 0);
@@ -955,6 +963,9 @@ public class ComboStateRegistry {
                             e.move(MoverType.SELF, vec);
                         }
                         e.setDeltaMovement(e.getDeltaMovement().multiply(0, 1, 0));
+                        if (e instanceof ServerPlayer sp) {
+                            sp.connection.send(new ClientboundSetEntityMotionPacket(sp));
+                        }
                     }).addTickAction(FallHandler::fallDecrease)
                     .addTickAction(UserPoseOverrider::resetRot).build());
 
@@ -1254,6 +1265,9 @@ public class ComboStateRegistry {
 
                 if (elapsed < 3) {
                     entity.moveRelative(entity.isInWater() ? 0.35f : 0.8f, new Vec3(0, 0, 1));
+                    if (entity instanceof ServerPlayer sp) {
+                        sp.connection.send(new ClientboundSetEntityMotionPacket(sp));
+                    }
                     AttackManager.areaAttack(entity, KnockBacks.toss.action, 1.1f, true, false, true);
                 }
                 if (elapsed == 1)

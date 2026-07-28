@@ -10,17 +10,14 @@ import mods.flammpfeil.slashblade.registry.combo.ComboState;
 import mods.flammpfeil.slashblade.slasharts.SlashArts;
 import mods.flammpfeil.slashblade.util.InputCommand;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.timers.TimerCallback;
-import net.minecraft.world.level.timers.TimerQueue;
 
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.Objects;
 
 public class SuperSlashArts {
     private static final class SingletonHolder {
@@ -35,7 +32,7 @@ public class SuperSlashArts {
     }
 
     public void register() {
-        InputCommandEvent.CALLBACK.register(this::onInputChange);
+        InputCommandEvent.EVENT.register(this::onInputChange);
     }
 
     public void onInputChange(InputCommandEvent event) {
@@ -62,7 +59,7 @@ public class SuperSlashArts {
                             .filter(input1 -> input1.getCommands().contains(targetCommnad1)
                                     && (!InputCommand.anyMatch(input1.getCommands(), InputCommand.move)
                                     || !input1.getCommands().contains(InputCommand.SNEAK))
-                                    && input1.getLastPressTime(targetCommnad1) == pressTime)
+                                    && Objects.equals(input1.getLastPressTime(targetCommnad1), pressTime))
                             .isPresent();
                     if (!inputSucceed)
                         return;
@@ -83,31 +80,28 @@ public class SuperSlashArts {
                                 double x = sender.getX(xDist / 4.0D);
                                 double y = sender.getY(0.5D + yDist / 4.0D);
                                 double z = sender.getZ(zDist / 4.0D);
-                                ((ServerLevel) event.getEntity().level()).sendParticles(
+                                event.getEntity().level().sendParticles(
                                         ParticleTypes.REVERSE_PORTAL, x, y, z, 0, xDist, yDist + 0.2D, zDist, 1);
                             }
                         }
                     });
                 });
-                input.getScheduler().schedule("chargeSuperSA", pressTime + 20, new TimerCallback<LivingEntity>() {
+                input.getScheduler().schedule("chargeSuperSA", pressTime + 20, (rawEntity, queue, now) -> {
 
-                    @Override
-                    public void handle(LivingEntity rawEntity, TimerQueue<LivingEntity> queue, long now) {
-                        if (!(rawEntity instanceof ServerPlayer entity))
-                            return;
+                    if (!(rawEntity instanceof ServerPlayer entity))
+                        return;
 
-                        InputCommand targetCommnad = InputCommand.SPRINT;
-                        boolean inputSucceed = CapabilityInputState.INPUT_STATE.maybeGet(entity)
-                                .filter(input -> input.getCommands().contains(targetCommnad)
-                                        && (!InputCommand.anyMatch(input.getCommands(), InputCommand.move)
-                                        || !input.getCommands().contains(InputCommand.SNEAK))
-                                        && input.getLastPressTime(targetCommnad) == pressTime)
-                                .isPresent();
-                        if (!inputSucceed)
-                            return;
+                    InputCommand targetCmd = InputCommand.SPRINT;
+                    boolean inputSucceed = CapabilityInputState.INPUT_STATE.maybeGet(entity)
+                            .filter(input1 -> input1.getCommands().contains(targetCmd)
+                                    && (!InputCommand.anyMatch(input1.getCommands(), InputCommand.move)
+                                    || !input1.getCommands().contains(InputCommand.SNEAK))
+                                    && Objects.equals(input1.getLastPressTime(targetCmd), pressTime))
+                            .isPresent();
+                    if (!inputSucceed)
+                        return;
 
-                        releaseSSA(entity);
-                    }
+                    releaseSSA(entity);
 
                 });
             });
@@ -125,16 +119,17 @@ public class SuperSlashArts {
             if (!entity.onGround())
                 return;
 
-            mainHandItem.hurtAndBreak(mainHandItem.getMaxDamage() / 2, entity.serverLevel(), entity, ItemSlashBlade.getOnBroken(mainHandItem, entity)
+            mainHandItem.hurtAndBreak(mainHandItem.getMaxDamage() / 2, entity.level(), entity, ItemSlashBlade.getOnBroken(mainHandItem, entity)
             );
 
-            Map.Entry<Integer, ResourceLocation> currentloc = state.resolvCurrentComboStateTicks(entity);
+            Map.Entry<Integer, Identifier> currentloc = state.resolvCurrentComboStateTicks(entity);
 
-            ComboState currentCS = ComboStateRegistry.COMBO_STATE.get(currentloc.getValue());
+            ComboState currentCS = ComboStateRegistry.COMBO_STATE.getValue(currentloc.getValue());
 
-            ResourceLocation csloc = state.getSlashArts().doArts(SlashArts.ArtsType.Super, entity);
-            ComboState cs = ComboStateRegistry.COMBO_STATE.get(csloc);
-            if (!csloc.equals(ComboStateRegistry.getId(ComboStateRegistry.NONE)) && !currentloc.getValue().equals(csloc)) {
+            Identifier csloc = state.getSlashArts().doArts(SlashArts.ArtsType.Super, entity);
+            ComboState cs = ComboStateRegistry.COMBO_STATE.getValue(csloc);
+            if (currentCS != null && cs != null
+                    && !csloc.equals(ComboStateRegistry.getId(ComboStateRegistry.NONE)) && !currentloc.getValue().equals(csloc)) {
 
                 if (currentCS.getPriority() > cs.getPriority()) {
                     state.updateComboSeq(entity, csloc);

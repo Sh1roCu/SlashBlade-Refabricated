@@ -1,8 +1,6 @@
 {
   "type": "minecraft:smelting",
-  "ingredient": {
-    "item": "slashblade:proudsoul_ingot"
-  },
+  "ingredient": "slashblade:proudsoul_ingot",
   "result": {
     "id": "slashblade:proudsoul_sphere"
   },

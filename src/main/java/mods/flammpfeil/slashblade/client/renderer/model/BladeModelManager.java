@@ -9,9 +9,8 @@ import mods.flammpfeil.slashblade.registry.slashblade.SlashBladeDefinition;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.concurrent.Executors;
 
@@ -30,13 +29,12 @@ public class BladeModelManager {
     }
 
     public static Registry<SlashBladeDefinition> getClientSlashBladeRegistry() {
-        return Minecraft.getInstance().getConnection().registryAccess()
-                .registryOrThrow(SlashBladeDefinition.REGISTRY_KEY);
+        return Minecraft.getInstance().getConnection().registryAccess().lookupOrThrow(SlashBladeDefinition.REGISTRY_KEY);
     }
 
     public WavefrontObject defaultModel;
 
-    public LoadingCache<ResourceLocation, WavefrontObject> cache;
+    public LoadingCache<Identifier, WavefrontObject> cache;
 
     private BladeModelManager() {
         defaultModel = new WavefrontObject(DefaultResources.resourceDefaultModel);
@@ -44,7 +42,7 @@ public class BladeModelManager {
         cache = CacheBuilder.newBuilder()
                 .build(CacheLoader.asyncReloading(new CacheLoader<>() {
                     @Override
-                    public WavefrontObject load(ResourceLocation key) {
+                    public WavefrontObject load(Identifier key) {
                         try {
                             return new WavefrontObject(key);
                         } catch (Exception e) {
@@ -61,7 +59,7 @@ public class BladeModelManager {
 //        defaultModel = new WavefrontObject(DefaultResources.resourceDefaultModel);
 //    }
 
-    public WavefrontObject getModel(ResourceLocation loc) {
+    public WavefrontObject getModel(Identifier loc) {
         if (loc != null) {
             try {
                 return cache.get(loc);

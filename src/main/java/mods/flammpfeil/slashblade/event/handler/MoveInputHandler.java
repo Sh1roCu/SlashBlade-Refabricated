@@ -34,19 +34,20 @@ public class MoveInputHandler {
 
         EnumSet<InputCommand> commands = EnumSet.noneOf(InputCommand.class);
 
-        if (player.input.up)
+        var input = player.input.keyPresses;
+        if (input.forward())
             commands.add(InputCommand.FORWARD);
-        if (player.input.down)
+        if (input.backward())
             commands.add(InputCommand.BACK);
-        if (player.input.left)
+        if (input.left())
             commands.add(InputCommand.LEFT);
-        if (player.input.right)
+        if (input.right())
             commands.add(InputCommand.RIGHT);
 
-        if (player.input.shiftKeyDown)
+        if (input.shift())
             commands.add(InputCommand.SNEAK);
 
-        if (player.input.jumping) {
+        if (input.jump()) {
             commands.add(InputCommand.JUMP);
         }
 
@@ -66,7 +67,7 @@ public class MoveInputHandler {
         EnumSet<InputCommand> old = CapabilityInputState.INPUT_STATE.maybeGet(player).map(IInputState::getCommands)
                 .orElseGet(() -> EnumSet.noneOf(InputCommand.class));
 
-        Level worldIn = player.getCommandSenderWorld();
+        Level worldIn = player.level();
 
         long currentTime = worldIn.getGameTime();
         boolean doSend = !old.equals(commands);

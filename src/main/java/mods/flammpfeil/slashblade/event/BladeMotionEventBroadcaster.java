@@ -20,7 +20,7 @@ public class BladeMotionEventBroadcaster {
     }
 
     public void register() {
-        BladeMotionEvent.CALLBACK.register(this::onBladeMotion);
+        BladeMotionEvent.EVENT.register(this::onBladeMotion);
     }
 
     public void onBladeMotion(BladeMotionEvent event) {
@@ -29,7 +29,7 @@ public class BladeMotionEventBroadcaster {
 
         // if(msg.combo == Extra.EX_JUDGEMENT_CUT.getName())
         {
-            for (ServerPlayer player : PlayerLookup.around(sp.serverLevel(), new Vec3(
+            for (ServerPlayer player : PlayerLookup.around(sp.level(), new Vec3(
                     sp.getX(),
                     sp.getY(),
                     sp.getZ()

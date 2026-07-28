@@ -1,6 +1,5 @@
 package mods.flammpfeil.slashblade.event.handler;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingAttackEvent;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import mods.flammpfeil.slashblade.event.SlashBladeRegistryEvent;
 import mods.flammpfeil.slashblade.item.SwordType;
@@ -14,18 +13,13 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 
 public class SlashBladeEventHandler {
-    public static void onLivingOnFire(LivingAttackEvent event) {
-        LivingEntity victim = event.getEntity();
-        DamageSource source = event.getSource();
-
+    public static boolean onLivingOnFire(LivingEntity victim, DamageSource source, float amount) {
         ItemStack stack = victim.getMainHandItem();
         var holder = victim.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.FIRE_PROTECTION);
         if (EnchantmentHelper.getItemEnchantmentLevel(holder, stack) <= 0)
-            return;
-        if (!source.is(DamageTypeTags.IS_FIRE))
-            return;
+            return true;
 
-        event.setCanceled(true);
+        return !source.is(DamageTypeTags.IS_FIRE);
     }
 
     public static void onLoadingBlade(SlashBladeRegistryEvent.Pre event) {

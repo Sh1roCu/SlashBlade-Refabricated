@@ -1,21 +1,21 @@
 package mods.flammpfeil.slashblade.init;
 
 import mods.flammpfeil.slashblade.SlashBlade;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public interface DefaultResources {
-    ResourceLocation BaseMotionLocation = SlashBlade.prefix("combostate/old_motion.vmd");
-    ResourceLocation ExMotionLocation = SlashBlade.prefix("combostate/motion.vmd");
+    Identifier BaseMotionLocation = SlashBlade.prefix("combostate/old_motion.vmd");
+    Identifier ExMotionLocation = SlashBlade.prefix("combostate/motion.vmd");
 
-    ResourceLocation testLocation = SlashBlade.prefix("combostate/piercing.vmd");
+    Identifier testLocation = SlashBlade.prefix("combostate/piercing.vmd");
 
-    ResourceLocation testPLLocation = SlashBlade.prefix("combostate/piercing_pl.vmd");
+    Identifier testPLLocation = SlashBlade.prefix("combostate/piercing_pl.vmd");
 
-    ResourceLocation resourceDefaultModel = ResourceLocation.fromNamespaceAndPath("slashblade", "model/blade.obj");
-    ResourceLocation resourceDefaultTexture = ResourceLocation.fromNamespaceAndPath("slashblade", "model/blade.png");
+    Identifier resourceDefaultModel = Identifier.fromNamespaceAndPath("slashblade", "model/blade.obj");
+    Identifier resourceDefaultTexture = Identifier.fromNamespaceAndPath("slashblade", "model/blade.png");
 
-    ResourceLocation resourceDurabilityModel = ResourceLocation.fromNamespaceAndPath("slashblade",
+    Identifier resourceDurabilityModel = Identifier.fromNamespaceAndPath("slashblade",
             "model/util/durability.obj");
-    ResourceLocation resourceDurabilityTexture = ResourceLocation.fromNamespaceAndPath("slashblade",
+    Identifier resourceDurabilityTexture = Identifier.fromNamespaceAndPath("slashblade",
             "model/util/durability.png");
 }

@@ -31,6 +31,10 @@ public class SprintMoveEvent extends BaseEvent implements ICancellableEvent {
         this.currentCommands = currentCommands;
     }
 
+    public ServerPlayer getPlayer() {
+        return player;
+    }
+
     public EnumSet<InputCommand> getCommands() {
         return currentCommands;
     }

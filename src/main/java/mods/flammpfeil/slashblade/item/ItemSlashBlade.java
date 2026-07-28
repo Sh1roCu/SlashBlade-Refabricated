@@ -12,7 +12,6 @@ import mods.flammpfeil.slashblade.capability.inputstate.CapabilityInputState;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.capability.slashblade.SlashBladeState;
-import mods.flammpfeil.slashblade.client.renderer.SlashBladeTEISR;
 import mods.flammpfeil.slashblade.data.tag.SlashBladeItemTags;
 import mods.flammpfeil.slashblade.entity.BladeItemEntity;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
@@ -29,7 +28,6 @@ import net.fabricmc.fabric.api.item.v1.EnchantingContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
@@ -38,15 +36,13 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -59,7 +55,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
@@ -67,6 +63,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -74,17 +71,23 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension, ISlashBladeCapabilityProvider {
-    protected static final ResourceLocation PLAYER_REACH_AMPLIFIER = SlashBlade.prefix("player_reach_amplifier");
+public class ItemSlashBlade extends Item implements ItemSlashBladeExtension, ISlashBladeCapabilityProvider {
+    protected static final Identifier PLAYER_REACH_AMPLIFIER = SlashBlade.prefix("player_reach_amplifier");
 
     public static final List<ResourceKey<Enchantment>> exEnchantment = List.of(Enchantments.SOUL_SPEED, Enchantments.POWER,
             Enchantments.FEATHER_FALLING, Enchantments.FIRE_PROTECTION, Enchantments.THORNS);
 
     protected int attackDamageIn;
     protected float attackSpeedIn;
+    public ToolMaterial tier;
 
-    public ItemSlashBlade(Tier tier, int attackDamageIn, float attackSpeedIn, Properties builder) {
-        super(tier, builder);
+    public ItemSlashBlade(ToolMaterial tier, int attackDamageIn, float attackSpeedIn, Properties builder) {
+        super(builder
+                .sword(tier, attackDamageIn, attackSpeedIn)
+                .repairable(SlashBladeItemTags.CAN_REPAIR_BLADE)
+                .enchantable(tier.enchantmentValue())
+        );
+        this.tier = tier;
         this.attackDamageIn = attackDamageIn;
         this.attackSpeedIn = attackSpeedIn;
     }
@@ -97,7 +100,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     }
 
     @Override
-    public @Nullable String getCreatorNamespace(ItemStack itemStack) {
+    public @NonNull String getCreatorNamespace(@NonNull ItemStack itemStack) {
         return this.getBladeId(itemStack).getNamespace();
     }
 
@@ -107,7 +110,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
 
         builder.add(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_ID, attackSpeedIn, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
 
-        AtomicReference<Double> finalDamage = new AtomicReference<>((double) ((float) attackDamageIn + this.getTier().getAttackDamageBonus()));
+        AtomicReference<Double> finalDamage = new AtomicReference<>((double) ((float) attackDamageIn + this.tier.attackDamageBonus()));
 
         Optional<ISlashBladeState> state = CapabilitySlashBlade.getBladeState(stack);
         state.ifPresent(s -> {
@@ -164,16 +167,17 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
         return 72000;
     }
 
-    public @NotNull InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+    @Override
+    public @NotNull InteractionResult use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack itemstack = playerIn.getItemInHand(handIn);
         if (handIn == InteractionHand.OFF_HAND && !(playerIn.getMainHandItem().getItem() instanceof ItemSlashBlade)) {
-            return InteractionResultHolder.pass(itemstack);
+            return InteractionResult.PASS;
         }
         boolean result = CapabilitySlashBlade.getBladeState(itemstack).map((state) -> {
 
             CapabilityInputState.INPUT_STATE.maybeGet(playerIn).ifPresent((s) -> s.getCommands().add(InputCommand.R_CLICK));
 
-            ResourceLocation combo = state.progressCombo(playerIn);
+            Identifier combo = state.progressCombo(playerIn);
 
             CapabilityInputState.INPUT_STATE.maybeGet(playerIn).ifPresent((s) -> s.getCommands().remove(InputCommand.R_CLICK));
 
@@ -184,7 +188,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
         }).orElse(false);
 
         playerIn.startUsingItem(handIn);
-        return new InteractionResultHolder<>(result ? InteractionResult.SUCCESS : InteractionResult.FAIL, itemstack);
+        return result ? InteractionResult.SUCCESS : InteractionResult.FAIL;
     }
 
     @Override
@@ -269,7 +273,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
                                 stack.canBeEnchantedWith(enchantment, EnchantingContext.ACCEPTABLE) ||
                                         stack.canBeEnchantedWith(enchantment, EnchantingContext.PRIMARY))
                         .filter(enchantment -> !SlashBladeConfig.NON_DROPPABLE_ENCHANTMENT.get()
-                                .contains(enchantment.key().location().toString()))
+                                .contains(enchantment.key().identifier().toString()))
                         .toList();
                 if (enchantments.isEmpty()) {
                     return;
@@ -301,11 +305,11 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
                 static final String isReleased = "isReleased";
 
                 @Override
-                public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource ds) {
+                public boolean causeFallDamage(double distance, float damageMultiplier, DamageSource ds) {
 
                     CompoundTag tag = this.sb$getPersistentData();
 
-                    if (!tag.getBoolean(isReleased)) {
+                    if (!tag.getBooleanOr(isReleased, false)) {
                         this.sb$getPersistentData().putBoolean(isReleased, true);
 
                         if (this.level() instanceof ServerLevel) {
@@ -342,12 +346,12 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     }
 
     @Override
-    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+    public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 
         CapabilitySlashBlade.getBladeState(stack).ifPresent((state) -> {
-            ResourceLocation loc = state.resolvCurrentComboState(attacker);
-            ComboState cs = ComboStateRegistry.COMBO_STATE.get(loc) != null
-                    ? ComboStateRegistry.COMBO_STATE.get(loc)
+            Identifier loc = state.resolvCurrentComboState(attacker);
+            ComboState cs = ComboStateRegistry.COMBO_STATE.get(loc).isPresent()
+                    ? ComboStateRegistry.COMBO_STATE.getValue(loc)
                     : ComboStateRegistry.NONE;
 
             SlashBladeEvent.HitEvent event = new SlashBladeEvent.HitEvent(stack, state, target, attacker);
@@ -361,10 +365,9 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
                 stack.hurtAndBreak(1, serverLevel, serverPlayer, getOnBroken(stack, attacker));
             }
         });
-
-        return true;
     }
 
+    @Override
     public boolean mineBlock(ItemStack stack, Level worldIn, BlockState state, BlockPos pos,
                              LivingEntity entityLiving) {
 
@@ -381,7 +384,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     }
 
     @Override
-    public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
+    public boolean releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
         int elapsed = this.getUseDuration(stack, entityLiving) - timeLeft;
 
         if (!worldIn.isClientSide()) {
@@ -392,7 +395,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
                 if (state.isBroken() || state.isSealed() || !(swordType.contains(SwordType.ENCHANTED)))
                     return;
 
-                ResourceLocation sa = state.doChargeAction(entityLiving, elapsed);
+                Identifier sa = state.doChargeAction(entityLiving, elapsed);
                 boolean isCreative = false;
                 // sa.tickAction(entityLiving);
                 if (!sa.equals(ComboStateRegistry.getId(ComboStateRegistry.NONE))) {
@@ -414,6 +417,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
                 }
             });
         }
+        return false;
     }
 
     @Override
@@ -421,8 +425,8 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
 
         CapabilitySlashBlade.getBladeState(stack).ifPresent((state) -> {
 
-            (ComboStateRegistry.COMBO_STATE.get(state.getComboSeq()) != null
-                    ? ComboStateRegistry.COMBO_STATE.get(state.getComboSeq())
+            (ComboStateRegistry.COMBO_STATE.get(state.getComboSeq()).isPresent()
+                    ? ComboStateRegistry.COMBO_STATE.getValue(state.getComboSeq())
                     : ComboStateRegistry.NONE).holdAction(player);
             int ticks = player.getTicksUsingItem();
 
@@ -445,8 +449,8 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-        super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
+    public void inventoryTick(ItemStack stack, ServerLevel worldIn, Entity entityIn, @Nullable EquipmentSlot slot) {
+        super.inventoryTick(stack, worldIn, entityIn, slot);
 
         if (stack == null)
             return;
@@ -454,11 +458,12 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
             return;
 
         CapabilitySlashBlade.getBladeState(stack).ifPresent((state) -> {
-            SlashBladeEvent.UpdateEvent event = new SlashBladeEvent.UpdateEvent(stack, state, worldIn, entityIn, itemSlot, isSelected);
+            SlashBladeEvent.UpdateEvent event = new SlashBladeEvent.UpdateEvent(stack, state, worldIn, entityIn, slot);
             SlashBladeEvent.UPDATE.invoker().onUpdate(event);
             if (event.isCanceled())
                 return;
 
+            boolean isSelected = slot == EquipmentSlot.MAINHAND;
             if (!isSelected) {
                 var swordType = SwordType.from(stack);
                 if (entityIn instanceof Player player) {
@@ -491,9 +496,9 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
                 /*
                  * if(0.5f > state.getDamage()) state.setDamage(0.99f);
                  */
-                ResourceLocation loc = state.resolvCurrentComboState(living);
-                ComboState cs = ComboStateRegistry.COMBO_STATE.get(loc) != null
-                        ? ComboStateRegistry.COMBO_STATE.get(loc)
+                Identifier loc = state.resolvCurrentComboState(living);
+                ComboState cs = ComboStateRegistry.COMBO_STATE.get(loc).isPresent()
+                        ? ComboStateRegistry.COMBO_STATE.getValue(loc)
                         : ComboStateRegistry.NONE;
 
                 if (isInMainhand(stack, isSelected, living))
@@ -537,7 +542,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
 
     @Override
     public int getMaxDamage(ItemStack stack) {
-        return CapabilitySlashBlade.getBladeState(stack).filter(s -> !s.isEmpty()).map(ISlashBladeState::getMaxDamage).orElse(this.getTier().getUses());
+        return CapabilitySlashBlade.getBladeState(stack).filter(s -> !s.isEmpty()).map(ISlashBladeState::getMaxDamage).orElse(this.tier.durability());
     }
 
     @Override
@@ -546,12 +551,14 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     }
 
     @Override
-    public String getDescriptionId(ItemStack stack) {
-        return CapabilitySlashBlade.getBladeState(stack).filter((s) -> !s.getTranslationKey().isBlank())
-                .map(ISlashBladeState::getTranslationKey).orElseGet(() -> stackDefaultDescriptionId(stack));
+    public Component getName(ItemStack stack) {
+        return Component.translatable(
+                CapabilitySlashBlade.getBladeState(stack).filter((s) -> !s.getTranslationKey().isBlank())
+                        .map(ISlashBladeState::getTranslationKey).orElseGet(() -> stackDefaultDescriptionId(stack))
+        );
     }
 
-    public ResourceLocation getBladeId(ItemStack stack) {
+    public Identifier getBladeId(ItemStack stack) {
         return CapabilitySlashBlade.getBladeState(stack).filter((s) -> !s.getTranslationKey().isBlank())
                 .map((state) -> parseBladeID(state.getTranslationKey())).orElseGet(() -> stackDefaultId(stack));
     }
@@ -559,12 +566,12 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     private String stackDefaultDescriptionId(ItemStack stack) {
         var cap = CapabilitySlashBlade.getBladeState(stack);
         if (cap.isEmpty())
-            return super.getDescriptionId(stack);
+            return super.getDescriptionId();
         String key = cap.get().getTranslationKey();
-        return !key.isBlank() ? key : super.getDescriptionId(stack);
+        return !key.isBlank() ? key : super.getDescriptionId();
     }
 
-    private ResourceLocation stackDefaultId(ItemStack stack) {
+    private Identifier stackDefaultId(ItemStack stack) {
         var cap = CapabilitySlashBlade.getBladeState(stack);
         if (cap.isEmpty())
             return BuiltInRegistries.ITEM.getKey(this);
@@ -572,32 +579,12 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
         return !key.isBlank() ? parseBladeID(key) : BuiltInRegistries.ITEM.getKey(this);
     }
 
-    public static ResourceLocation parseBladeID(String key) {
-        return ResourceLocation.tryParse(key.substring(5).replaceFirst("\\.", ":").replace(".", "/"));
+    public static Identifier parseBladeID(String key) {
+        return Identifier.tryParse(key.substring(5).replaceFirst("\\.", ":").replace(".", "/"));
     }
 
     public boolean isDestructable(ItemStack stack) {
         return false;
-    }
-
-    @Override
-    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-
-        if (Ingredient.of(ItemTags.STONE_TOOL_MATERIALS).test(repair)) {
-            return true;
-        }
-
-        /*
-         * Tag<Item> tags = ItemTags.getCollection().get(new
-         * ResourceLocation("slashblade","proudsouls"));
-         *
-         * if(tags != null){ boolean result = Ingredient.fromTag(tags).test(repair); }
-         */
-
-        // todo: repair custom material
-        if (repair.is(SlashBladeItemTags.PROUD_SOULS))
-            return true;
-        return super.isValidRepairItem(toRepair, repair);
     }
 
     RangeMap<Comparable<?>, Object> refineColor = ImmutableRangeMap.builder()
@@ -608,7 +595,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
+    public void appendHoverText(final ItemStack stack, final TooltipContext context, final TooltipDisplay display, final Consumer<Component> tooltip, final TooltipFlag flagIn) {
         CapabilitySlashBlade.getBladeState(stack).ifPresent(s -> {
             this.appendSwordType(stack, context, tooltip, flagIn); // √
             this.appendProudSoulCount(tooltip, stack, s);
@@ -618,53 +605,53 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
             this.appendSpecialEffects(tooltip, s); // √
         });
 
-        super.appendHoverText(stack, context, tooltip, flagIn);
+        super.appendHoverText(stack, context, display, tooltip, flagIn);
     }
 
     @Environment(EnvType.CLIENT)
-    public void appendSlashArt(ItemStack stack, List<Component> tooltip, @NotNull ISlashBladeState s) {
+    public void appendSlashArt(ItemStack stack, Consumer<Component> tooltip, @NotNull ISlashBladeState s) {
         var swordType = SwordType.from(stack);
         if (swordType.contains(SwordType.BEWITCHED) && !swordType.contains(SwordType.SEALED)) {
-            tooltip.add(Component.translatable("slashblade.tooltip.slash_art", s.getSlashArts().getDescription())
+            tooltip.accept(Component.translatable("slashblade.tooltip.slash_art", s.getSlashArts().getDescription())
                     .withStyle(ChatFormatting.GRAY));
         }
     }
 
     @Environment(EnvType.CLIENT)
-    public void appendRefineCount(List<Component> tooltip, @NotNull ItemStack stack, @NotNull ISlashBladeState s) {
+    public void appendRefineCount(Consumer<Component> tooltip, @NotNull ItemStack stack, @NotNull ISlashBladeState s) {
         int refine = s.getRefine();
         if (refine > 0) {
-            tooltip.add(Component.translatable("slashblade.tooltip.refine", refine)
+            tooltip.accept(Component.translatable("slashblade.tooltip.refine", refine)
                     .withStyle((ChatFormatting) refineColor.get(refine)));
         }
     }
 
     @Environment(EnvType.CLIENT)
-    public void appendProudSoulCount(List<Component> tooltip, @NotNull ItemStack stack, @NotNull ISlashBladeState s) {
+    public void appendProudSoulCount(Consumer<Component> tooltip, @NotNull ItemStack stack, @NotNull ISlashBladeState s) {
         int proudsoul = s.getProudSoulCount();
         if (proudsoul > 0) {
             MutableComponent countComponent = Component.translatable("slashblade.tooltip.proud_soul", proudsoul)
                     .withStyle(ChatFormatting.GRAY);
             if (proudsoul > 10000)
-                countComponent = countComponent.withStyle(ChatFormatting.DARK_PURPLE);
-            tooltip.add(countComponent);
+                countComponent.withStyle(ChatFormatting.DARK_PURPLE);
+            tooltip.accept(countComponent);
         }
     }
 
     @Environment(EnvType.CLIENT)
-    public void appendKillCount(List<Component> tooltip, @NotNull ItemStack stack, @NotNull ISlashBladeState s) {
+    public void appendKillCount(Consumer<Component> tooltip, @NotNull ItemStack stack, @NotNull ISlashBladeState s) {
         int killCount = s.getKillCount();
         if (killCount > 0) {
             MutableComponent killCountComponent = Component.translatable("slashblade.tooltip.killcount", killCount)
                     .withStyle(ChatFormatting.GRAY);
             if (killCount > 1000)
-                killCountComponent = killCountComponent.withStyle(ChatFormatting.DARK_PURPLE);
-            tooltip.add(killCountComponent);
+                killCountComponent.withStyle(ChatFormatting.DARK_PURPLE);
+            tooltip.accept(killCountComponent);
         }
     }
 
     @Environment(EnvType.CLIENT)
-    public void appendSpecialEffects(List<Component> tooltip, @NotNull ISlashBladeState s) {
+    public void appendSpecialEffects(Consumer<Component> tooltip, @NotNull ISlashBladeState s) {
         if (s.getSpecialEffects().isEmpty())
             return;
 
@@ -675,7 +662,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
 
             boolean showingLevel = SpecialEffect.getRequestLevel(se) > 0;
 
-            tooltip.add(Component.translatable("slashblade.tooltip.special_effect", SpecialEffect.getDescription(se),
+            tooltip.accept(Component.translatable("slashblade.tooltip.special_effect", SpecialEffect.getDescription(se),
                             Component.literal(showingLevel ? String.valueOf(SpecialEffect.getRequestLevel(se)) : "")
                                     .withStyle(SpecialEffect.isEffective(se, player.experienceLevel) ? ChatFormatting.RED
                                             : ChatFormatting.DARK_GRAY))
@@ -684,18 +671,18 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     }
 
     @Environment(EnvType.CLIENT)
-    public void appendSwordType(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendSwordType(ItemStack stack, TooltipContext context, Consumer<Component> tooltip, TooltipFlag flagIn) {
         var swordType = SwordType.from(stack);
         boolean goldenFlag = swordType.containsAll(List.of(SwordType.SOULEATER, SwordType.FIERCEREDGE));
         if (swordType.contains(SwordType.SEALED)) return;
         if (swordType.contains(SwordType.BEWITCHED)) {
-            tooltip.add(
+            tooltip.accept(
                     Component.translatable("slashblade.sword_type.bewitched")
                             .withStyle(goldenFlag ? ChatFormatting.GOLD : ChatFormatting.DARK_PURPLE));
         } else if (swordType.contains(SwordType.ENCHANTED)) {
-            tooltip.add(Component.translatable("slashblade.sword_type.enchanted").withStyle(ChatFormatting.DARK_AQUA));
+            tooltip.accept(Component.translatable("slashblade.sword_type.enchanted").withStyle(ChatFormatting.DARK_AQUA));
         } else {
-            tooltip.add(Component.translatable("slashblade.sword_type.noname").withStyle(ChatFormatting.DARK_GRAY));
+            tooltip.accept(Component.translatable("slashblade.sword_type.noname").withStyle(ChatFormatting.DARK_GRAY));
         }
     }
 
@@ -708,10 +695,11 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
                 .isEmpty();
     }
 
-    @Override
-    public boolean hasCustomEntity(ItemStack stack) {
-        return true;
-    }
+    // TODO
+//    @Override
+//    public boolean hasCustomEntity(ItemStack stack) {
+//        return true;
+//    }
 
     /**
      * 原来的方法替换掉落实体时无法Copy假物品实体相关的NBT，因为获取物品指令是先生成的物品实体再设置的假物品
@@ -733,12 +721,6 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     public int getEntityLifespan(ItemStack itemStack, Level world) {
         return super.getEntityLifespan(itemStack, world);// Short.MAX_VALUE;
     }*/
-
-    @Environment(EnvType.CLIENT)
-    @Override
-    public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-        return SlashBladeTEISR.INSTANCE.get();
-    }
 
     @Override
     public SlashBladeState initCapability(ItemStack stack) {

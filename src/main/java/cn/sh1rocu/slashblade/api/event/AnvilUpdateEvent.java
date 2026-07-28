@@ -14,7 +14,7 @@ public class AnvilUpdateEvent extends BaseEvent implements ICancellableEvent {
     private int cost;
     private int materialCost;
     private final Player player;
-    public static final Event<Callback> CALLBACK = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+    public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
         for (Callback callback : callbacks) {
             callback.onAnvilUpdate(event);
         }

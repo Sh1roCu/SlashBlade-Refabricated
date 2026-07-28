@@ -1,7 +1,7 @@
 {
   "itemGroup.slashblade": "拔刀剑",
   "itemGroup.slashblade.desc": "堕入修罗之道",
-  "key.category.slashblade": "拔刀剑",
+  "key.category.slashblade.slashblade": "拔刀剑",
   "key.slashblade.special_move": "特殊移动",
   "key.slashblade.summon_blade": "召唤幻影剑",
   "attribute.name.generic.reachDistance": "攻击距离",

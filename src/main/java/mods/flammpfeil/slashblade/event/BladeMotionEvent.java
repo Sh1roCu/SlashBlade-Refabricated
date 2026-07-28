@@ -4,13 +4,13 @@ import cn.sh1rocu.slashblade.api.event.BaseEvent;
 import cn.sh1rocu.slashblade.api.event.ICancellableEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 
 public class BladeMotionEvent extends BaseEvent implements ICancellableEvent {
     private final LivingEntity entity;
-    private ResourceLocation combo;
-    public static final Event<Callback> CALLBACK = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+    private Identifier combo;
+    public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
         for (Callback callback : callbacks) {
             callback.onBladeMotion(event);
         }
@@ -20,7 +20,7 @@ public class BladeMotionEvent extends BaseEvent implements ICancellableEvent {
         void onBladeMotion(BladeMotionEvent event);
     }
 
-    public BladeMotionEvent(LivingEntity entity, ResourceLocation combo) {
+    public BladeMotionEvent(LivingEntity entity, Identifier combo) {
         this.entity = entity;
         this.combo = combo;
     }
@@ -29,11 +29,11 @@ public class BladeMotionEvent extends BaseEvent implements ICancellableEvent {
         return entity;
     }
 
-    public ResourceLocation getCombo() {
+    public Identifier getCombo() {
         return this.combo;
     }
 
-    public void setCombo(ResourceLocation combo) {
+    public void setCombo(Identifier combo) {
         this.combo = combo;
     }
 }

@@ -9,15 +9,15 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 public class NetworkManager {
     public static void registerC2SPackets() {
-        PayloadTypeRegistry.playC2S().register(MoveCommandPacket.TYPE, MoveCommandPacket.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(MoveCommandPacket.TYPE, MoveCommandPacket.STREAM_CODEC);
         ServerPlayNetworking.registerGlobalReceiver(MoveCommandPacket.TYPE, MoveCommandPacket::handle);
     }
 
     public static void registerS2CPackets() {
-        PayloadTypeRegistry.playS2C().register(AdvancedAddEntityPayload.TYPE, AdvancedAddEntityPayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(AdvancedAddEntityPayload.TYPE, AdvancedAddEntityPayload.STREAM_CODEC);
 
-        PayloadTypeRegistry.playS2C().register(RankSyncPacket.TYPE, RankSyncPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(MotionBroadcastPacket.TYPE, MotionBroadcastPacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(RankSyncPacket.TYPE, RankSyncPacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(MotionBroadcastPacket.TYPE, MotionBroadcastPacket.STREAM_CODEC);
     }
 
     @Environment(EnvType.CLIENT)

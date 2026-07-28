@@ -1,8 +1,6 @@
 {
   "type": "minecraft:blasting",
-  "ingredient": {
-    "item": "slashblade:proudsoul_sphere"
-  },
+  "ingredient": "slashblade:proudsoul_sphere",
   "result": {
     "id": "slashblade:proudsoul_crystal"
   },

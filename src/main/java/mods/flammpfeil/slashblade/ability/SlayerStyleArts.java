@@ -1,9 +1,9 @@
 package mods.flammpfeil.slashblade.ability;
 
+import cn.sh1rocu.slashblade.api.event.PlayerTickEvent;
 import cn.sh1rocu.slashblade.api.extension.EntityExtension;
 import cn.sh1rocu.slashblade.mixin.accessor.ServerPlayerAccessor;
-import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
-import io.github.fabricators_of_create.porting_lib.entity.events.tick.PlayerTickEvent;
+import cn.sh1rocu.slashblade.util.SoundUtil;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.capability.mobeffect.CapabilityMobEffect;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
@@ -19,7 +19,7 @@ import mods.flammpfeil.slashblade.util.NBTHelper;
 import mods.flammpfeil.slashblade.util.VectorHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.TicketType;
@@ -44,7 +44,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 public class SlayerStyleArts {
-    private static final ResourceLocation STEP_HEIGHT_MOD = SlashBlade.prefix("step_height_modifier");
+    private static final Identifier STEP_HEIGHT_MOD = SlashBlade.prefix("step_height_modifier");
 
     private static final class SingletonHolder {
 
@@ -59,7 +59,7 @@ public class SlayerStyleArts {
     }
 
     public void register() {
-        InputCommandEvent.CALLBACK.register(this::onInputChange);
+        InputCommandEvent.EVENT.register(this::onInputChange);
         this.onTick();
     }
 
@@ -83,10 +83,10 @@ public class SlayerStyleArts {
 
     public static final Vec3 BACK_MOTION = new Vec3(0, -5, 0);
 
-    static public final ResourceLocation ADVANCEMENT_AIR_TRICK = SlashBlade.prefix("abilities/air_trick");
-    static public final ResourceLocation ADVANCEMENT_TRICK_DOWN = SlashBlade.prefix("abilities/trick_down");
-    static public final ResourceLocation ADVANCEMENT_TRICK_DODGE = SlashBlade.prefix("abilities/trick_dodge");
-    static public final ResourceLocation ADVANCEMENT_TRICK_UP = SlashBlade.prefix("abilities/trick_up");
+    static public final Identifier ADVANCEMENT_AIR_TRICK = SlashBlade.prefix("abilities/air_trick");
+    static public final Identifier ADVANCEMENT_TRICK_DOWN = SlashBlade.prefix("abilities/trick_down");
+    static public final Identifier ADVANCEMENT_TRICK_DODGE = SlashBlade.prefix("abilities/trick_dodge");
+    static public final Identifier ADVANCEMENT_TRICK_UP = SlashBlade.prefix("abilities/trick_up");
 
     public static final String AVOID_TRICKUP_PATH = "sb.avoid.trickup";
     public static final String AVOID_COUNTER_PATH = "sb.avoid.counter";
@@ -107,7 +107,7 @@ public class SlayerStyleArts {
         if (stack.isEmpty()) return;
         if (!(stack.getItem() instanceof ItemSlashBlade)) return;
 
-        ServerLevel worldIn = sender.serverLevel();
+        ServerLevel worldIn = sender.level();
         EnumSet<InputCommand> old = event.getOld();
         EnumSet<InputCommand> current = event.getCurrent();
 
@@ -147,11 +147,11 @@ public class SlayerStyleArts {
     public boolean handleForwardSprintSneak(ServerPlayer sender, Level worldIn) {
         return CapabilitySlashBlade.getBladeState(sender.getMainHandItem()).map(state -> {
             Entity tmpTarget = state.getTargetEntity(worldIn);
-            Entity target = (tmpTarget instanceof MultiPartEntity mp && mp.getParts() != null && mp.getParts().length > 0)
-                    ? mp.getParts()[0] : tmpTarget;
+            Entity target = /*(tmpTarget instanceof MultiPartEntity mp && mp.getParts() != null && mp.getParts().length > 0)
+                    ? mp.getParts()[0] :*/ tmpTarget;
 
             if (target == null
-                    && ((EntityExtension) sender).sb$getPersistentData().getInt(AVOID_TRICKUP_PATH) == 0) {
+                    && ((EntityExtension) sender).sb$getPersistentData().getIntOr(AVOID_TRICKUP_PATH, 0) == 0) {
                 return executeTrickUp(sender);
             } else if (target != null) {
                 return executeAirTrick(sender, worldIn, target, state);
@@ -177,7 +177,7 @@ public class SlayerStyleArts {
     }
 
     public boolean handleSprintMove(ServerPlayer sender, EnumSet<InputCommand> current) {
-        ServerLevel level = sender.serverLevel();
+        ServerLevel level = sender.level();
         int count = CapabilityMobEffect.MOB_EFFECT.maybeGet(sender)
                 .map(effect -> effect.doAvoid(level.getGameTime()))
                 .orElse(0);
@@ -189,7 +189,7 @@ public class SlayerStyleArts {
             sender.moveRelative(3.0f, input);
             Vec3 motion = this.maybeBackOffFromEdge(sender.getDeltaMovement(), sender);
 
-            sender.playNotifySound(SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.5f, 1.2f);
+            SoundUtil.playNotifySound(sender, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.5f, 1.2f);
             sender.move(MoverType.SELF, motion);
             sender.connection.send(new ClientboundSetEntityMotionPacket(sender.getId(), motion.scale(0.5f)));
 
@@ -235,14 +235,14 @@ public class SlayerStyleArts {
 
     }
 
-    public void applyTrickSoundAndAdvancement(ServerPlayer sender, ResourceLocation advancement) {
+    public void applyTrickSoundAndAdvancement(ServerPlayer sender, Identifier advancement) {
         AdvancementHelper.grantCriterion(sender, advancement);
-        sender.playNotifySound(SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.5f, 1.2f);
+        SoundUtil.playNotifySound(sender, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.5f, 1.2f);
 
     }
 
     public void applyFullTrickEffects(ServerPlayer sender, Vec3 motion, String counterPath,
-                                      ResourceLocation advancement, float motionScale) {
+                                      Identifier advancement, float motionScale) {
         applyBasicTrickEffects(sender);
         sender.connection.send(new ClientboundSetEntityMotionPacket(sender.getId(), motion.scale(motionScale)));
         ((EntityExtension) sender).sb$getPersistentData().putInt(counterPath, 2);
@@ -292,7 +292,7 @@ public class SlayerStyleArts {
 
             @Override
             public void tick() {
-                if (this.sb$getPersistentData().getBoolean(DO_FORCE_HIT_PATH)) {
+                if (this.sb$getPersistentData().getBooleanOr(DO_FORCE_HIT_PATH, false)) {
                     this.doForceHitEntity(target);
                     this.sb$getPersistentData().remove(DO_FORCE_HIT_PATH);
 
@@ -318,7 +318,7 @@ public class SlayerStyleArts {
         ss.sb$getPersistentData().putBoolean(DO_FORCE_HIT_PATH, true);
 
         worldIn.addFreshEntity(ss);
-        sender.playNotifySound(SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 0.2F, 1.45F);
+        SoundUtil.playNotifySound(sender, SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 0.2F, 1.45F);
 
     }
 
@@ -351,7 +351,7 @@ public class SlayerStyleArts {
 
     public static void prepareTeleportEffects(Entity entityIn) {
         if (entityIn instanceof ServerPlayer serverPlayer) {
-            serverPlayer.playNotifySound(SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.75F, 1.25F);
+            SoundUtil.playNotifySound(serverPlayer, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.75F, 1.25F);
             CapabilitySlashBlade.getBladeState(serverPlayer.getMainHandItem())
                     .ifPresent(state -> state.updateComboSeq(serverPlayer, state.getComboRoot()));
             Untouchable.setUntouchable(serverPlayer, TRICK_ACTION_UNTOUCHABLE_TIME);
@@ -385,11 +385,10 @@ public class SlayerStyleArts {
 
     public static void handleServerPlayerTeleportation(ServerPlayer serverPlayer, ServerLevel serverLevel,
                                                        double x, double y, double z, float yaw, float pitch) {
-        Set<RelativeMovement> relativeList = Collections.emptySet();
-        BlockPos blockPos = new BlockPos((int) x, (int) y, (int) z);
-        ChunkPos chunkPos = new ChunkPos(blockPos);
+        Set<Relative> relativeList = Collections.emptySet();
+        ChunkPos chunkPos = new ChunkPos((int) x, (int) z);
 
-        serverLevel.getChunkSource().addRegionTicket(TicketType.POST_TELEPORT, chunkPos, 1, serverPlayer.getId());
+        serverLevel.getChunkSource().addTicketWithRadius(TicketType.FORCED, chunkPos, 1);
         serverPlayer.stopRiding();
 
         if (serverPlayer.isSleeping()) {
@@ -398,10 +397,10 @@ public class SlayerStyleArts {
         }
 
         if (serverLevel == serverPlayer.level()) {
-            serverPlayer.connection.teleport(x, y, z, yaw, pitch, relativeList);
+            serverPlayer.connection.teleport(new PositionMoveRotation(new Vec3(x, y, z), Vec3.ZERO, yaw, pitch), relativeList);
 
         } else {
-            serverPlayer.teleportTo(serverLevel, x, y, z, yaw, pitch);
+            serverPlayer.teleportTo(serverLevel, x, y, z, relativeList, yaw, pitch, false);
 
         }
         serverPlayer.setYHeadRot(yaw);
@@ -414,7 +413,7 @@ public class SlayerStyleArts {
         float clampedPitch = Mth.clamp(Mth.wrapDegrees(pitch), -90.0F, 90.0F);
 
         if (serverLevel == entityIn.level()) {
-            entityIn.moveTo(x, y, z, wrappedYaw, clampedPitch);
+            entityIn.snapTo(x, y, z, wrappedYaw, clampedPitch);
             entityIn.setYHeadRot(wrappedYaw);
         } else {
             handleCrossDimensionTeleport(entityIn, serverLevel, x, y, z, wrappedYaw, clampedPitch);
@@ -424,11 +423,11 @@ public class SlayerStyleArts {
     public static void handleCrossDimensionTeleport(Entity entityIn, ServerLevel serverLevel,
                                                     double x, double y, double z, float yaw, float pitch) {
         entityIn.unRide();
-        Entity newEntity = entityIn.getType().create(serverLevel);
+        Entity newEntity = entityIn.getType().create(serverLevel, EntitySpawnReason.DIMENSION_TRAVEL);
 
         if (newEntity != null) {
             newEntity.restoreFrom(entityIn);
-            newEntity.moveTo(x, y, z, yaw, pitch);
+            newEntity.snapTo(x, y, z, yaw, pitch);
             newEntity.setYHeadRot(yaw);
         }
     }
@@ -498,8 +497,8 @@ public class SlayerStyleArts {
     static final float stepUpDefault = 0.6f;
 
     public void onTick() {
-        PlayerTickEvent.Pre.EVENT.register(this::handleTickStart);
-        PlayerTickEvent.Post.EVENT.register(this::handleTickEnd);
+        PlayerTickEvent.START.register(this::handleTickStart);
+        PlayerTickEvent.END.register(this::handleTickEnd);
     }
 
     public void handleTickStart(PlayerTickEvent.Pre event) {
@@ -565,7 +564,7 @@ public class SlayerStyleArts {
             return;
         }
 
-        int count = ((EntityExtension) player).sb$getPersistentData().getInt(AVOID_TRICKUP_PATH) - 1;
+        int count = ((EntityExtension) player).sb$getPersistentData().getIntOr(AVOID_TRICKUP_PATH, 0) - 1;
 
         if (count <= 0) {
             ((EntityExtension) player).sb$getPersistentData().remove(AVOID_TRICKUP_PATH);
@@ -580,7 +579,7 @@ public class SlayerStyleArts {
             return;
         }
 
-        int count = ((EntityExtension) player).sb$getPersistentData().getInt(AVOID_COUNTER_PATH) - 1;
+        int count = ((EntityExtension) player).sb$getPersistentData().getIntOr(AVOID_COUNTER_PATH, 0) - 1;
 
         if (count <= 0) {
             restoreAvoidPosition(player);
@@ -596,7 +595,7 @@ public class SlayerStyleArts {
     public void restoreAvoidPosition(Player player) {
         if (((EntityExtension) player).sb$getPersistentData().contains(AVOID_VEC_PATH)) {
             Vec3 pos = NBTHelper.getVector3d(((EntityExtension) player).sb$getPersistentData(), AVOID_VEC_PATH);
-            player.moveTo(pos);
+            player.snapTo(pos);
 
         }
     }
@@ -612,7 +611,7 @@ public class SlayerStyleArts {
             return;
         }
 
-        int count = ((EntityExtension) player).sb$getPersistentData().getInt(AIRTRICK_COUNTER_PATH) - 1;
+        int count = ((EntityExtension) player).sb$getPersistentData().getIntOr(AIRTRICK_COUNTER_PATH, 0) - 1;
 
         if (count <= 0) {
             executeAirTrickTeleport(player);
@@ -630,7 +629,7 @@ public class SlayerStyleArts {
             return;
         }
 
-        int id = ((EntityExtension) player).sb$getPersistentData().getInt(AIRTRICK_TARGET_PATH);
+        int id = ((EntityExtension) player).sb$getPersistentData().getIntOr(AIRTRICK_TARGET_PATH, 0);
         Entity target = player.level().getEntity(id);
 
         if (target instanceof LivingEntity livingEntity) {
@@ -654,7 +653,7 @@ public class SlayerStyleArts {
 
     public void handleTickEnd(PlayerTickEvent.Post event) {
         var player = event.getEntity();
-        float stepUp = ((EntityExtension) player).sb$getPersistentData().getFloat(TMP_STEPUP_PATH);
+        float stepUp = ((EntityExtension) player).sb$getPersistentData().getFloatOr(TMP_STEPUP_PATH, 0);
         stepUp = Math.max(stepUp, stepUpDefault);
 
         if (stepUp < player.maxUpStep()) {

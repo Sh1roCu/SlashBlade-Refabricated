@@ -14,7 +14,7 @@ public class RefineSettlementEvent extends SlashBladeEvent implements ICancellab
     private int materialCost;
     private int costResult;
     private int refineResult;
-    public static final Event<Callback> CALLBACK = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+    public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
         for (Callback callback : callbacks) {
             callback.onRefineSettlement(event);
         }

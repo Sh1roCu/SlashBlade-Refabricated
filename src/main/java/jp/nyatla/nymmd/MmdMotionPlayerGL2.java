@@ -1,9 +1,12 @@
 package jp.nyatla.nymmd;
 
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import jp.nyatla.nymmd.types.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.ByteBuffer;
@@ -18,7 +21,7 @@ public class MmdMotionPlayerGL2 extends MmdMotionPlayer {
         public float fShininess;
         public short[] indices;
         public int ulNumIndices;
-        public ResourceLocation texture_id;
+        public Identifier texture_id;
         public int unknown;
     }
 
@@ -196,8 +199,6 @@ public class MmdMotionPlayerGL2 extends MmdMotionPlayer {
             // 頂点インデックスを指定してポリゴン描画
             // GL11.glDrawElements(GL11.GL_TRIANGLES, mt_ptr.indices);
 
-            MeshData data = wr.buildOrThrow();
-            BufferUploader.drawWithShader(data);
         }
 
         GL11.glPopClientAttrib();

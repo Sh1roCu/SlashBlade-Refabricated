@@ -1,6 +1,5 @@
 package cn.sh1rocu.slashblade.util;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.logging.log4j.Level;
@@ -8,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullUnmarked;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashSet;
@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@NullUnmarked
 public class LazyOptional<T> {
     private final NonNullSupplier<T> supplier;
     private final Object lock = new Object();
@@ -61,7 +61,7 @@ public class LazyOptional<T> {
                 }
             }
         }
-        return resolved.getValue();
+        return resolved.get();
     }
 
     private T getValueUnsafe() {

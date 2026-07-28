@@ -1,9 +1,7 @@
 {
   "type": "slashblade:proudsoul",
   "ingredients": [
-    {
-      "item": "slashblade:proudsoul"
-    }
+    "slashblade:proudsoul"
   ],
   "result": {
     "id": "slashblade:proudsoul_tiny",

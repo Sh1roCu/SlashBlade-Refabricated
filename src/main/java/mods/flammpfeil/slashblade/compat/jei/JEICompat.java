@@ -12,16 +12,15 @@ import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.init.SBItems;
 import mods.flammpfeil.slashblade.recipe.SlashBladeSmithingRecipe;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-// FIXME: 拔刀剑在JEI的物品界面渲染不正常，耐久值会改变；在JEI的配方界面渲染正常
 @JeiPlugin
 public class JEICompat implements IModPlugin {
 
     @Override
-    public ResourceLocation getPluginUid() {
+    public Identifier getPluginUid() {
         return SlashBlade.prefix(SlashBlade.MODID);
     }
 
@@ -33,10 +32,6 @@ public class JEICompat implements IModPlugin {
                 return syncSlashBlade(ingredient, context);
             }
 
-            @Override
-            public String getLegacyStringSubtypeInfo(ItemStack ingredient, UidContext context) {
-                return syncSlashBlade(ingredient, context);
-            }
         });
     }
 
@@ -52,5 +47,4 @@ public class JEICompat implements IModPlugin {
 
         smithingCategory.addExtension(SlashBladeSmithingRecipe.class, new SlashBladeSmithingCategoryExtension());
     }
-
 }

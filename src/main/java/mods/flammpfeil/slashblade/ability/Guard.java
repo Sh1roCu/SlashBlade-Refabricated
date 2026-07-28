@@ -1,6 +1,5 @@
 package mods.flammpfeil.slashblade.ability;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingAttackEvent;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.capability.concentrationrank.CapabilityConcentrationRank;
 import mods.flammpfeil.slashblade.capability.concentrationrank.IConcentrationRank;
@@ -13,8 +12,9 @@ import mods.flammpfeil.slashblade.registry.ComboStateRegistry;
 import mods.flammpfeil.slashblade.registry.combo.ComboState;
 import mods.flammpfeil.slashblade.util.AdvancementHelper;
 import mods.flammpfeil.slashblade.util.InputCommand;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -45,38 +45,35 @@ public class Guard {
     }
 
     public void register() {
-        LivingAttackEvent.EVENT.register(this::onLivingAttack);
+        ServerLivingEntityEvents.ALLOW_DAMAGE.register(this::onLivingAttack);
     }
 
-    public static final ResourceLocation ADVANCEMENT_GUARD = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID, "abilities/guard");
-    public static final ResourceLocation ADVANCEMENT_GUARD_JUST = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
+    public static final Identifier ADVANCEMENT_GUARD = Identifier.fromNamespaceAndPath(SlashBlade.MODID, "abilities/guard");
+    public static final Identifier ADVANCEMENT_GUARD_JUST = Identifier.fromNamespaceAndPath(SlashBlade.MODID,
             "abilities/guard_just");
 
     final static EnumSet<InputCommand> move = EnumSet.of(InputCommand.FORWARD, InputCommand.BACK, InputCommand.LEFT,
             InputCommand.RIGHT);
 
-    public void onLivingAttack(LivingAttackEvent event) {
-        LivingEntity victim = event.getEntity();
-        DamageSource source = event.getSource();
-
+    public boolean onLivingAttack(LivingEntity victim, DamageSource source, float amount) {
         // begin executable check -----------------
         // item check
         ItemStack stack = victim.getMainHandItem();
         Optional<ISlashBladeState> slashBlade = CapabilitySlashBlade.getBladeState(stack);
         if (slashBlade.isEmpty())
-            return;
+            return true;
         if (slashBlade.filter(ISlashBladeState::isBroken).isPresent())
-            return;
+            return true;
         var thorns = victim.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.THORNS);
         if (EnchantmentHelper.getItemEnchantmentLevel(thorns, stack) <= 0)
-            return;
+            return true;
 
         // user check
         if (!victim.onGround())
-            return;
+            return true;
         Optional<IInputState> input = CapabilityInputState.INPUT_STATE.maybeGet(victim);
         if (input.isEmpty())
-            return;
+            return true;
 
         // commanc check
         InputCommand targetCommand = InputCommand.SNEAK;
@@ -91,11 +88,11 @@ public class Guard {
                 && victim.isSprinting());
 
         if (!handleCommand)
-            return;
+            return true;
 
         // range check
         if (!isInsideGuardableRange(source, victim))
-            return;
+            return true;
 
         // performance branch -----------------
         // just check
@@ -128,25 +125,27 @@ public class Guard {
         // after executable check -----------------
         if (!isJust) {
             if (!isProjectile)
-                return;
+                return true;
             if (!isHighRank && source.is(DamageTypeTags.BYPASSES_ARMOR))
-                return;
+                return true;
 
             boolean inMotion = slashBlade.filter(s -> {
-                ResourceLocation current = s.resolvCurrentComboState(victim);
-                ComboState currentCS = ComboStateRegistry.COMBO_STATE.get(current);
+                Identifier current = s.resolvCurrentComboState(victim);
+                ComboState currentCS = ComboStateRegistry.COMBO_STATE.getValue(current);
                 return !current.equals(ComboStateRegistry.getId(ComboStateRegistry.NONE)) && current.equals(currentCS.getNext(victim));
             }).isPresent();
             if (inMotion)
-                return;
+                return true;
         } else {
             if (!isProjectile && !(source.getDirectEntity() instanceof LivingEntity))
-                return;
+                return true;
         }
+
+        boolean canceled = false;
 
         // execute performance------------------
         // damage cancel
-        event.setCanceled(true);
+        canceled = true;
 
         // Motion
         if (isJust) {
@@ -189,6 +188,7 @@ public class Guard {
             });
         }
 
+        return !canceled;
     }
 
     public boolean isInsideGuardableRange(DamageSource source, LivingEntity victim) {

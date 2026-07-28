@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade.capability.slashblade;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -8,13 +8,13 @@ import java.util.Optional;
 
 public class SimpleSlashBladeState extends SlashBladeState {
 
-    private final ResourceLocation model;
-    private final ResourceLocation texture;
+    private final Identifier model;
+    private final Identifier texture;
     private final float attack;
     private int damage;
 
 
-    public SimpleSlashBladeState(ItemStack blade, ResourceLocation model, ResourceLocation texture, float attack, int damage) {
+    public SimpleSlashBladeState(ItemStack blade, Identifier model, Identifier texture, float attack, int damage) {
         super(blade);
         this.model = model;
         this.attack = attack;
@@ -23,13 +23,13 @@ public class SimpleSlashBladeState extends SlashBladeState {
     }
 
     @Override
-    public @NotNull Optional<ResourceLocation> getModel() {
+    public @NotNull Optional<Identifier> getModel() {
         return Optional.ofNullable(model);
     }
 
     @Deprecated
     @Override
-    public void setModel(ResourceLocation model) {
+    public void setModel(Identifier model) {
     }
 
     @Override
@@ -43,13 +43,13 @@ public class SimpleSlashBladeState extends SlashBladeState {
     }
 
     @Override
-    public ResourceLocation getSlashArtsKey() {
+    public Identifier getSlashArtsKey() {
         return super.getSlashArtsKey();
     }
 
     @Deprecated
     @Override
-    public void setSlashArtsKey(ResourceLocation key) {
+    public void setSlashArtsKey(Identifier key) {
     }
 
     @Override
@@ -68,13 +68,13 @@ public class SimpleSlashBladeState extends SlashBladeState {
     }
 
     @Override
-    public @NotNull Optional<ResourceLocation> getTexture() {
+    public @NotNull Optional<Identifier> getTexture() {
         return Optional.ofNullable(texture);
     }
 
     @Deprecated
     @Override
-    public void setTexture(ResourceLocation texture) {
+    public void setTexture(Identifier texture) {
     }
 
     @Override

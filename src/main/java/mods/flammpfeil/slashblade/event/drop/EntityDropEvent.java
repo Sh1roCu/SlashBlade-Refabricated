@@ -1,6 +1,5 @@
 package mods.flammpfeil.slashblade.event.drop;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingDropsEvent;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.entity.BladeItemEntity;
@@ -8,6 +7,7 @@ import mods.flammpfeil.slashblade.init.SBEntityTypes;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -17,16 +17,15 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 
 public class EntityDropEvent {
-    public static void dropBlade(LivingDropsEvent event) {
-        LivingEntity entity = event.getEntity();
+    public static void dropBlade(LivingEntity entity, DamageSource source, boolean recentlyHit) {
         var bladeRegistry = SlashBlade.getSlashBladeDefinitionRegistry(entity.level());
-        entity.level().registryAccess().registryOrThrow(EntityDropEntry.REGISTRY_KEY).forEach(entry -> {
+        entity.level().registryAccess().lookupOrThrow(EntityDropEntry.REGISTRY_KEY).forEach(entry -> {
             if (!BuiltInRegistries.ENTITY_TYPE.containsKey(entry.getEntityType()))
                 return;
             if (!bladeRegistry.containsKey(entry.getBladeName()))
                 return;
 
-            if (!(event.getSource().getEntity() instanceof LivingEntity attacker))
+            if (!(source.getEntity() instanceof LivingEntity attacker))
                 return;
 
             if (SlashBladeConfig.FRIENDLY_ENABLE.get() || (entity instanceof Enemy)) {
@@ -39,12 +38,12 @@ public class EntityDropEvent {
             float resultRate = Math.min(1F, entry.getDropRate() + lootingLevel * 0.1F);
 
             if (entry.isDropFixedPoint())
-                dropBlade(entity, BuiltInRegistries.ENTITY_TYPE.get(entry.getEntityType()),
-                        bladeRegistry.get(entry.getBladeName()).getBlade(entity.registryAccess()), resultRate, entry.getDropPoint().x,
+                dropBlade(entity, BuiltInRegistries.ENTITY_TYPE.getValue(entry.getEntityType()),
+                        bladeRegistry.getValue(entry.getBladeName()).getBlade(entity.registryAccess()), resultRate, entry.getDropPoint().x,
                         entry.getDropPoint().y, entry.getDropPoint().z);
             else
-                dropBlade(entity, BuiltInRegistries.ENTITY_TYPE.get(entry.getEntityType()),
-                        bladeRegistry.get(entry.getBladeName()).getBlade(entity.registryAccess()), resultRate, entity.getX(), entity.getY(),
+                dropBlade(entity, BuiltInRegistries.ENTITY_TYPE.getValue(entry.getEntityType()),
+                        bladeRegistry.getValue(entry.getBladeName()).getBlade(entity.registryAccess()), resultRate, entity.getX(), entity.getY(),
                         entity.getZ());
         });
 

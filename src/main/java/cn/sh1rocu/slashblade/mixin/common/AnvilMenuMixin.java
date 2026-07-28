@@ -5,10 +5,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AnvilMenu;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.ItemCombinerMenu;
-import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,9 +23,10 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
     @Unique
     private static final ThreadLocal<Float> sb$breakChance = new ThreadLocal<>();
 
-    public AnvilMenuMixin(@Nullable MenuType<?> menuType, int i, Inventory inventory, ContainerLevelAccess containerLevelAccess) {
-        super(menuType, i, inventory, containerLevelAccess);
+    public AnvilMenuMixin(@Nullable MenuType<?> menuType, int containerId, Inventory inventory, ContainerLevelAccess access, ItemCombinerMenuSlotDefinition itemInputSlots) {
+        super(menuType, containerId, inventory, access, itemInputSlots);
     }
+
 
     @Inject(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z", ordinal = 0), cancellable = true)
     private void sb$onAnvilUpdate(CallbackInfo ci, @Local(ordinal = 0) ItemStack itemStack, @Local(ordinal = 1) int j) {
@@ -44,7 +42,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
         sb$breakChance.set(CommonHooks.onAnvilRepair(player, stack, this.inputSlots.getItem(0), this.inputSlots.getItem(1)));
     }
 
-    @ModifyExpressionValue(method = "method_24922", at = @At(value = "CONSTANT", args = "floatValue=0.12"))
+    @ModifyExpressionValue(method = "lambda$onTake$0", at = @At(value = "CONSTANT", args = "floatValue=0.12"))
     private static float sb$useForgeBreakChanceIfPossible(float original) {
         if (original == 0.12f) {
             var value = sb$breakChance.get();

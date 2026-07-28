@@ -4,14 +4,14 @@ import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
 public class CopySpecialAttackFromBladeEvent extends SlashBladeEvent {
-    private final ResourceLocation SAKey;
+    private final Identifier SAKey;
     private final BladeStandAttackEvent originalEvent;
     private final ItemStack orb;
     private final ItemEntity itemEntity;
@@ -21,7 +21,7 @@ public class CopySpecialAttackFromBladeEvent extends SlashBladeEvent {
         }
     });
 
-    public CopySpecialAttackFromBladeEvent(ItemStack blade, ISlashBladeState state, ResourceLocation SAKey,
+    public CopySpecialAttackFromBladeEvent(ItemStack blade, ISlashBladeState state, Identifier SAKey,
                                            BladeStandAttackEvent originalEvent,
                                            ItemStack orb, ItemEntity itemEntity) {
         super(blade, state);
@@ -36,7 +36,7 @@ public class CopySpecialAttackFromBladeEvent extends SlashBladeEvent {
         this(pe.getBlade(), pe.getSlashBladeState(), pe.getSAKey(), pe.getOriginalEvent(), orb, itemEntity);
     }
 
-    public ResourceLocation getSAKey() {
+    public Identifier getSAKey() {
         return SAKey;
     }
 

@@ -1,25 +1,24 @@
 package mods.flammpfeil.slashblade.client.renderer.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.capability.concentrationrank.CapabilityConcentrationRank;
 import mods.flammpfeil.slashblade.capability.concentrationrank.IConcentrationRank;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.resources.ResourceLocation;
-import org.joml.Matrix4f;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.NonNull;
 
 @Environment(EnvType.CLIENT)
-public class RankRenderer {
+public class RankRenderer implements HudElement {
     private static final class SingletonHolder {
         private static final RankRenderer instance = new RankRenderer();
     }
@@ -32,13 +31,13 @@ public class RankRenderer {
     }
 
     public void register() {
-        HudRenderCallback.EVENT.register(this::renderTick);
+        HudElementRegistry.attachElementBefore(VanillaHudElements.CROSSHAIR, SlashBlade.prefix("rank"), RankRenderer.getInstance());
     }
 
-    static ResourceLocation RankImg = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID, "textures/gui/rank.png");
+    static Identifier RankImg = Identifier.fromNamespaceAndPath(SlashBlade.MODID, "textures/gui/rank.png");
 
-    @Environment(EnvType.CLIENT)
-    public void renderTick(GuiGraphics drawContext, DeltaTracker timer) {
+    @Override
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, @NonNull DeltaTracker timer) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null)
             return;
@@ -53,10 +52,10 @@ public class RankRenderer {
         LocalPlayer player = mc.player;
         long time = System.currentTimeMillis();
 
-        renderRankHud(timer, player, time);
+        renderRankHud(graphics, timer, player, time);
     }
 
-    private void renderRankHud(DeltaTracker timer, LocalPlayer player, long time) {
+    private void renderRankHud(GuiGraphicsExtractor graphics, DeltaTracker timer, LocalPlayer player, long time) {
         Minecraft mc = Minecraft.getInstance();
 
         CapabilityConcentrationRank.RANK_POINT.maybeGet(player).ifPresent(cr -> {
@@ -78,15 +77,9 @@ public class RankRenderer {
             int k = mc.getWindow().getGuiScaledWidth();
             int l = mc.getWindow().getGuiScaledHeight();
 
-            PoseStack poseStack = new PoseStack();
             // position
-            poseStack.translate(k * 2 / 3, l / 5, 0);
-
-            // RenderSystem.enableTexture();
-            RenderSystem.disableDepthTest();
-            TextureManager texturemanager = Minecraft.getInstance().getTextureManager();
-            texturemanager.getTexture(RankImg).setFilter(false, false);
-            RenderSystem.setShaderTexture(0, RankImg);
+            int baseX = k * 2 / 3;
+            int baseY = l / 5;
 
             boolean showTextRank = false;
 
@@ -105,40 +98,30 @@ public class RankRenderer {
                 int progressIcon = (int) (18 * cr.getRankProgress(now));
                 int progressIconInv = 17 - progressIcon;
 
-                // GL11.glScalef(3,3,3);
                 // iconFrame
-                drawTexturedQuad(poseStack, 0, 0, textOffset + 64, rankOffset, 64, 32, -95f);
+                blit(graphics, baseX, baseY, textOffset + 64, rankOffset, 64, 32);
                 // icon
-                drawTexturedQuad(poseStack, 0, progressIconInv + 7, textOffset, rankOffset + progressIconInv + 7,
-                        64, progressIcon, -90f);
-
+                blit(graphics, baseX, baseY + progressIconInv + 7, textOffset,
+                        rankOffset + progressIconInv + 7, 64, progressIcon);
                 // gauge frame
-                drawTexturedQuad(poseStack, 0, 32, 0, 256 - 16, 64, 16, -90f);
-                // gause fill
-                drawTexturedQuad(poseStack, 16, 32, 16, 256 - 32, progress, 16, -95f);
+                blit(graphics, baseX, baseY + 32, 0, 256 - 16, 64, 16);
+                // gauge fill
+                blit(graphics, baseX + 16, baseY + 32, 16, 256 - 32, progress, 16);
             }
 
         });
 
     }
 
-    public static void drawTexturedQuad(PoseStack poseStack, int x, int y, int u, int v, int width, int height,
-                                        float zLevel) {
-        float var7 = 0.00390625F; // 1/256 texturesize
-        float var8 = 0.00390625F;
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-
-        Tesselator tessellator = Tesselator.getInstance();
-        BufferBuilder wr = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-
-        Matrix4f m = poseStack.last().pose();
-
-        wr.addVertex(m, x, y + height, zLevel).setUv((u + 0.0f) * var7, (v + height) * var8);
-        wr.addVertex(m, x + width, y + height, zLevel).setUv((u + width) * var7, (v + height) * var8);
-        wr.addVertex(m, x + width, y, zLevel).setUv((u + width) * var7, (v) * var8);
-        wr.addVertex(m, x, y, zLevel).setUv((u) * var7, (v) * var8);
-
-        // tessellator.end();
-        BufferUploader.drawWithShader(wr.buildOrThrow());
+    private static void blit(GuiGraphicsExtractor graphics, int x, int y, int u, int v, int width, int height) {
+        graphics.blit(
+                RenderPipelines.GUI_TEXTURED,
+                RankImg,
+                x, y,
+                u, v,
+                width, height,
+                width, height,
+                256, 256
+        );
     }
 }

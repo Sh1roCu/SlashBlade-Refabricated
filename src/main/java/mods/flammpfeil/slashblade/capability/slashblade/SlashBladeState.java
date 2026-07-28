@@ -9,8 +9,7 @@ import mods.flammpfeil.slashblade.util.NBTHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.phys.Vec3;
@@ -49,7 +48,7 @@ public class SlashBladeState implements ISlashBladeState {
 
     @Override
     public long getLastActionTime() {
-        return getBladeState().getLong(LAST_ACTION_TIME);
+        return getBladeState().getLongOr(LAST_ACTION_TIME, 0);
     }
 
     @Override
@@ -59,7 +58,7 @@ public class SlashBladeState implements ISlashBladeState {
 
     @Override
     public boolean onClick() {
-        return getBladeState().getBoolean(ON_CLICK);
+        return getBladeState().getBooleanOr(ON_CLICK, false);
     }
 
     @Override
@@ -69,7 +68,7 @@ public class SlashBladeState implements ISlashBladeState {
 
     @Override
     public float getFallDecreaseRate() {
-        return getBladeState().getFloat(FALL_DECREASE_RATE);
+        return getBladeState().getFloatOr(FALL_DECREASE_RATE, 0);
     }
 
     @Override
@@ -79,7 +78,7 @@ public class SlashBladeState implements ISlashBladeState {
 
     @Override
     public float getAttackAmplifier() {
-        return getBladeState().getFloat(ATTACK_AMPLIFIER);
+        return getBladeState().getFloatOr(ATTACK_AMPLIFIER, 0);
     }
 
     @Override
@@ -89,26 +88,26 @@ public class SlashBladeState implements ISlashBladeState {
 
     @Override
     @Nonnull
-    public ResourceLocation getComboSeq() {
+    public Identifier getComboSeq() {
         if (getBladeState().getString(CURRENT_COMBO).isEmpty())
             return ComboStateRegistry.getId(ComboStateRegistry.NONE);
-        ResourceLocation location = ResourceLocation.tryParse(getBladeState().getString(CURRENT_COMBO));
+        Identifier location = Identifier.tryParse(getBladeState().getStringOr(CURRENT_COMBO, ""));
         return location != null && ComboStateRegistry.COMBO_STATE.containsKey(location) ? location : ComboStateRegistry.getId(ComboStateRegistry.NONE);
     }
 
     @Override
-    public void setComboSeq(ResourceLocation comboSeq) {
+    public void setComboSeq(Identifier comboSeq) {
         if (ComboStateRegistry.COMBO_STATE.containsKey(comboSeq)) {
             updateBladeState(tag -> tag.putString(CURRENT_COMBO, comboSeq.toString()));
         } else {
-            ResourceLocation id = ComboStateRegistry.getId(ComboStateRegistry.NONE);
+            Identifier id = ComboStateRegistry.getId(ComboStateRegistry.NONE);
             updateBladeState(tag -> tag.putString(CURRENT_COMBO, id.toString()));
         }
     }
 
     @Override
     public boolean isBroken() {
-        return getBladeState().getBoolean(IS_BROKEN);
+        return getBladeState().getBooleanOr(IS_BROKEN, false);
     }
 
     @Override
@@ -118,7 +117,7 @@ public class SlashBladeState implements ISlashBladeState {
 
     @Override
     public boolean isSealed() {
-        return getBladeState().getBoolean(IS_SEALED);
+        return getBladeState().getBooleanOr(IS_SEALED, false);
     }
 
     @Override
@@ -130,7 +129,7 @@ public class SlashBladeState implements ISlashBladeState {
     public float getBaseAttackModifier() {
         CompoundTag bladeState = getBladeState();
         if (bladeState.contains(BASE_ATTACK_MODIFIER))
-            return bladeState.getFloat(BASE_ATTACK_MODIFIER);
+            return bladeState.getFloatOr(BASE_ATTACK_MODIFIER, 4F);
         // 默认值
         return 4F;
     }
@@ -142,7 +141,7 @@ public class SlashBladeState implements ISlashBladeState {
 
     @Override
     public int getKillCount() {
-        return getBladeState().getInt(KILL_COUNT);
+        return getBladeState().getIntOr(KILL_COUNT, 0);
     }
 
     @Override
@@ -152,7 +151,7 @@ public class SlashBladeState implements ISlashBladeState {
 
     @Override
     public int getRefine() {
-        return getBladeState().getInt(REPAIR_COUNTER);
+        return getBladeState().getIntOr(REPAIR_COUNTER, 0);
     }
 
     @Override
@@ -161,26 +160,26 @@ public class SlashBladeState implements ISlashBladeState {
     }
 
     @Override
-    public ResourceLocation getSlashArtsKey() {
+    public Identifier getSlashArtsKey() {
         if (getBladeState().getString(SPECIAL_ATTACK_TYPE).isEmpty())
             return SlashArtsRegistry.SLASH_ARTS.getKey(SlashArtsRegistry.JUDGEMENT_CUT);
-        ResourceLocation location = ResourceLocation.tryParse(getBladeState().getString(SPECIAL_ATTACK_TYPE));
+        Identifier location = Identifier.tryParse(getBladeState().getStringOr(SPECIAL_ATTACK_TYPE, ""));
         return location != null ? location : SlashArtsRegistry.SLASH_ARTS.getKey(SlashArtsRegistry.JUDGEMENT_CUT);
     }
 
     @Override
-    public void setSlashArtsKey(ResourceLocation key) {
+    public void setSlashArtsKey(Identifier key) {
         if (SlashArtsRegistry.SLASH_ARTS.containsKey(key)) {
             updateBladeState(tag -> tag.putString(SPECIAL_ATTACK_TYPE, key.toString()));
         } else {
-            ResourceLocation id = SlashArtsRegistry.SLASH_ARTS.getKey(SlashArtsRegistry.JUDGEMENT_CUT);
+            Identifier id = SlashArtsRegistry.SLASH_ARTS.getKey(SlashArtsRegistry.JUDGEMENT_CUT);
             updateBladeState(tag -> tag.putString(SPECIAL_ATTACK_TYPE, id.toString()));
         }
     }
 
     @Override
     public boolean isDefaultBewitched() {
-        return getBladeState().getBoolean(IS_DEFAULT_BEWITCHED);
+        return getBladeState().getBooleanOr(IS_DEFAULT_BEWITCHED, false);
     }
 
     @Override
@@ -190,7 +189,7 @@ public class SlashBladeState implements ISlashBladeState {
 
     @Override
     public @NotNull String getTranslationKey() {
-        return getBladeState().getString(TRANSLATION_KEY);
+        return getBladeState().getStringOr(TRANSLATION_KEY, "");
     }
 
     @Override
@@ -202,7 +201,7 @@ public class SlashBladeState implements ISlashBladeState {
     @Override
     @Nonnull
     public CarryType getCarryType() {
-        return EnumSetConverter.fromOrdinal(CarryType.values(), getBladeState().getInt(STANDBY_RENDER_TYPE), CarryType.PSO2);
+        return EnumSetConverter.fromOrdinal(CarryType.values(), getBladeState().getIntOr(STANDBY_RENDER_TYPE, 0), CarryType.PSO2);
     }
 
     @Override
@@ -213,7 +212,7 @@ public class SlashBladeState implements ISlashBladeState {
     @Override
     public @NotNull Color getEffectColor() {
         if (getBladeState().contains(SUMMONED_SWORD_COLOR))
-            return new Color(getBladeState().getInt(SUMMONED_SWORD_COLOR));
+            return new Color(getBladeState().getIntOr(SUMMONED_SWORD_COLOR, 0x3333FF));
         return new Color(0x3333FF);
     }
 
@@ -224,7 +223,7 @@ public class SlashBladeState implements ISlashBladeState {
 
     @Override
     public boolean isEffectColorInverse() {
-        return getBladeState().getBoolean(SUMMONED_SWORD_COLOR_INVERSE);
+        return getBladeState().getBooleanOr(SUMMONED_SWORD_COLOR_INVERSE, false);
     }
 
     @Override
@@ -245,30 +244,30 @@ public class SlashBladeState implements ISlashBladeState {
     }
 
     @Override
-    public @NotNull Optional<ResourceLocation> getTexture() {
-        ResourceLocation location = ResourceLocation.tryParse(getBladeState().getString(TEXTURE_NAME));
+    public @NotNull Optional<Identifier> getTexture() {
+        Identifier location = Identifier.tryParse(getBladeState().getStringOr(TEXTURE_NAME, ""));
         if (location != null && location.getPath().isEmpty())
             return Optional.empty();
         return Optional.ofNullable(location);
     }
 
     @Override
-    public void setTexture(ResourceLocation texture) {
+    public void setTexture(Identifier texture) {
         if (texture != null) {
             updateBladeState(tag -> tag.putString(TEXTURE_NAME, texture.toString()));
         }
     }
 
     @Override
-    public @NotNull Optional<ResourceLocation> getModel() {
-        ResourceLocation location = ResourceLocation.tryParse(getBladeState().getString(MODEL_NAME));
+    public @NotNull Optional<Identifier> getModel() {
+        Identifier location = Identifier.tryParse(getBladeState().getStringOr(MODEL_NAME, ""));
         if (location != null && location.getPath().isEmpty())
             return Optional.empty();
         return Optional.ofNullable(location);
     }
 
     @Override
-    public void setModel(ResourceLocation model) {
+    public void setModel(Identifier model) {
         if (model != null) {
             updateBladeState(tag -> tag.putString(MODEL_NAME, model.toString()));
         }
@@ -276,7 +275,7 @@ public class SlashBladeState implements ISlashBladeState {
 
     @Override
     public int getTargetEntityId() {
-        return getBladeState().getInt(TARGET_ENTITY);
+        return getBladeState().getIntOr(TARGET_ENTITY, 0);
     }
 
     @Override
@@ -285,20 +284,20 @@ public class SlashBladeState implements ISlashBladeState {
     }
 
     @Override
-    public ResourceLocation getComboRoot() {
-        String comboRoot = getBladeState().getString(COMBO_ROOT);
+    public Identifier getComboRoot() {
+        String comboRoot = getBladeState().getStringOr(COMBO_ROOT, "");
         if (comboRoot.isEmpty())
             return ComboStateRegistry.getId((ComboStateRegistry.STANDBY));
-        ResourceLocation location = ResourceLocation.tryParse(comboRoot);
+        Identifier location = Identifier.tryParse(comboRoot);
         return location != null && ComboStateRegistry.COMBO_STATE.containsKey(location) ? location : ComboStateRegistry.getId((ComboStateRegistry.STANDBY));
     }
 
     @Override
-    public void setComboRoot(ResourceLocation rootLoc) {
+    public void setComboRoot(Identifier rootLoc) {
         if (ComboStateRegistry.COMBO_STATE.containsKey(rootLoc)) {
             updateBladeState(tag -> tag.putString(COMBO_ROOT, rootLoc.toString()));
         } else {
-            ResourceLocation id = ComboStateRegistry.getId(ComboStateRegistry.STANDBY);
+            Identifier id = ComboStateRegistry.getId(ComboStateRegistry.STANDBY);
             updateBladeState(tag -> tag.putString(COMBO_ROOT, id.toString()));
         }
     }
@@ -307,7 +306,7 @@ public class SlashBladeState implements ISlashBladeState {
     public int getMaxDamage() {
         CompoundTag bladeState = getBladeState();
         if (bladeState.contains(MAX_DAMAGE))
-            return bladeState.getInt(MAX_DAMAGE);
+            return bladeState.getIntOr(MAX_DAMAGE, 40);
         // 默认值
         return 40;
     }
@@ -319,7 +318,7 @@ public class SlashBladeState implements ISlashBladeState {
 
     @Override
     public int getDamage() {
-        return getBladeState().getInt(DAMAGE);
+        return getBladeState().getIntOr(DAMAGE, 0);
     }
 
     @Override
@@ -330,7 +329,7 @@ public class SlashBladeState implements ISlashBladeState {
 
     @Override
     public int getProudSoulCount() {
-        return getBladeState().getInt(PROUD_SOUL);
+        return getBladeState().getIntOr(PROUD_SOUL, 0);
     }
 
     @Override
@@ -340,10 +339,10 @@ public class SlashBladeState implements ISlashBladeState {
     }
 
     @Override
-    public Collection<ResourceLocation> getSpecialEffects() {
-        Collection<ResourceLocation> result = new HashSet<>();
-        getBladeState().getList(SPECIAL_EFFECTS, Tag.TAG_STRING).forEach(tag -> {
-            ResourceLocation se = ResourceLocation.tryParse(tag.getAsString());
+    public Collection<Identifier> getSpecialEffects() {
+        Collection<Identifier> result = new HashSet<>();
+        getBladeState().getListOrEmpty(SPECIAL_EFFECTS).forEach(tag -> {
+            Identifier se = Identifier.tryParse(tag.asString().orElse(""));
             if (se != null && SpecialEffectsRegistry.SPECIAL_EFFECT.containsKey(se))
                 result.add(se);
         });
@@ -356,33 +355,33 @@ public class SlashBladeState implements ISlashBladeState {
     }
 
     @Override
-    public boolean addSpecialEffect(ResourceLocation se) {
+    public boolean addSpecialEffect(Identifier se) {
         if (SpecialEffectsRegistry.SPECIAL_EFFECT.containsKey(se)) {
             final var seTag = StringTag.valueOf(se.toString());
             updateBladeState(tag -> {
                 if (!tag.contains(SPECIAL_EFFECTS)) {
                     tag.put(SPECIAL_EFFECTS, new ListTag());
                 }
-                tag.getList(SPECIAL_EFFECTS, Tag.TAG_STRING).add(seTag);
+                tag.getListOrEmpty(SPECIAL_EFFECTS).add(seTag);
             });
-            return getBladeState().getList(SPECIAL_EFFECTS, Tag.TAG_STRING).contains(seTag);
+            return getBladeState().getListOrEmpty(SPECIAL_EFFECTS).contains(seTag);
         }
         return false;
     }
 
     @Override
-    public boolean removeSpecialEffect(ResourceLocation se) {
+    public boolean removeSpecialEffect(Identifier se) {
         final var seTag = StringTag.valueOf(se.toString());
-        updateBladeState(tag -> tag.getList(SPECIAL_EFFECTS, Tag.TAG_STRING).remove(seTag));
-        return !getBladeState().getList(SPECIAL_EFFECTS, Tag.TAG_STRING).contains(seTag);
+        updateBladeState(tag -> tag.getListOrEmpty(SPECIAL_EFFECTS).remove(seTag));
+        return !getBladeState().getListOrEmpty(SPECIAL_EFFECTS).contains(seTag);
     }
 
     @Override
-    public boolean hasSpecialEffect(ResourceLocation se) {
+    public boolean hasSpecialEffect(Identifier se) {
         if (SpecialEffectsRegistry.SPECIAL_EFFECT.containsKey(se)) {
-            return getBladeState().getList(SPECIAL_EFFECTS, Tag.TAG_STRING).contains(StringTag.valueOf(se.toString()));
+            return getBladeState().getListOrEmpty(SPECIAL_EFFECTS).contains(StringTag.valueOf(se.toString()));
         }
-        getBladeState().getList(SPECIAL_EFFECTS, Tag.TAG_STRING).remove(StringTag.valueOf(se.toString()));
+        getBladeState().getListOrEmpty(SPECIAL_EFFECTS).remove(StringTag.valueOf(se.toString()));
         return false;
     }
 

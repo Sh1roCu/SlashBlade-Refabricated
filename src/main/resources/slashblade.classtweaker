@@ -1,0 +1,5 @@
+classTweaker v2 official
+
+accessible method net/minecraft/world/entity/ai/targeting/TargetingConditions <init> (Z)V
+
+inject-interface net/minecraft/client/renderer/entity/state/EntityRenderState cn/sh1rocu/slashblade/api/mixin/IEntityRenderStatePartialTick

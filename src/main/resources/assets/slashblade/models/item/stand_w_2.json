@@ -1,12 +1,8 @@
 {
-  "loader": "porting_lib:obj",
+  "fabric:type": "slashblade:obj_loader",
   "__comment": "Add the following line on the same level as a 'model' declaration.",
-  "flip-v": true,
+  "flip_v": true,
   "model": "slashblade:models/item/stand_w_2.obj",
-  "textures": {
-    "soul": "slashblade:item/soul",
-    "particle": "slashblade:item/soul"
-  },
   "textures": {
     "soul": "slashblade:item/soul",
     "particle": "slashblade:item/soul"

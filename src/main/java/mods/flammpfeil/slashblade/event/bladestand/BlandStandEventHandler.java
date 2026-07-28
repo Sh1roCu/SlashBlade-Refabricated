@@ -16,7 +16,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -54,7 +54,7 @@ public class BlandStandEventHandler {
 
     public static void eventKoseki(SlashBladeEvent.BladeStandAttackEvent event) {
         var slashBladeDefinitionRegistry = SlashBlade.getSlashBladeDefinitionRegistry(event.getBladeStand().level());
-        if (!slashBladeDefinitionRegistry.containsKey(SlashBladeBuiltInRegistry.KOSEKI.location())) {
+        if (!slashBladeDefinitionRegistry.containsKey(SlashBladeBuiltInRegistry.KOSEKI.identifier())) {
             return;
         }
         if (!(event.getDamageSource().getEntity() instanceof WitherBoss)) {
@@ -67,7 +67,7 @@ public class BlandStandEventHandler {
         if (!in.test(event.getBlade())) {
             return;
         }
-        event.getBladeStand().setItem(Objects.requireNonNull(slashBladeDefinitionRegistry.get(SlashBladeBuiltInRegistry.KOSEKI)).getBlade(event.getBladeStand().registryAccess()));
+        event.getBladeStand().setItem(Objects.requireNonNull(slashBladeDefinitionRegistry.getValue(SlashBladeBuiltInRegistry.KOSEKI)).getBlade(event.getBladeStand().registryAccess()));
         event.setCanceled(true);
     }
 
@@ -95,7 +95,7 @@ public class BlandStandEventHandler {
         CompoundTag tag = data.copyTag();
         if (tag.contains("SpecialEffectType")) {
             var bladeStand = event.getBladeStand();
-            ResourceLocation SEKey = ResourceLocation.parse(tag.getString("SpecialEffectType"));
+            Identifier SEKey = Identifier.parse(tag.getStringOr("SpecialEffectType", ""));
             if (!(SpecialEffectsRegistry.SPECIAL_EFFECT.containsKey(SEKey))) {
                 return;
             }
@@ -146,7 +146,7 @@ public class BlandStandEventHandler {
         if (!tag.contains("SpecialAttackType"))
             return;
 
-        ResourceLocation SAKey = ResourceLocation.parse(tag.getString("SpecialAttackType"));
+        Identifier SAKey = Identifier.parse(tag.getStringOr("SpecialAttackType", ""));
         if (!SlashArtsRegistry.SLASH_ARTS.containsKey(SAKey)) {
             return;
         }
@@ -218,8 +218,8 @@ public class BlandStandEventHandler {
             }
 
             PreCopySpecialEffectFromBladeEvent pe = new PreCopySpecialEffectFromBladeEvent(
-                    blade, state, se, event, Objects.requireNonNull(SpecialEffectsRegistry.SPECIAL_EFFECT.get(se)).isRemovable(),
-                    Objects.requireNonNull(SpecialEffectsRegistry.SPECIAL_EFFECT.get(se)).isCopiable());
+                    blade, state, se, event, Objects.requireNonNull(SpecialEffectsRegistry.SPECIAL_EFFECT.getValue(se)).isRemovable(),
+                    Objects.requireNonNull(SpecialEffectsRegistry.SPECIAL_EFFECT.getValue(se)).isCopiable());
 
             if (!player.isCreative()) {
                 pe.setShrinkCount(1);
@@ -281,7 +281,7 @@ public class BlandStandEventHandler {
 
         var state = event.getSlashBladeState();
         var bladeStand = event.getBladeStand();
-        ResourceLocation SA = state.getSlashArtsKey();
+        Identifier SA = state.getSlashArtsKey();
         if (SA != null && !SA.equals(SlashArtsRegistry.SLASH_ARTS.getKey(SlashArtsRegistry.NONE))) {
 
             PreCopySpecialAttackFromBladeEvent pe = new PreCopySpecialAttackFromBladeEvent(

@@ -12,21 +12,11 @@
         ]
       }
     },
-    "D": {
-      "tag": "c:storage_blocks/coal"
-    },
-    "E": {
-      "tag": "c:rods/blaze"
-    },
-    "I": {
-      "tag": "c:ingots/gold"
-    },
-    "P": {
-      "tag": "c:dyes/blue"
-    },
-    "S": {
-      "tag": "c:strings"
-    }
+    "D": "#c:storage_blocks/coal",
+    "E": "#c:rods/blaze",
+    "I": "#c:ingots/gold",
+    "P": "#c:dyes/blue",
+    "S": "#c:strings"
   },
   "pattern": [
     " EI",
@@ -34,7 +24,6 @@
     "SI "
   ],
   "result": {
-    "count": 1,
     "id": "slashblade:slashblade"
   }
 }

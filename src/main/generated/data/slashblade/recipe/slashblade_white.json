@@ -3,15 +3,9 @@
   "blade": "slashblade:slashblade_white",
   "category": "equipment",
   "key": {
-    "B": {
-      "item": "slashblade:slashblade_wood"
-    },
-    "G": {
-      "tag": "c:ingots/gold"
-    },
-    "L": {
-      "item": "slashblade:proudsoul_ingot"
-    }
+    "B": "slashblade:slashblade_wood",
+    "G": "#c:ingots/gold",
+    "L": "slashblade:proudsoul_ingot"
   },
   "pattern": [
     "  L",
@@ -19,7 +13,6 @@
     "BG "
   ],
   "result": {
-    "count": 1,
     "id": "slashblade:slashblade"
   }
 }

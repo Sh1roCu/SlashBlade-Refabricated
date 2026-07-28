@@ -1,12 +1,10 @@
 package mods.flammpfeil.slashblade.capability.mobeffect;
 
 import com.google.common.collect.Sets;
-import mods.flammpfeil.slashblade.util.NBTHelper;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffect;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.Optional;
 import java.util.Set;
@@ -112,12 +110,12 @@ public class MobEffectState implements IMobEffectState {
     }
 
     @Override
-    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
-        NBTHelper.getNBTCoupler(tag).get("StunTimeout", this::setStunTimeOut);
+    public void readData(ValueInput readView) {
+        this.setStunTimeOut(readView.getLongOr("StunTimeout", -1));
     }
 
     @Override
-    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
-        NBTHelper.getNBTCoupler(tag).put("StunTimeout", getStunTimeOut());
+    public void writeData(ValueOutput writeView) {
+        writeView.putLong("StunTimeout", this.getStunTimeOut());
     }
 }

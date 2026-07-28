@@ -13,7 +13,7 @@ public class SpecialEffectsRegistry {
     }
 
     public static final Registry<SpecialEffect> SPECIAL_EFFECT = FabricRegistryBuilder
-            .createSimple(SpecialEffect.REGISTRY_KEY)
+            .create(SpecialEffect.REGISTRY_KEY)
             .attribute(RegistryAttribute.SYNCED)
             .buildAndRegister();
 

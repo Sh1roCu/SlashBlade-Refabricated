@@ -10,7 +10,7 @@ public class EntityJoinLevelEvent extends BaseEvent implements ICancellableEvent
     private final Level level;
     private final boolean loadedFromDisk;
 
-    public static final Event<Callback> CALLBACK = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+    public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
         for (final Callback callback : callbacks)
             callback.post(event);
     });

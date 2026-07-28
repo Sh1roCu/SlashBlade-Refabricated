@@ -18,8 +18,8 @@ public class StunManager {
     static final int DEFAULT_STUN_TICKS = 10;
 
     public static void init() {
-        EntityJoinLevelEvent.CALLBACK.register(StunManager::onEntityJoinWorldEvent);
-        LivingTickEvent.CALLBACK.register(StunManager::onEntityLivingUpdate);
+        EntityJoinLevelEvent.EVENT.register(StunManager::onEntityJoinWorldEvent);
+        LivingTickEvent.EVENT.register(StunManager::onEntityLivingUpdate);
     }
 
     public static void onEntityJoinWorldEvent(EntityJoinLevelEvent event) {

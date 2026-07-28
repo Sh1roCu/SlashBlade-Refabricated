@@ -9,11 +9,7 @@ import mods.flammpfeil.slashblade.event.handler.FallHandler;
 import mods.flammpfeil.slashblade.util.AttackManager;
 import mods.flammpfeil.slashblade.util.EnumSetConverter;
 import mods.flammpfeil.slashblade.util.KnockBacks;
-import mods.flammpfeil.slashblade.util.NBTHelper;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -27,6 +23,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -109,26 +107,35 @@ public class EntitySlashEffect extends Projectile implements IShootable {
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
+    protected void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
 
-        NBTHelper.getNBTCoupler(compound).put("RotationOffset", this.getRotationOffset())
-                .put("RotationRoll", this.getRotationRoll()).put("BaseSize", this.getBaseSize())
-                .put("Color", this.getColor()).put("Rank", this.getRank()).put("damage", this.damage)
-                .put("crit", this.getIsCritical()).put("clip", this.isNoClip()).put("Lifetime", this.getLifetime())
-                .put("Knockback", this.getKnockBack().ordinal());
+        output.putFloat("RotationOffset", this.getRotationOffset());
+        output.putFloat("RotationRoll", this.getRotationRoll());
+        output.putFloat("BaseSize", this.getBaseSize());
+        output.putInt("Color", this.getColor());
+        output.putFloat("Rank", this.getRank());
+        output.putDouble("damage", this.damage);
+        output.putBoolean("crit", this.getIsCritical());
+        output.putBoolean("clip", this.isNoClip());
+        output.putInt("Lifetime", this.getLifetime());
+        output.putInt("Knockback", this.getKnockBack().ordinal());
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
+    protected void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
 
-        NBTHelper.getNBTCoupler(compound).get("RotationOffset", this::setRotationOffset)
-                .get("RotationRoll", this::setRotationRoll).get("BaseSize", this::setBaseSize)
-                .get("Color", this::setColor).get("Rank", this::setRank)
-                .get("damage", ((Double v) -> this.damage = v), this.damage).get("crit", this::setIsCritical)
-                .get("clip", this::setNoClip).get("Lifetime", this::setLifetime)
-                .get("Knockback", this::setKnockBackOrdinal);
+        this.setRotationOffset(input.getFloatOr("RotationOffset", 0));
+        this.setRotationRoll(input.getFloatOr("RotationRoll", 0));
+        this.setBaseSize(input.getFloatOr("BaseSize", 1F));
+        this.setColor(input.getIntOr("Color", 0x3333FF));
+        this.setRank(input.getFloatOr("Rank", 0));
+        this.damage = input.getDoubleOr("damage", 0.0D);
+        this.setIsCritical(input.getBooleanOr("crit", false));
+        this.setNoClip(input.getBooleanOr("clip", false));
+        this.setLifetime(input.getIntOr("Lifetime", 0));
+        this.setKnockBackOrdinal(input.getIntOr("Knockback", 0));
     }
 
     public boolean isWave() {
@@ -142,7 +149,6 @@ public class EntitySlashEffect extends Projectile implements IShootable {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public boolean shouldRenderAtSqrDistance(double distance) {
         double d0 = this.getBoundingBox().getSize() * 10.0D;
         if (Double.isNaN(d0)) {
@@ -154,15 +160,7 @@ public class EntitySlashEffect extends Projectile implements IShootable {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public void lerpTo(double x, double y, double z, float yaw, float pitch, int i) {
-        this.setPos(x, y, z);
-        this.setRot(yaw, pitch);
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void lerpMotion(double x, double y, double z) {
+    public void lerpMotion(Vec3 movement) {
         this.setDeltaMovement(0, 0, 0);
     }
 
@@ -291,7 +289,7 @@ public class EntitySlashEffect extends Projectile implements IShootable {
 
             Vec3 normal3d = new Vec3(normal.x(), normal.y(), normal.z());
 
-            BlockHitResult rayResult = this.getCommandSenderWorld().clip(new ClipContext(start.add(normal3d.scale(1.5)),
+            BlockHitResult rayResult = this.level().clip(new ClipContext(start.add(normal3d.scale(1.5)),
                     start.add(normal3d.scale(3)), ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, CollisionContext.empty()));
 
             if (getShooter() != null && !getShooter().isInWaterOrRain()

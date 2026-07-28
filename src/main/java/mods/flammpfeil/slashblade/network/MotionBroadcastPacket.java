@@ -13,13 +13,13 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.UUID;
 
 public record MotionBroadcastPacket(UUID playerId, String combo) implements CustomPacketPayload {
-    private static final ResourceLocation ID = SlashBlade.prefix("s2c_motion_broadcast");
+    private static final Identifier ID = SlashBlade.prefix("s2c_motion_broadcast");
     public static final Type<MotionBroadcastPacket> TYPE = new Type<>(ID);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, MotionBroadcastPacket> STREAM_CODEC = StreamCodec.composite(
@@ -45,11 +45,11 @@ public record MotionBroadcastPacket(UUID playerId, String combo) implements Cust
         if (!(target instanceof AbstractClientPlayer))
             return;
 
-        ResourceLocation state = ResourceLocation.tryParse(combo);
+        Identifier state = Identifier.tryParse(combo);
         if (state == null || !ComboStateRegistry.COMBO_STATE.containsKey(state))
             return;
 
-        BladeMotionEvent.CALLBACK.invoker().onBladeMotion(new BladeMotionEvent(target, state));
+        BladeMotionEvent.EVENT.invoker().onBladeMotion(new BladeMotionEvent(target, state));
     }
 
     @Override

@@ -1,7 +1,7 @@
 {
   "itemGroup.slashblade": "Slash Blade",
   "itemGroup.slashblade.desc": "Fall into the Shura realms.",
-  "key.category.slashblade": "Slash Blade",
+  "key.category.slashblade.slashblade": "Slash Blade",
   "key.slashblade.special_move": "Special Move",
   "key.slashblade.summon_blade": "Summon Mirage Blade",
   "attribute.name.generic.reachDistance": "Reach",

@@ -1,7 +1,6 @@
 package mods.flammpfeil.slashblade.event.handler;
 
 import cn.sh1rocu.slashblade.api.event.PlayerFlyableFallEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingFallEvent;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.registry.ComboStateRegistry;
 import mods.flammpfeil.slashblade.registry.combo.ComboState;
@@ -31,12 +30,11 @@ public class FallHandler {
     }
 
     public void register() {
-        LivingFallEvent.EVENT.register(this::onFall);
-        PlayerFlyableFallEvent.CALLBACK.register(this::onFlyableFall);
+        PlayerFlyableFallEvent.EVENT.register(this::onFlyableFall);
     }
 
-    public void onFall(LivingFallEvent event) {
-        resetState(event.getEntity());
+    public static void onFall(LivingEntity entity) {
+        resetState(entity);
     }
 
     public void onFlyableFall(PlayerFlyableFallEvent event) {
@@ -48,8 +46,8 @@ public class FallHandler {
                 state -> {
                     state.setFallDecreaseRate(0);
 
-                    ComboState combo = ComboStateRegistry.COMBO_STATE.get(state.getComboSeq()) != null
-                            ? ComboStateRegistry.COMBO_STATE.get(state.getComboSeq())
+                    ComboState combo = ComboStateRegistry.COMBO_STATE.getValue(state.getComboSeq()) != null
+                            ? ComboStateRegistry.COMBO_STATE.getValue(state.getComboSeq())
                             : ComboStateRegistry.NONE;
                     if (combo.isAerial()) {
                         state.setComboSeq(combo.getNextOfTimeout(user));

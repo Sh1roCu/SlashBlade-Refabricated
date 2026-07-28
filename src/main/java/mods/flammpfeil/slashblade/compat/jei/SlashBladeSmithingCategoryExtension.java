@@ -6,27 +6,32 @@ import mods.flammpfeil.slashblade.recipe.SlashBladeSmithingRecipe;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.SmithingRecipeInput;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
+
+import java.util.List;
+import java.util.Objects;
 
 public class SlashBladeSmithingCategoryExtension implements ISmithingCategoryExtension<SlashBladeSmithingRecipe> {
     @Override
     public <T extends IIngredientAcceptor<T>> void setTemplate(SlashBladeSmithingRecipe recipe, T ingredientAcceptor) {
         Ingredient ingredient = recipe.template();
-        ingredientAcceptor.addIngredients(ingredient);
+        ingredientAcceptor.add(ingredient);
     }
 
     @Override
     public <T extends IIngredientAcceptor<T>> void setBase(SlashBladeSmithingRecipe recipe, T ingredientAcceptor) {
         Ingredient ingredient = recipe.base();
-        ingredientAcceptor.addIngredients(ingredient);
+        ingredientAcceptor.add(ingredient);
     }
 
     @Override
     public <T extends IIngredientAcceptor<T>> void setAddition(SlashBladeSmithingRecipe recipe, T ingredientAcceptor) {
         Ingredient ingredient = recipe.addition();
-        ingredientAcceptor.addIngredients(ingredient);
+        ingredientAcceptor.add(ingredient);
     }
 
     @Override
@@ -35,17 +40,20 @@ public class SlashBladeSmithingCategoryExtension implements ISmithingCategoryExt
         Ingredient baseIngredient = recipe.base();
         Ingredient additionIngredient = recipe.addition();
 
-        ItemStack[] additions = additionIngredient.getItems();
-        if (additions.length == 0) {
+        Minecraft minecraft = Minecraft.getInstance();
+        ContextMap contextmap = SlotDisplayContext.fromLevel(Objects.requireNonNull(minecraft.level));
+
+        List<ItemStack> additions = additionIngredient.display().resolveForStacks(contextmap);
+        if (additions.isEmpty()) {
             return;
         }
-        ItemStack addition = additions[0];
+        ItemStack addition = additions.getFirst();
 
-        for (ItemStack template : templateIngredient.getItems()) {
-            for (ItemStack base : baseIngredient.getItems()) {
+        for (ItemStack template : templateIngredient.display().resolveForStacks(contextmap)) {
+            for (ItemStack base : baseIngredient.display().resolveForStacks(contextmap)) {
                 SmithingRecipeInput recipeInput = createInput(template, base, addition);
                 ItemStack output = assembleResultItem(recipeInput, recipe);
-                ingredientAcceptor.addItemStack(output);
+                ingredientAcceptor.add(output);
             }
         }
     }
@@ -56,8 +64,7 @@ public class SlashBladeSmithingCategoryExtension implements ISmithingCategoryExt
         if (level == null) {
             throw new NullPointerException("level must not be null.");
         }
-        RegistryAccess registryAccess = level.registryAccess();
-        return recipe.assemble(input, registryAccess);
+        return recipe.assemble(input);
     }
 
     private static SmithingRecipeInput createInput(ItemStack template, ItemStack base, ItemStack addition) {

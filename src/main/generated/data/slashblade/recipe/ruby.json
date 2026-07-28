@@ -12,18 +12,10 @@
         ]
       }
     },
-    "D": {
-      "tag": "c:dyes/red"
-    },
-    "I": {
-      "item": "slashblade:proudsoul"
-    },
-    "P": {
-      "item": "slashblade:proudsoul_ingot"
-    },
-    "S": {
-      "tag": "c:strings"
-    }
+    "D": "#c:dyes/red",
+    "I": "slashblade:proudsoul",
+    "P": "slashblade:proudsoul_ingot",
+    "S": "#c:strings"
   },
   "pattern": [
     "DPI",
@@ -31,7 +23,6 @@
     "S  "
   ],
   "result": {
-    "count": 1,
     "id": "slashblade:slashblade"
   }
 }

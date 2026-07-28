@@ -41,19 +41,19 @@ public class BladeStandItem extends HangingEntityItem {
             Level world = context.getLevel();
             HangingEntity hangingentity = BladeStandEntity.createInstanceFromPos(world, blockpos1, direction, this);
 
-            CustomData customData = itemstack.get(DataComponents.CUSTOM_DATA);
-            if (customData != null) {
-                EntityType.updateCustomEntityTag(world, playerentity, hangingentity, customData);
+            var entityData = itemstack.get(DataComponents.ENTITY_DATA);
+            if (entityData != null) {
+                EntityType.updateCustomEntityTag(world, playerentity, hangingentity,  entityData);
             }
 
             if (hangingentity.survives()) {
-                if (!world.isClientSide) {
+                if (!world.isClientSide()) {
                     hangingentity.playPlacementSound();
                     world.addFreshEntity(hangingentity);
                 }
 
                 itemstack.shrink(1);
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return world.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
             } else {
                 return InteractionResult.CONSUME;
             }

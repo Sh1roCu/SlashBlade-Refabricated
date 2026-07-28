@@ -1,8 +1,6 @@
 {
   "type": "minecraft:blasting",
-  "ingredient": {
-    "item": "slashblade:proudsoul_crystal"
-  },
+  "ingredient": "slashblade:proudsoul_crystal",
   "result": {
     "id": "slashblade:proudsoul_trapezohedron"
   },

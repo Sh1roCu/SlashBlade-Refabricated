@@ -1,5 +1,7 @@
 package mods.flammpfeil.slashblade.ability;
 
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -7,9 +9,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.level.GameRules;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.gamerules.GameRules;
 
 public class TNTExtinguisher {
     public static void doExtinguishing(Entity target, LivingEntity attacker) {
@@ -27,7 +27,7 @@ public class TNTExtinguisher {
                 target.getZ(), 5, target.getBbWidth() * 1.5, target.getBbHeight(), target.getBbWidth() * 1.5, 0.02D);
 
         if (target.getType() == EntityType.TNT) {
-            if (world.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
+            if (world.getGameRules().get(GameRules.MOB_DROPS)) {
                 ItemEntity itementity = new ItemEntity(world, target.getX(), target.getY() + target.getBbHeight(),
                         target.getZ(), new ItemStack(Items.TNT));
                 itementity.setDefaultPickUpDelay();

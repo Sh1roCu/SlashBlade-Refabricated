@@ -4,33 +4,33 @@ import cn.sh1rocu.slashblade.api.event.BaseEvent;
 import cn.sh1rocu.slashblade.api.event.ICancellableEvent;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mods.flammpfeil.slashblade.client.renderer.model.obj.WavefrontObject;
+import mods.flammpfeil.slashblade.client.renderer.special.state.BladeItemRenderState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.Function;
 
 @Environment(EnvType.CLIENT)
 public class RenderOverrideEvent extends BaseEvent implements ICancellableEvent {
-    ItemStack stack;
+    BladeItemRenderState state;
     WavefrontObject model;
     String target;
-    ResourceLocation texture;
+    Identifier texture;
 
     PoseStack matrixStack;
-    MultiBufferSource buffer;
+    SubmitNodeCollector submitNodeCollector;
 
     WavefrontObject originalModel;
     String originalTarget;
-    ResourceLocation originalTexture;
+    Identifier originalTexture;
 
     int packedLightIn;
-    Function<ResourceLocation, RenderType> getRenderType;
+    Function<Identifier, RenderType> getRenderType;
     boolean enableEffect;
 
     public static final Event<Callback> CALLBACK = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
@@ -39,15 +39,15 @@ public class RenderOverrideEvent extends BaseEvent implements ICancellableEvent 
         }
     });
 
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return texture;
     }
 
-    public void setTexture(ResourceLocation texture) {
+    public void setTexture(Identifier texture) {
         this.texture = texture;
     }
 
-    public ResourceLocation getOriginalTexture() {
+    public Identifier getOriginalTexture() {
         return originalTexture;
     }
 
@@ -59,8 +59,8 @@ public class RenderOverrideEvent extends BaseEvent implements ICancellableEvent 
         return originalTarget;
     }
 
-    public ItemStack getStack() {
-        return stack;
+    public BladeItemRenderState getRenderState() {
+        return state;
     }
 
     public WavefrontObject getModel() {
@@ -83,8 +83,8 @@ public class RenderOverrideEvent extends BaseEvent implements ICancellableEvent 
         return matrixStack;
     }
 
-    public MultiBufferSource getBuffer() {
-        return buffer;
+    public SubmitNodeCollector getSubmitNodeCollector() {
+        return submitNodeCollector;
     }
 
     public int getPackedLightIn() {
@@ -95,11 +95,11 @@ public class RenderOverrideEvent extends BaseEvent implements ICancellableEvent 
         this.packedLightIn = packedLightIn;
     }
 
-    public Function<ResourceLocation, RenderType> getGetRenderType() {
+    public Function<Identifier, RenderType> getGetRenderType() {
         return getRenderType;
     }
 
-    public void setGetRenderType(Function<ResourceLocation, RenderType> getRenderType) {
+    public void setGetRenderType(Function<Identifier, RenderType> getRenderType) {
         this.getRenderType = getRenderType;
     }
 
@@ -115,23 +115,23 @@ public class RenderOverrideEvent extends BaseEvent implements ICancellableEvent 
         void onRenderOverride(RenderOverrideEvent event);
     }
 
-    public RenderOverrideEvent(ItemStack stack, WavefrontObject model, String target, ResourceLocation texture,
-                               PoseStack matrixStack, MultiBufferSource buffer, int packedLightIn, Function<ResourceLocation, RenderType> getRenderType, boolean enableEffect) {
-        this.stack = stack;
+    public RenderOverrideEvent(BladeItemRenderState state, WavefrontObject model, String target, Identifier texture,
+                               PoseStack matrixStack, SubmitNodeCollector submitNodeCollector, int packedLightIn, Function<Identifier, RenderType> getRenderType, boolean enableEffect) {
+        this.state = state;
         this.originalModel = this.model = model;
         this.originalTarget = this.target = target;
         this.originalTexture = this.texture = texture;
 
         this.matrixStack = matrixStack;
-        this.buffer = buffer;
+        this.submitNodeCollector = submitNodeCollector;
         this.packedLightIn = packedLightIn;
         this.getRenderType = getRenderType;
         this.enableEffect = enableEffect;
     }
 
-    public static RenderOverrideEvent onRenderOverride(ItemStack stack, WavefrontObject model, String target,
-                                                       ResourceLocation texture, PoseStack matrixStack, MultiBufferSource buffer, int packedLightIn, Function<ResourceLocation, RenderType> getRenderType, boolean enableEffect) {
-        RenderOverrideEvent event = new RenderOverrideEvent(stack, model, target, texture, matrixStack, buffer, packedLightIn, getRenderType, enableEffect);
+    public static RenderOverrideEvent onRenderOverride(BladeItemRenderState state, WavefrontObject model, String target,
+                                                       Identifier texture, PoseStack matrixStack, SubmitNodeCollector submitNodeCollector, int packedLightIn, Function<Identifier, RenderType> getRenderType, boolean enableEffect) {
+        RenderOverrideEvent event = new RenderOverrideEvent(state, model, target, texture, matrixStack, submitNodeCollector, packedLightIn, getRenderType, enableEffect);
         CALLBACK.invoker().onRenderOverride(event);
         return event;
     }

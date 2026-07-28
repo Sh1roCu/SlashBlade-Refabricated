@@ -1,6 +1,6 @@
 {
   "package": "mods.flammpfeil.slashblade.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "required": true,
   "minVersion": "0.8",
   "refmap": "slashblade.refmap.json",

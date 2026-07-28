@@ -1,7 +1,7 @@
 {
   "package": "mods.flammpfeil.slashblade.patchouli.mixin",
   "plugin": "mods.flammpfeil.slashblade.patchouli.mixin.PatchouliMixinPlugin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "required": true,
   "minVersion": "0.8",
   "refmap": "slashblade.refmap.json",

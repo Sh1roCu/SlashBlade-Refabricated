@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.recipe;
 
+import cn.sh1rocu.slashblade.SlashBladeFabric;
 import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.init.SBItems;
@@ -7,35 +8,45 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.registry.slashblade.SlashBladeDefinition;
 import net.fabricmc.fabric.api.item.v1.EnchantingContext;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-public class SlashBladeShapedRecipe extends ShapedRecipe {
-    public static final RecipeSerializer<SlashBladeShapedRecipe> SERIALIZER = new SlashBladeShapedRecipeSerializer();
+import java.util.List;
+
+public class SlashBladeShapedRecipe extends NormalCraftingRecipe {
+    public static final RecipeSerializer<SlashBladeShapedRecipe> SERIALIZER = new RecipeSerializer<>(
+            SlashBladeShapedRecipeSerializer.CODEC, SlashBladeShapedRecipeSerializer.STREAM_CODEC
+    );
 
     final ShapedRecipePattern pattern;
-    final ItemStack result;
+    final ItemStackTemplate result;
     final String group;
     final CraftingBookCategory category;
     final boolean showNotification;
-    final ResourceLocation outputBlade;
+    final Identifier outputBlade;
 
-    public SlashBladeShapedRecipe(String group, CraftingBookCategory craftingBookCategory, ShapedRecipePattern shapedRecipePattern, ItemStack itemStack, boolean bl, ResourceLocation blade) {
-        super(group, craftingBookCategory, shapedRecipePattern, itemStack, bl);
+    public SlashBladeShapedRecipe(String group,
+                                  CraftingBookCategory craftingBookCategory,
+                                  ShapedRecipePattern shapedRecipePattern, ItemStackTemplate itemStack, boolean showNotification, Identifier blade) {
+        super(new CommonInfo(showNotification), new CraftingBookInfo(craftingBookCategory, group));
         this.group = group;
         this.category = craftingBookCategory;
         this.pattern = shapedRecipePattern;
         this.result = itemStack;
-        this.showNotification = bl;
+        this.showNotification = showNotification;
         this.outputBlade = blade;
     }
 
@@ -43,26 +54,38 @@ public class SlashBladeShapedRecipe extends ShapedRecipe {
         return this.group;
     }
 
-    public CraftingBookCategory category() {
-        return this.category;
+    @Override
+    public RecipeSerializer<SlashBladeShapedRecipe> getSerializer() {
+        return SERIALIZER;
     }
 
-    public NonNullList<Ingredient> getIngredients() {
-        return this.pattern.ingredients();
+    @Override
+    protected PlacementInfo createPlacementInfo() {
+        return PlacementInfo.createFromOptionals(this.pattern.ingredients());
     }
 
-    public boolean showNotification() {
-        return this.showNotification;
+    @Override
+    public List<RecipeDisplay> display() {
+        ItemStack resultStack = getResultItem();
+        return List.of(
+                new ShapedCraftingRecipeDisplay(
+                        this.pattern.width(),
+                        this.pattern.height(),
+                        this.pattern.ingredients().stream().map(e -> e.map(Ingredient::display).orElse(SlotDisplay.Empty.INSTANCE)).toList(),
+                        new SlotDisplay.ItemStackSlotDisplay(new ItemStackTemplate(resultStack.typeHolder(), resultStack.getCount(), resultStack.getComponentsPatch())),
+                        new SlotDisplay.ItemSlotDisplay(Items.CRAFTING_TABLE)
+                )
+        );
     }
 
-    public static ItemStack getResultBlade(ResourceLocation outputBlade) {
-        Item bladeItem = BuiltInRegistries.ITEM.containsKey(outputBlade) ? BuiltInRegistries.ITEM.get(outputBlade)
+    public static ItemStack getResultBlade(Identifier outputBlade) {
+        Item bladeItem = BuiltInRegistries.ITEM.containsKey(outputBlade) ? BuiltInRegistries.ITEM.getValue(outputBlade)
                 : SBItems.SLASHBLADE;
 
         return bladeItem.getDefaultInstance();
     }
 
-    public ResourceLocation getOutputBlade() {
+    public Identifier getOutputBlade() {
         return outputBlade;
     }
 
@@ -74,21 +97,25 @@ public class SlashBladeShapedRecipe extends ShapedRecipe {
         return pattern;
     }
 
-    @Override
-    public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider provider) {
+    public @NotNull ItemStack getResultItem() {
         ItemStack result = SlashBladeShapedRecipe.getResultBlade(this.getOutputBlade());
 
         if (!BuiltInRegistries.ITEM.getKey(result.getItem()).equals(getOutputBlade())) {
-            result = provider.lookupOrThrow(SlashBladeDefinition.REGISTRY_KEY).getOrThrow(getOutputBladeKey())
-                    .value().getBlade(provider);
+            result = SlashBladeDefinition.ACCESS.lookupOrThrow(SlashBladeDefinition.REGISTRY_KEY).getOrThrow(getOutputBladeKey())
+                    .value().getBlade(SlashBladeFabric.SERVER_ACCESS);
         }
 
         return result;
     }
 
     @Override
-    public @NotNull ItemStack assemble(@NotNull CraftingInput container, HolderLookup.@NotNull Provider provider) {
-        var result = this.getResultItem(provider);
+    public boolean matches(CraftingInput input, Level level) {
+        return false;
+    }
+
+    @Override
+    public @NotNull ItemStack assemble(@NotNull CraftingInput container) {
+        var result = this.getResultItem();
         if (!(result.getItem() instanceof ItemSlashBlade)) {
             result = new ItemStack(SBItems.SLASHBLADE);
         }
@@ -147,10 +174,5 @@ public class SlashBladeShapedRecipe extends ShapedRecipe {
                 }
             }
         }
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
-        return SERIALIZER;
     }
 }

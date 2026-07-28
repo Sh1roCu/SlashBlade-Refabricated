@@ -1,8 +1,6 @@
 {
   "type": "slashblade:slashblade_smithing",
-  "addition": {
-    "tag": "c:ingots/netherite"
-  },
+  "addition": "#c:ingots/netherite",
   "base": {
     "fabric:type": "slashblade:blade",
     "items": "slashblade:slashblade",
@@ -11,7 +9,5 @@
     }
   },
   "blade": "slashblade:rodai_netherite",
-  "template": {
-    "item": "minecraft:netherite_upgrade_smithing_template"
-  }
+  "template": "minecraft:netherite_upgrade_smithing_template"
 }

@@ -11,8 +11,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -26,6 +28,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -41,38 +47,41 @@ public class BladeStandEntity extends ItemFrame implements IEntityWithComplexSpa
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
+    public void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
         String standTypeStr;
         if (this.currentType != null) {
             standTypeStr = BuiltInRegistries.ITEM.getKey(this.currentType).toString();
         } else {
             standTypeStr = "";
         }
-        compound.putString("StandType", standTypeStr);
+        output.putString("StandType", standTypeStr);
 
-        compound.putByte("Pose", (byte) this.getPose().ordinal());
+        output.putByte("Pose", (byte) this.getPose().ordinal());
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        this.currentType = BuiltInRegistries.ITEM.get(ResourceLocation.parse(compound.getString("StandType")));
+    public void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        this.currentType = BuiltInRegistries.ITEM.getValue(Identifier.parse(input.getStringOr("StandType", "")));
 
-        this.setPose(Pose.values()[compound.getByte("Pose") % Pose.values().length]);
+        this.setPose(Pose.values()[input.getByteOr("Pose", (byte) 0) % Pose.values().length]);
     }
 
     @Override
     public void writeSpawnData(RegistryFriendlyByteBuf buffer) {
-        CompoundTag tag = new CompoundTag();
-        this.addAdditionalSaveData(tag);
-        buffer.writeNbt(tag);
+        var output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, this.registryAccess());
+        this.addAdditionalSaveData(output);
+        buffer.writeNbt(output.buildResult());
     }
 
     @Override
     public void readSpawnData(RegistryFriendlyByteBuf additionalData) {
         CompoundTag tag = additionalData.readNbt();
-        this.readAdditionalSaveData(tag);
+        if (tag != null) {
+            this.readAdditionalSaveData(TagValueInput.create(ProblemReporter.DISCARDING, this.registryAccess(), tag));
+
+        }
     }
 
     public static BladeStandEntity createInstanceFromPos(Level worldIn, BlockPos placePos, Direction dir, Item type) {
@@ -87,25 +96,25 @@ public class BladeStandEntity extends ItemFrame implements IEntityWithComplexSpa
 
     @Nullable
     @Override
-    public ItemEntity spawnAtLocation(ItemLike iip) {
+    public ItemEntity spawnAtLocation(ServerLevel level, ItemLike iip) {
         if (iip == Items.ITEM_FRAME) {
             if (this.currentType == null || this.currentType == Items.AIR)
                 return null;
 
             iip = this.currentType;
         }
-        return super.spawnAtLocation(iip);
+        return super.spawnAtLocation(level, iip);
     }
 
     @Override
-    public boolean hurt(DamageSource damageSource, float cat) {
+    public boolean hurtServer(ServerLevel level, DamageSource damageSource, float cat) {
         ItemStack blade = this.getItem();
 
         if (blade.isEmpty())
-            return super.hurt(damageSource, cat);
+            return super.hurtServer(level, damageSource, cat);
 
         if (CapabilitySlashBlade.getBladeState(blade).isEmpty())
-            return super.hurt(damageSource, cat);
+            return super.hurtServer(level, damageSource, cat);
 
         ISlashBladeState state = CapabilitySlashBlade.getBladeState(blade).orElseThrow(NullPointerException::new);
 
@@ -115,11 +124,11 @@ public class BladeStandEntity extends ItemFrame implements IEntityWithComplexSpa
             return true;
         }
 
-        return super.hurt(damageSource, cat);
+        return super.hurtServer(level, damageSource, cat);
     }
 
     @Override
-    public InteractionResult interact(Player player, InteractionHand hand) {
+    public InteractionResult interact(Player player, InteractionHand hand, Vec3 position) {
         InteractionResult result = InteractionResult.PASS;
         if (!this.level().isClientSide() && hand == InteractionHand.MAIN_HAND) {
             ItemStack itemstack = player.getItemInHand(hand);
@@ -160,6 +169,7 @@ public class BladeStandEntity extends ItemFrame implements IEntityWithComplexSpa
         return result;
     }
 
+    @Override
     protected ItemStack getFrameItemStack() {
         return new ItemStack(currentType);
     }

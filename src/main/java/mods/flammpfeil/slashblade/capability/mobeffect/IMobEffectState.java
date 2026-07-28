@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
+@SuppressWarnings("UnstableApiUsage")
 public interface IMobEffectState extends AutoSyncedComponent {
     default void setManagedStun(long now, long duration) {
         if (duration <= 0)

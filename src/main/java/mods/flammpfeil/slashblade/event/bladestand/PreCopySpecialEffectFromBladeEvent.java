@@ -5,13 +5,13 @@ import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
 public class PreCopySpecialEffectFromBladeEvent extends SlashBladeEvent implements ICancellableEvent {
-    private ResourceLocation SEKey;
+    private Identifier SEKey;
     private int shrinkCount = 0;
     private boolean isRemovable;
     private boolean isCopiable;
@@ -22,7 +22,7 @@ public class PreCopySpecialEffectFromBladeEvent extends SlashBladeEvent implemen
         }
     });
 
-    public PreCopySpecialEffectFromBladeEvent(ItemStack blade, ISlashBladeState state, ResourceLocation SEKey,
+    public PreCopySpecialEffectFromBladeEvent(ItemStack blade, ISlashBladeState state, Identifier SEKey,
                                               BladeStandAttackEvent originalEvent, boolean isRemovable, boolean isCopiable) {
         super(blade, state);
         this.SEKey = SEKey;
@@ -31,11 +31,11 @@ public class PreCopySpecialEffectFromBladeEvent extends SlashBladeEvent implemen
         this.originalEvent = originalEvent;
     }
 
-    public ResourceLocation getSEKey() {
+    public Identifier getSEKey() {
         return SEKey;
     }
 
-    public ResourceLocation setSEKey(ResourceLocation SEKey) {
+    public Identifier setSEKey(Identifier SEKey) {
         this.SEKey = SEKey;
         return SEKey;
     }

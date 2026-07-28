@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade.event.handler;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingExperienceDropEvent;
+import cn.sh1rocu.slashblade.api.event.LivingExperienceDropEvent;
 import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.concentrationrank.CapabilityConcentrationRank;
 import mods.flammpfeil.slashblade.capability.concentrationrank.IConcentrationRank;
@@ -61,7 +61,7 @@ public class KillCounter {
             return;
 
         IConcentrationRank.ConcentrationRanks rankBonus = CapabilityConcentrationRank.RANK_POINT.maybeGet(player)
-                .map(rp -> rp.getRank(player.getCommandSenderWorld().getGameTime()))
+                .map(rp -> rp.getRank(player.level().getGameTime()))
                 .orElse(IConcentrationRank.ConcentrationRanks.NONE);
         int souls = (int) Math.floor(event.getDroppedExperience() * (1.0F + (rankBonus.level * 0.1F)));
 

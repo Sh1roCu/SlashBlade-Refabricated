@@ -11,11 +11,11 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 
 public record RankSyncPacket(long rawPoint) implements CustomPacketPayload {
-    private static final ResourceLocation ID = SlashBlade.prefix("s2c_rank_sync");
+    private static final Identifier ID = SlashBlade.prefix("s2c_rank_sync");
     public static final Type<RankSyncPacket> TYPE = new Type<>(ID);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, RankSyncPacket> STREAM_CODEC = StreamCodec.composite(

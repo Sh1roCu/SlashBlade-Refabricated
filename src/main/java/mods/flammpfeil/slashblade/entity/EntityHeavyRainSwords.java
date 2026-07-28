@@ -4,6 +4,7 @@ import mods.flammpfeil.slashblade.ability.StunManager;
 import mods.flammpfeil.slashblade.util.KnockBacks;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -26,9 +27,9 @@ public class EntityHeavyRainSwords extends EntityAbstractSummonedSword {
         this.setPierce((byte) 5);
 
         CompoundTag compoundtag = this.sb$getPersistentData();
-        ListTag listtag = compoundtag.getList("CustomPotionEffects", 9);
-        MobEffectInstance mobeffectinstance = new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20, 10);
-        listtag.add(mobeffectinstance.save());
+        ListTag listtag = compoundtag.getListOrEmpty("CustomPotionEffects");
+        MobEffectInstance mobeffectinstance = new MobEffectInstance(MobEffects.SLOWNESS, 20, 10);
+        listtag.add(MobEffectInstance.CODEC.encodeStart(NbtOps.INSTANCE, mobeffectinstance).getOrThrow());
         this.sb$getPersistentData().put("CustomPotionEffects", listtag);
 
     }
@@ -54,7 +55,7 @@ public class EntityHeavyRainSwords extends EntityAbstractSummonedSword {
     public void tick() {
         if (!itFired()) {
             if (getVehicle() == null && this.getOwner() != null) {
-                startRiding(this.getOwner(), true);
+                startRiding(this.getOwner(), true, true);
             }
         }
 

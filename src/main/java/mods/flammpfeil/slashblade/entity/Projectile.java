@@ -32,7 +32,7 @@ public abstract class Projectile extends net.minecraft.world.entity.projectile.P
             if (super.getOwner() != tmp)
                 this.setOwner(tmp);
         } else {
-            this.setOwner(null);
+            this.setOwner((Entity) null);
         }
 
         return super.getOwner();

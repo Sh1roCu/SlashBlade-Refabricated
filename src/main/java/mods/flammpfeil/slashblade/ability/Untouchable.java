@@ -1,9 +1,7 @@
 package mods.flammpfeil.slashblade.ability;
 
+import cn.sh1rocu.slashblade.api.event.LivingJumpEvent;
 import cn.sh1rocu.slashblade.api.event.LivingTickEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingAttackEvent;
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEvents;
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingHurtEvent;
 import mods.flammpfeil.slashblade.capability.mobeffect.CapabilityMobEffect;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -29,12 +27,12 @@ public class Untouchable {
     }
 
     public void register() {
-        LivingHurtEvent.EVENT.register(this::onLivingHurt);
-        ServerLivingEntityEvents.ALLOW_DAMAGE.register(this::onLivingDamage);
-        LivingAttackEvent.EVENT.register(this::onLivingAttack);
+        ServerLivingEntityEvents.ALLOW_DAMAGE.register(this::onLivingHurt);
+        // ServerLivingEntityEvents.ALLOW_DAMAGE.register(this::onLivingDamage);
+        ServerLivingEntityEvents.ALLOW_DAMAGE.register(this::onLivingAttack);
         ServerLivingEntityEvents.ALLOW_DEATH.register(this::onLivingDeath);
-        LivingTickEvent.CALLBACK.register(this::onLivingTicks);
-        LivingEvents.LivingJumpEvent.EVENT.register(this::onPlayerJump);
+        LivingTickEvent.EVENT.register(this::onLivingTicks);
+        LivingJumpEvent.EVENT.register(this::onPlayerJump);
     }
 
     public static void setUntouchable(LivingEntity entity, int ticks) {
@@ -47,9 +45,9 @@ public class Untouchable {
 
     private boolean checkUntouchable(LivingEntity entity) {
         Optional<Boolean> isUntouchable = CapabilityMobEffect.MOB_EFFECT.maybeGet(entity)
-                .map(ef -> ef.isUntouchable(entity.getCommandSenderWorld().getGameTime()));
+                .map(ef -> ef.isUntouchable(entity.level().getGameTime()));
 
-        return isUntouchable.orElseGet(() -> false);
+        return isUntouchable.orElse(false);
     }
 
     private void doWitchTime(Entity entity) {
@@ -70,27 +68,20 @@ public class Untouchable {
         return false;
     }
 
-    public void onLivingHurt(LivingHurtEvent event) {
-        if (doUntouchable(event.getEntity(), event.getSource().getEntity())) {
-            event.setCanceled(true);
-        }
-    }
-
-    public boolean onLivingDamage(LivingEntity entity, DamageSource source, float amount) {
-        //event.setCanceled(true);
+    public boolean onLivingHurt(LivingEntity entity, DamageSource source, float amount) {
         return !doUntouchable(entity, source.getEntity());
     }
 
-    public void onLivingAttack(LivingAttackEvent event) {
-        if (checkUntouchable(event.getEntity())) {
-            event.setCanceled(true);
-        }
+//    public boolean onLivingDamage(LivingEntity entity, DamageSource source, float amount) {
+//        return !doUntouchable(entity, source.getEntity());
+//    }
+
+    public boolean onLivingAttack(LivingEntity entity, DamageSource source, float amount) {
+        return !checkUntouchable(entity);
     }
 
     public boolean onLivingDeath(LivingEntity entity, DamageSource damageSource, float damageAmount) {
         if (doUntouchable(entity, damageSource.getEntity())) {
-            //event.setCanceled(true);
-
             CapabilityMobEffect.MOB_EFFECT.maybeGet(entity).ifPresent(ef -> {
                 if (ef.hasUntouchableWorked()) {
                     List<Holder<MobEffect>> filterd = entity.getActiveEffectsMap().keySet().stream()
@@ -131,7 +122,7 @@ public class Untouchable {
 
     static final int JUMP_TICKS = 10;
 
-    public void onPlayerJump(LivingEvents.LivingJumpEvent event) {
+    public void onPlayerJump(LivingJumpEvent event) {
         if (CapabilitySlashBlade.getBladeState(event.getEntity().getMainHandItem()).isEmpty())
             return;
 

@@ -21,6 +21,7 @@
           {
             "predicates": {
               "slashblade:slashblade": {
+                "bladeItem": "slashblade:slashblade",
                 "requestBlade": {}
               }
             }

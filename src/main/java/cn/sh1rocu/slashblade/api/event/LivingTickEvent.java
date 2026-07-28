@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.entity.LivingEntity;
 
 public class LivingTickEvent extends LivingEvent implements ICancellableEvent {
-    public static final Event<Callback> CALLBACK = EventFactory.createArrayBacked(Callback.class, callbacks -> (event) -> {
+    public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> (event) -> {
         for (Callback callback : callbacks)
             callback.onLivingTick(event);
     });

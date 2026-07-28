@@ -2,7 +2,6 @@ package mods.flammpfeil.slashblade.event.handler;
 
 import cn.sh1rocu.slashblade.api.event.AnvilRepairEvent;
 import cn.sh1rocu.slashblade.api.event.AnvilUpdateEvent;
-import cn.sh1rocu.slashblade.api.extension.BaseItemExtension;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
@@ -12,10 +11,10 @@ import mods.flammpfeil.slashblade.event.RefineProgressEvent;
 import mods.flammpfeil.slashblade.event.RefineSettlementEvent;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.util.AdvancementHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TieredItem;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -32,9 +31,9 @@ public class RefineHandler {
     }
 
     public void register() {
-        AnvilUpdateEvent.CALLBACK.register(this::onAnvilUpdateEvent);
-        AnvilRepairEvent.CALLBACK.register(this::onAnvilRepairEvent);
-        RefineProgressEvent.CALLBACK.register(this::refineLimitCheck);
+        AnvilUpdateEvent.EVENT.register(this::onAnvilUpdateEvent);
+        AnvilRepairEvent.EVENT.register(this::onAnvilRepairEvent);
+        RefineProgressEvent.EVENT.register(this::refineLimitCheck);
     }
 
     public void onAnvilUpdateEvent(AnvilUpdateEvent event) {
@@ -55,16 +54,13 @@ public class RefineHandler {
             return;
         }
 
-        boolean isRepairable = base.getItem().isValidRepairItem(base, material);
+        boolean isRepairable = base.isValidRepairItem(material);
         if (!isRepairable) {
             return;
         }
-
         int level = 0;
-        if (material.getItem() instanceof BaseItemExtension extension)
-            level = extension.getEnchantmentValue(material);
-        else if (material.getItem() instanceof TieredItem tier)
-            level = tier.getEnchantmentValue();
+        if (material.has(DataComponents.ENCHANTABLE))
+            level = material.get(DataComponents.ENCHANTABLE).value();
 
         if (level < 0) {
             return;
@@ -86,7 +82,7 @@ public class RefineHandler {
                     CapabilitySlashBlade.getBladeState(result).orElse(new SlashBladeState(result)), materialCost + 1, levelCostBase,
                     costResult, refineResult.get(), event);
 
-            RefineProgressEvent.CALLBACK.invoker().onRefineProgress(e);
+            RefineProgressEvent.EVENT.invoker().onRefineProgress(e);
             if (e.isCanceled()) {
                 break;
             }
@@ -106,7 +102,7 @@ public class RefineHandler {
             RefineSettlementEvent e2 = new RefineSettlementEvent(result,
                     state, materialCost, costResult, refineResult.get(), event);
 
-            RefineSettlementEvent.CALLBACK.invoker().onRefineSettlement(e2);
+            RefineSettlementEvent.EVENT.invoker().onRefineSettlement(e2);
             if (e2.isCanceled()) {
                 return;
             }
@@ -139,7 +135,7 @@ public class RefineHandler {
                 * Math.min(5000, level * 10);
     }
 
-    private static final ResourceLocation REFINE = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID, "tips/refine");
+    private static final Identifier REFINE = Identifier.fromNamespaceAndPath(SlashBlade.MODID, "tips/refine");
 
     public void onAnvilRepairEvent(AnvilRepairEvent event) {
 
@@ -157,7 +153,7 @@ public class RefineHandler {
         if (material.isEmpty())
             return;
 
-        boolean isRepairable = base.getItem().isValidRepairItem(base, material);
+        boolean isRepairable = base.isValidRepairItem(material);
 
         if (!isRepairable)
             return;
@@ -177,10 +173,8 @@ public class RefineHandler {
         }
         int level = 0;
         ItemStack material = oriEvent.getRight();
-        if (material.getItem() instanceof BaseItemExtension extension)
-            level = extension.getEnchantmentValue(material);
-        else if (material.getItem() instanceof TieredItem tier)
-            level = tier.getEnchantmentValue();
+        if (material.has(DataComponents.ENCHANTABLE))
+            level = material.get(DataComponents.ENCHANTABLE).value();
         int refineLimit = Math.max(10, level);
         if (event.getRefineResult() < refineLimit) {
             event.setRefineResult(event.getRefineResult() + 1);

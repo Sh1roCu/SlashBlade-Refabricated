@@ -5,7 +5,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public abstract class ItemProudSoul extends Item implements BaseItemExtension {
+public class ItemProudSoul extends Item implements BaseItemExtension {
     public ItemProudSoul(Properties properties) {
         super(properties);
     }

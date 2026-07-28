@@ -5,13 +5,13 @@ import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
 public class BladeChangeSpecialAttackEvent extends SlashBladeEvent implements ICancellableEvent {
-    private ResourceLocation SAKey;
+    private Identifier SAKey;
     private int shrinkCount = 0;
     private final BladeStandAttackEvent originalEvent;
     public static final Event<Callback> CALLBACK = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
@@ -20,18 +20,18 @@ public class BladeChangeSpecialAttackEvent extends SlashBladeEvent implements IC
         }
     });
 
-    public BladeChangeSpecialAttackEvent(ItemStack blade, ISlashBladeState state, ResourceLocation SAKey,
+    public BladeChangeSpecialAttackEvent(ItemStack blade, ISlashBladeState state, Identifier SAKey,
                                          BladeStandAttackEvent originalEvent) {
         super(blade, state);
         this.SAKey = SAKey;
         this.originalEvent = originalEvent;
     }
 
-    public ResourceLocation getSAKey() {
+    public Identifier getSAKey() {
         return SAKey;
     }
 
-    public ResourceLocation setSAKey(ResourceLocation SAKey) {
+    public Identifier setSAKey(Identifier SAKey) {
         this.SAKey = SAKey;
         return SAKey;
     }

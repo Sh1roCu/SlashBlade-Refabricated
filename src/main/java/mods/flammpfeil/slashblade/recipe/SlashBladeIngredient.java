@@ -7,6 +7,7 @@ import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.init.SBItems;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -14,25 +15,27 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.HolderSetCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.ItemLike;
 
-import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
-public record SlashBladeIngredient(HolderSet<Item> items, RequestDefinition request) implements CustomIngredient {
+public record SlashBladeIngredient(HolderSet<Item> holdItems, RequestDefinition request) implements CustomIngredient {
     public static final Codec<HolderSet<Item>> ITEM_HOLDER_SET_CODEC = HolderSetCodec.create(Registries.ITEM, BuiltInRegistries.ITEM.holderByNameCodec(), false);
 
     public static final MapCodec<SlashBladeIngredient> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
-            ITEM_HOLDER_SET_CODEC.fieldOf("items").forGetter(ingredient -> ingredient.items),
+            ITEM_HOLDER_SET_CODEC.fieldOf("items").forGetter(ingredient -> ingredient.holdItems),
             RequestDefinition.CODEC.fieldOf("request").forGetter(ingredient -> ingredient.request)
     ).apply(builder, SlashBladeIngredient::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SlashBladeIngredient> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.fromCodecWithRegistries(ITEM_HOLDER_SET_CODEC),
-            ingredient -> ingredient.items,
+            ingredient -> ingredient.holdItems,
             RequestDefinition.STREAM_CODEC,
             ingredient -> ingredient.request,
             SlashBladeIngredient::new
@@ -40,7 +43,7 @@ public record SlashBladeIngredient(HolderSet<Item> items, RequestDefinition requ
 
 
     public SlashBladeIngredient {
-        if (items.size() <= 0) {
+        if (holdItems.size() <= 0) {
             throw new IllegalArgumentException("Cannot create a SlashBladeIngredient with no items");
         }
     }
@@ -57,12 +60,12 @@ public record SlashBladeIngredient(HolderSet<Item> items, RequestDefinition requ
         return new SlashBladeIngredient(Set.of(SBItems.SLASHBLADE), request);
     }
 
-    public static SlashBladeIngredient of(ItemLike item, ResourceLocation request) {
+    public static SlashBladeIngredient of(ItemLike item, Identifier request) {
         return new SlashBladeIngredient(Set.of(item.asItem()),
                 RequestDefinition.Builder.newInstance().name(request).build());
     }
 
-    public static SlashBladeIngredient of(ResourceLocation request) {
+    public static SlashBladeIngredient of(Identifier request) {
         return new SlashBladeIngredient(Set.of(SBItems.SLASHBLADE),
                 RequestDefinition.Builder.newInstance().name(request).build());
     }
@@ -75,19 +78,21 @@ public record SlashBladeIngredient(HolderSet<Item> items, RequestDefinition requ
     public boolean test(ItemStack input) {
         if (input == null)
             return false;
-        return items.contains(input.getItemHolder()) && this.request.test(input);
+        return holdItems.contains(input.getItem().builtInRegistryHolder()) && this.request.test(input);
     }
 
     @Override
-    public List<ItemStack> getMatchingStacks() {
-        return items.stream().map(item -> {
+    public Stream<Holder<Item>> items() {
+        return holdItems.stream();
+    }
+
+    @Override
+    public SlotDisplay display() {
+        return new SlotDisplay.Composite(this.items().<SlotDisplay>map(item -> {
             ItemStack stack = new ItemStack(item);
-            // copy NBT to prevent the stack from modifying the original, as capabilities or
-            // vanilla item durability will modify the tag
             request.initItemStack(stack);
-            // return new Ingredient.ItemValue(stack);
-            return stack;
-        }).toList();
+            return new SlotDisplay.ItemStackSlotDisplay(new ItemStackTemplate(item, stack.getCount(), stack.getComponentsPatch()));
+        }).toList());
     }
 
     @Override
@@ -102,20 +107,20 @@ public record SlashBladeIngredient(HolderSet<Item> items, RequestDefinition requ
 
     public static class Serializer implements CustomIngredientSerializer<SlashBladeIngredient> {
         public static final Serializer INSTANCE = new Serializer();
-        public static final ResourceLocation RES = SlashBlade.prefix("blade");
+        public static final Identifier RES = SlashBlade.prefix("blade");
 
         @Override
-        public ResourceLocation getIdentifier() {
+        public Identifier getIdentifier() {
             return RES;
         }
 
         @Override
-        public MapCodec<SlashBladeIngredient> getCodec(boolean b) {
+        public MapCodec<SlashBladeIngredient> getCodec() {
             return SlashBladeIngredient.CODEC;
         }
 
         @Override
-        public StreamCodec<RegistryFriendlyByteBuf, SlashBladeIngredient> getPacketCodec() {
+        public StreamCodec<RegistryFriendlyByteBuf, SlashBladeIngredient> getStreamCodec() {
             return SlashBladeIngredient.STREAM_CODEC;
         }
     }

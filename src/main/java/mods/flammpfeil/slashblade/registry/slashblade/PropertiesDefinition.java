@@ -6,39 +6,39 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import mods.flammpfeil.slashblade.item.SwordType;
 import mods.flammpfeil.slashblade.registry.ComboStateRegistry;
 import mods.flammpfeil.slashblade.registry.SlashArtsRegistry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 
 public class PropertiesDefinition {
     public static final Codec<PropertiesDefinition> CODEC = RecordCodecBuilder
             .create(instance -> instance
-                    .group(ResourceLocation.CODEC.optionalFieldOf("root_combo", ComboStateRegistry.getId(ComboStateRegistry.STANDBY))
+                    .group(Identifier.CODEC.optionalFieldOf("root_combo", ComboStateRegistry.getId(ComboStateRegistry.STANDBY))
                                     .forGetter(PropertiesDefinition::getComboRoot),
-                            ResourceLocation.CODEC.optionalFieldOf("slash_art", SlashArtsRegistry.SLASH_ARTS.getKey(SlashArtsRegistry.JUDGEMENT_CUT))
+                            Identifier.CODEC.optionalFieldOf("slash_art", SlashArtsRegistry.SLASH_ARTS.getKey(SlashArtsRegistry.JUDGEMENT_CUT))
                                     .forGetter(PropertiesDefinition::getSpecialAttackType),
                             Codec.FLOAT.optionalFieldOf("attack_base", 4.0F)
                                     .forGetter(PropertiesDefinition::getBaseAttackModifier),
                             Codec.INT.optionalFieldOf("max_damage", 40).forGetter(PropertiesDefinition::getMaxDamage),
                             SwordType.CODEC.listOf().optionalFieldOf("sword_type", Lists.newArrayList())
                                     .forGetter(PropertiesDefinition::getDefaultType),
-                            ResourceLocation.CODEC.listOf().optionalFieldOf("special_effects", Lists.newArrayList())
+                            Identifier.CODEC.listOf().optionalFieldOf("special_effects", Lists.newArrayList())
                                     .forGetter(PropertiesDefinition::getSpecialEffects),
                             Codec.BOOL.optionalFieldOf("unbreakable", false)
                                     .forGetter(PropertiesDefinition::isUnbreakable)
                     )
                     .apply(instance, PropertiesDefinition::new));
 
-    private final ResourceLocation comboRoot;
-    private final ResourceLocation specialAttackType;
+    private final Identifier comboRoot;
+    private final Identifier specialAttackType;
     private final float baseAttackModifier;
     private final int maxDamage;
     private final List<SwordType> defaultType;
-    private final List<ResourceLocation> specialEffects;
+    private final List<Identifier> specialEffects;
     private final boolean unbreakable;
 
-    private PropertiesDefinition(ResourceLocation comboRoot, ResourceLocation specialAttackType,
-                                 float baseAttackModifier, int damage, List<SwordType> defaultType, List<ResourceLocation> specialEffects, boolean unbreakable) {
+    private PropertiesDefinition(Identifier comboRoot, Identifier specialAttackType,
+                                 float baseAttackModifier, int damage, List<SwordType> defaultType, List<Identifier> specialEffects, boolean unbreakable) {
         this.comboRoot = comboRoot;
         this.specialAttackType = specialAttackType;
         this.baseAttackModifier = baseAttackModifier;
@@ -49,15 +49,15 @@ public class PropertiesDefinition {
     }
 
 
-    public List<ResourceLocation> getSpecialEffects() {
+    public List<Identifier> getSpecialEffects() {
         return specialEffects;
     }
 
-    public ResourceLocation getComboRoot() {
+    public Identifier getComboRoot() {
         return comboRoot;
     }
 
-    public ResourceLocation getSpecialAttackType() {
+    public Identifier getSpecialAttackType() {
         return specialAttackType;
     }
 
@@ -78,12 +78,12 @@ public class PropertiesDefinition {
     }
 
     public static class Builder {
-        private ResourceLocation comboRoot;
-        private ResourceLocation specialAttackType;
+        private Identifier comboRoot;
+        private Identifier specialAttackType;
         private float baseAttackModifier;
         private int maxDamage;
         private List<SwordType> defaultType;
-        private final List<ResourceLocation> specialEffects;
+        private final List<Identifier> specialEffects;
         private boolean unbreakable;
 
         private Builder() {
@@ -100,12 +100,12 @@ public class PropertiesDefinition {
             return new Builder();
         }
 
-        public Builder rootComboState(ResourceLocation comboRoot) {
+        public Builder rootComboState(Identifier comboRoot) {
             this.comboRoot = comboRoot;
             return this;
         }
 
-        public Builder slashArtsType(ResourceLocation specialAttackType) {
+        public Builder slashArtsType(Identifier specialAttackType) {
             this.specialAttackType = specialAttackType;
             return this;
         }
@@ -125,7 +125,7 @@ public class PropertiesDefinition {
             return this;
         }
 
-        public Builder addSpecialEffect(ResourceLocation se) {
+        public Builder addSpecialEffect(Identifier se) {
             this.specialEffects.add(se);
             return this;
         }

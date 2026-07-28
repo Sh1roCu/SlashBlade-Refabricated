@@ -16,7 +16,7 @@ import mods.flammpfeil.slashblade.util.AdvancementHelper;
 import mods.flammpfeil.slashblade.util.TimeValueHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -94,9 +94,9 @@ public interface ISlashBladeState {
     void setAttackAmplifier(float attackAmplifier);
 
     @Nonnull
-    ResourceLocation getComboSeq();
+    Identifier getComboSeq();
 
-    void setComboSeq(ResourceLocation comboSeq);
+    void setComboSeq(Identifier comboSeq);
 
     boolean isBroken();
 
@@ -124,10 +124,10 @@ public interface ISlashBladeState {
 
     @Nonnull
     default SlashArts getSlashArts() {
-        ResourceLocation key = getSlashArtsKey();
+        Identifier key = getSlashArtsKey();
         SlashArts result = null;
         if (key != null)
-            result = SlashArtsRegistry.SLASH_ARTS.containsKey(key) ? SlashArtsRegistry.SLASH_ARTS.get(key)
+            result = SlashArtsRegistry.SLASH_ARTS.containsKey(key) ? SlashArtsRegistry.SLASH_ARTS.getValue(key)
                     : SlashArtsRegistry.JUDGEMENT_CUT;
 
         if (Objects.equals(key, SlashArtsRegistry.SLASH_ARTS.getKey(SlashArtsRegistry.NONE)))
@@ -136,9 +136,9 @@ public interface ISlashBladeState {
         return result != null ? result : SlashArtsRegistry.JUDGEMENT_CUT;
     }
 
-    void setSlashArtsKey(ResourceLocation slashArts);
+    void setSlashArtsKey(Identifier slashArts);
 
-    ResourceLocation getSlashArtsKey();
+    Identifier getSlashArtsKey();
 
     boolean isDefaultBewitched();
 
@@ -177,14 +177,14 @@ public interface ISlashBladeState {
     void setAdjust(Vec3 adjust);
 
     @NotNull
-    Optional<ResourceLocation> getTexture();
+    Optional<Identifier> getTexture();
 
-    void setTexture(ResourceLocation texture);
+    void setTexture(Identifier texture);
 
     @NotNull
-    Optional<ResourceLocation> getModel();
+    Optional<Identifier> getModel();
 
-    void setModel(ResourceLocation model);
+    void setModel(Identifier model);
 
     int getTargetEntityId();
 
@@ -219,25 +219,25 @@ public interface ISlashBladeState {
         return getFullChargeTicks(user) < elapsed;
     }
 
-    default ResourceLocation progressCombo(LivingEntity user, boolean isVirtual) {
-        ResourceLocation currentloc = resolvCurrentComboState(user);
-        ComboState current = ComboStateRegistry.COMBO_STATE.get(currentloc);
+    default Identifier progressCombo(LivingEntity user, boolean isVirtual) {
+        Identifier currentloc = resolvCurrentComboState(user);
+        ComboState current = ComboStateRegistry.COMBO_STATE.getValue(currentloc);
 
         if (current == null)
             return ComboStateRegistry.getId(ComboStateRegistry.NONE);
 
         var event = new SlashBladeEvent.NextComboEvent(user.getMainHandItem(), this, user, current.getNext(user));
         SlashBladeEvent.NEXT_COMBO.invoker().onNextCombo(event);
-        ResourceLocation next = event.getNextCombo();
+        Identifier next = event.getNextCombo();
         if (event.isCanceled())
             return ComboStateRegistry.getId(ComboStateRegistry.NONE);
         if (!next.equals(ComboStateRegistry.getId(ComboStateRegistry.NONE)) && next.equals(currentloc))
             return ComboStateRegistry.getId(ComboStateRegistry.NONE);
 
-        ResourceLocation rootNext = ComboStateRegistry.COMBO_STATE.get(getComboRoot()).getNext(user);
-        ComboState nextCS = ComboStateRegistry.COMBO_STATE.get(next);
-        ComboState rootNextCS = ComboStateRegistry.COMBO_STATE.get(rootNext);
-        ResourceLocation resolved = nextCS.getPriority() <= rootNextCS.getPriority() ? next : rootNext;
+        Identifier rootNext = ComboStateRegistry.COMBO_STATE.getValue(getComboRoot()).getNext(user);
+        ComboState nextCS = ComboStateRegistry.COMBO_STATE.getValue(next);
+        ComboState rootNextCS = ComboStateRegistry.COMBO_STATE.getValue(rootNext);
+        Identifier resolved = nextCS.getPriority() <= rootNextCS.getPriority() ? next : rootNext;
 
         if (!isVirtual) {
             this.updateComboSeq(user, resolved);
@@ -246,20 +246,20 @@ public interface ISlashBladeState {
         return resolved;
     }
 
-    default ResourceLocation progressCombo(LivingEntity user) {
+    default Identifier progressCombo(LivingEntity user) {
         return progressCombo(user, false);
     }
 
-    default ResourceLocation doChargeAction(LivingEntity user, int elapsed) {
+    default Identifier doChargeAction(LivingEntity user, int elapsed) {
         if (elapsed <= 2)
             return ComboStateRegistry.getId(ComboStateRegistry.NONE);
 
         if (this.isBroken() || this.isSealed())
             return ComboStateRegistry.getId(ComboStateRegistry.NONE);
 
-        Map.Entry<Integer, ResourceLocation> currentloc = resolvCurrentComboStateTicks(user);
+        Map.Entry<Integer, Identifier> currentloc = resolvCurrentComboStateTicks(user);
 
-        ComboState current = ComboStateRegistry.COMBO_STATE.get(currentloc.getValue());
+        ComboState current = ComboStateRegistry.COMBO_STATE.getValue(currentloc.getValue());
         if (current == null)
             return ComboStateRegistry.getId(ComboStateRegistry.NONE);
 
@@ -271,7 +271,6 @@ public interface ISlashBladeState {
         int justReceptionSpan = SlashArts.getJustReceptionSpan(user);
         int justChargePeriod = fullChargeTicks + justReceptionSpan;
 
-        @SuppressWarnings("UnstableApiUsage")
         RangeMap<Integer, SlashArts.ArtsType> charge_accept = ImmutableRangeMap.<Integer, SlashArts.ArtsType>builder()
                 .put(Range.lessThan(fullChargeTicks), SlashArts.ArtsType.Fail)
                 .put(Range.closedOpen(fullChargeTicks, justChargePeriod), SlashArts.ArtsType.Jackpot)
@@ -287,7 +286,7 @@ public interface ISlashBladeState {
                 type = result;
         }
 
-        ResourceLocation csloc = this.getSlashArts().doArts(type, user);
+        Identifier csloc = this.getSlashArts().doArts(type, user);
 
         SlashBladeEvent.PerformSlashArtEvent event = new SlashBladeEvent.PerformSlashArtEvent(user, elapsed, this, csloc,
                 type);
@@ -297,7 +296,7 @@ public interface ISlashBladeState {
         }
 
         csloc = event.getComboState();
-        ComboState cs = ComboStateRegistry.COMBO_STATE.get(csloc);
+        ComboState cs = ComboStateRegistry.COMBO_STATE.getValue(csloc);
 
         if (!csloc.equals(ComboStateRegistry.getId(ComboStateRegistry.NONE)) && !currentloc.getValue().equals(csloc)) {
 
@@ -310,27 +309,27 @@ public interface ISlashBladeState {
         return csloc;
     }
 
-    default void updateComboSeq(LivingEntity entity, ResourceLocation loc) {
+    default void updateComboSeq(LivingEntity entity, Identifier loc) {
         BladeMotionEvent event = new BladeMotionEvent(entity, loc);
-        BladeMotionEvent.CALLBACK.invoker().onBladeMotion(event);
+        BladeMotionEvent.EVENT.invoker().onBladeMotion(event);
         if (event.isCanceled()) return;
         this.setComboSeq(event.getCombo());
         this.setLastActionTime(entity.level().getGameTime());
-        ComboState cs = ComboStateRegistry.COMBO_STATE.get(event.getCombo());
+        ComboState cs = ComboStateRegistry.COMBO_STATE.getValue(event.getCombo());
         cs.clickAction(event.getEntity());
     }
 
-    default ResourceLocation resolvCurrentComboState(LivingEntity user) {
+    default Identifier resolvCurrentComboState(LivingEntity user) {
         if (!(user.getMainHandItem().getItem() instanceof ItemSlashBlade))
             return ComboStateRegistry.getId(ComboStateRegistry.NONE);
         return resolvCurrentComboStateTicks(user).getValue();
     }
 
-    default Map.Entry<Integer, ResourceLocation> resolvCurrentComboStateTicks(LivingEntity user) {
-        ResourceLocation current = ComboStateRegistry.COMBO_STATE.containsKey(getComboSeq()) ? getComboSeq()
+    default Map.Entry<Integer, Identifier> resolvCurrentComboStateTicks(LivingEntity user) {
+        Identifier current = ComboStateRegistry.COMBO_STATE.containsKey(getComboSeq()) ? getComboSeq()
                 : ComboStateRegistry.getId(ComboStateRegistry.NONE);
-        ComboState currentCS = ComboStateRegistry.COMBO_STATE.get(current) != null
-                ? ComboStateRegistry.COMBO_STATE.get(current)
+        ComboState currentCS = ComboStateRegistry.COMBO_STATE.getValue(current) != null
+                ? ComboStateRegistry.COMBO_STATE.getValue(current)
                 : ComboStateRegistry.NONE;
         int time = (int) TimeValueHelper.getMSecFromTicks(getElapsedTime(user));
 
@@ -349,9 +348,9 @@ public interface ISlashBladeState {
         return new AbstractMap.SimpleImmutableEntry<>(ticks, current);
     }
 
-    ResourceLocation getComboRoot();
+    Identifier getComboRoot();
 
-    void setComboRoot(ResourceLocation resourceLocation);
+    void setComboRoot(Identifier resourceLocation);
 
     int getDamage();
 
@@ -361,15 +360,15 @@ public interface ISlashBladeState {
 
     void setMaxDamage(int damage);
 
-    Collection<ResourceLocation> getSpecialEffects();
+    Collection<Identifier> getSpecialEffects();
 
     void setSpecialEffects(ListTag list);
 
-    boolean addSpecialEffect(ResourceLocation se);
+    boolean addSpecialEffect(Identifier se);
 
-    boolean removeSpecialEffect(ResourceLocation se);
+    boolean removeSpecialEffect(Identifier se);
 
-    boolean hasSpecialEffect(ResourceLocation se);
+    boolean hasSpecialEffect(Identifier se);
 
     boolean isEmpty();
 

@@ -9,9 +9,9 @@ import net.minecraft.core.Registry;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.Drowned;
-import net.minecraft.world.entity.monster.Zombie;
-import net.minecraft.world.entity.monster.ZombifiedPiglin;
+import net.minecraft.world.entity.monster.zombie.Drowned;
+import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.monster.zombie.ZombifiedPiglin;
 
 public class EntitySpawnEventHandler {
     public static void onMobSpawn(MobSpawnEvent.FinalizeSpawn event) {
@@ -27,7 +27,7 @@ public class EntitySpawnEventHandler {
 
         Registry<SlashBladeDefinition> bladeRegistry = SlashBlade
                 .getSlashBladeDefinitionRegistry(event.getEntity().level());
-        if (!bladeRegistry.containsKey(SlashBladeBuiltInRegistry.SABIGATANA.location()))
+        if (!bladeRegistry.containsKey(SlashBladeBuiltInRegistry.SABIGATANA.identifier()))
             return;
 
         float rngResult = random.nextFloat();
@@ -35,10 +35,10 @@ public class EntitySpawnEventHandler {
         if (rngResult < SlashBladeConfig.BROKEN_SABIGATANA_SPAWN_CHANCE.get() * difficultyMultiplier) {
             if (rngResult < SlashBladeConfig.SABIGATANA_SPAWN_CHANCE.get() * difficultyMultiplier) {
                 entity.setItemSlot(EquipmentSlot.MAINHAND,
-                        bladeRegistry.get(SlashBladeBuiltInRegistry.SABIGATANA.location()).getBlade(event.getEntity().registryAccess()));
+                        bladeRegistry.getValue(SlashBladeBuiltInRegistry.SABIGATANA.identifier()).getBlade(event.getEntity().registryAccess()));
             } else {
                 entity.setItemSlot(EquipmentSlot.MAINHAND,
-                        bladeRegistry.get(SlashBladeBuiltInRegistry.SABIGATANA_BROKEN.location()).getBlade(event.getEntity().registryAccess()));
+                        bladeRegistry.getValue(SlashBladeBuiltInRegistry.SABIGATANA_BROKEN.identifier()).getBlade(event.getEntity().registryAccess()));
             }
         }
     }

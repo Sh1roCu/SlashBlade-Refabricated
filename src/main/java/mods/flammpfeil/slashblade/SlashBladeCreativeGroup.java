@@ -4,15 +4,15 @@ import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.init.SBItems;
 import mods.flammpfeil.slashblade.registry.SlashArtsRegistry;
 import mods.flammpfeil.slashblade.registry.slashblade.SlashBladeDefinition;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTabOutput;
 import net.fabricmc.fabric.api.item.v1.EnchantingContext;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -24,12 +24,12 @@ public class SlashBladeCreativeGroup {
 
     }
 
-    private static final CreativeModeTab SLASHBLADE = FabricItemGroup.builder()
+    private static final CreativeModeTab SLASHBLADE = FabricCreativeModeTab.builder()
             .title(Component.translatable("itemGroup.slashblade")).icon(() -> {
                 ItemStack stack = new ItemStack(SBItems.SLASHBLADE);
                 CapabilitySlashBlade.getBladeState(stack).ifPresent(s -> {
-                    s.setModel(ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID, "model/named/yamato.obj"));
-                    s.setTexture(ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID, "model/named/yamato.png"));
+                    s.setModel(Identifier.fromNamespaceAndPath(SlashBlade.MODID, "model/named/yamato.obj"));
+                    s.setTexture(Identifier.fromNamespaceAndPath(SlashBlade.MODID, "model/named/yamato.png"));
                 });
                 return stack;
             }).displayItems((features, output) -> {
@@ -65,7 +65,7 @@ public class SlashBladeCreativeGroup {
             SLASHBLADE
     );
 
-    public static void onCreativeTagBuilding(CreativeModeTab group, FabricItemGroupEntries entries) {
+    public static void onCreativeTagBuilding(CreativeModeTab group, FabricCreativeModeTabOutput entries) {
         SlashBlade.getSlashBladeDefinitionRegistry(entries.getContext().holders())
                 .listElements()
                 .sorted(SlashBladeDefinition.COMPARATOR).forEach(entry -> {
@@ -103,7 +103,7 @@ public class SlashBladeCreativeGroup {
 
     private static void fillSASpheres(CreativeModeTab.Output output) {
         SlashArtsRegistry.SLASH_ARTS.forEach(slashArts -> {
-            ResourceLocation key = SlashArtsRegistry.SLASH_ARTS.getKey(slashArts);
+            Identifier key = SlashArtsRegistry.SLASH_ARTS.getKey(slashArts);
             if (slashArts.equals(SlashArtsRegistry.NONE) || key == null)
                 return;
             ItemStack sphere = new ItemStack(SBItems.PROUDSOUL_SPHERE);

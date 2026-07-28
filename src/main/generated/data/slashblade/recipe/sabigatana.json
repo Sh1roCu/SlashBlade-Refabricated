@@ -14,9 +14,7 @@
         ]
       }
     },
-    "P": {
-      "item": "slashblade:proudsoul_ingot"
-    }
+    "P": "slashblade:proudsoul_ingot"
   },
   "pattern": [
     "  P",
@@ -24,7 +22,6 @@
     "B  "
   ],
   "result": {
-    "count": 1,
     "id": "slashblade:slashblade"
   }
 }

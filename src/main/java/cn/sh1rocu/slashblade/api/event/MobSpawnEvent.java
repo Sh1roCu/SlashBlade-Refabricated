@@ -4,8 +4,8 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.ApiStatus;
@@ -38,7 +38,7 @@ public abstract class MobSpawnEvent extends BaseEvent {
     }
 
     public static class FinalizeSpawn extends MobSpawnEvent implements ICancellableEvent {
-        private final MobSpawnType spawnType;
+        private final EntitySpawnReason spawnType;
         private DifficultyInstance difficulty;
         @Nullable
         private SpawnGroupData spawnData;
@@ -46,7 +46,7 @@ public abstract class MobSpawnEvent extends BaseEvent {
         private CompoundTag spawnTag;
 
         @ApiStatus.Internal
-        public FinalizeSpawn(Mob entity, ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnData) {
+        public FinalizeSpawn(Mob entity, ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason spawnType, @Nullable SpawnGroupData spawnData) {
             super(entity, level);
             this.difficulty = difficulty;
             this.spawnType = spawnType;
@@ -61,7 +61,7 @@ public abstract class MobSpawnEvent extends BaseEvent {
             this.difficulty = inst;
         }
 
-        public MobSpawnType getSpawnType() {
+        public EntitySpawnReason getSpawnType() {
             return this.spawnType;
         }
 

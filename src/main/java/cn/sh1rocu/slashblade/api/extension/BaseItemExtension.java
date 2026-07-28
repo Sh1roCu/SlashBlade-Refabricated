@@ -5,7 +5,4 @@ import net.minecraft.world.item.ItemStack;
 
 public interface BaseItemExtension {
     boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity);
-
-    int getEnchantmentValue(ItemStack stack);
-
 }

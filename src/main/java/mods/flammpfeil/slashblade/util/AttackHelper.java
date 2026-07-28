@@ -1,7 +1,6 @@
 package mods.flammpfeil.slashblade.util;
 
 import cn.sh1rocu.slashblade.api.extension.ItemSlashBladeExtension;
-import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import mods.flammpfeil.slashblade.capability.concentrationrank.CapabilityConcentrationRank;
 import mods.flammpfeil.slashblade.capability.concentrationrank.IConcentrationRank;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
@@ -77,7 +76,8 @@ public class AttackHelper {
 
         Vec3 originalMotion = target.getDeltaMovement();
 
-        boolean damageSuccess = target.hurt(damageSource, (float) baseDamage);
+        boolean damageSuccess = target.level() instanceof ServerLevel serverLevel
+                && target.hurtServer(serverLevel, damageSource, (float) baseDamage);
 
         if (damageSuccess) {
             applyKnockback(attacker, target, knockback);
@@ -125,7 +125,7 @@ public class AttackHelper {
      */
     public static float getRankBonus(LivingEntity attacker) {
         IConcentrationRank.ConcentrationRanks rankBonus = CapabilityConcentrationRank.RANK_POINT.maybeGet(attacker)
-                .map(rp -> rp.getRank(attacker.getCommandSenderWorld().getGameTime()))
+                .map(rp -> rp.getRank(attacker.level().getGameTime()))
                 .orElse(IConcentrationRank.ConcentrationRanks.NONE);
         double rankDamageBonus = rankBonus.level / 2.0;
         if (IConcentrationRank.ConcentrationRanks.S.level <= rankBonus.level) {
@@ -146,9 +146,9 @@ public class AttackHelper {
         if (target.level() instanceof ServerLevel serverLevel) {
             if (target instanceof LivingEntity living) {
                 return EnchantmentHelper.modifyDamage(serverLevel, attacker.getMainHandItem(), living, damageSource, baseDamage);
-            } else if (target instanceof PartEntity<?> part && part.getParent() instanceof LivingEntity living) {
+            }/* else if (target instanceof PartEntity<?> part && part.getParent() instanceof LivingEntity living) {
                 return EnchantmentHelper.modifyDamage(serverLevel, attacker.getMainHandItem(), living, damageSource, baseDamage);
-            }
+            }*/
         }
         return baseDamage;
     }
@@ -256,15 +256,16 @@ public class AttackHelper {
 
         ItemStack itemStack = attacker.getMainHandItem();
         Entity entity = target;
-        if (target instanceof PartEntity<?> partEntity) {
-            entity = partEntity.getParent();
-        }
+//        if (target instanceof PartEntity<?> partEntity) {
+//            entity = partEntity.getParent();
+//        }
 
         // 减少耐久
         if (!attacker.level().isClientSide() && !itemStack.isEmpty() && entity instanceof LivingEntity living) {
             ItemStack copy = itemStack.copy();
             Item item = itemStack.getItem();
-            if (item.hurtEnemy(itemStack, living, attacker) && attacker instanceof Player player) {
+            item.hurtEnemy(itemStack, living, attacker);
+            if (attacker instanceof Player player) {
                 player.awardStat(Stats.ITEM_USED.get(item));
             }
             if (itemStack.isEmpty()) {

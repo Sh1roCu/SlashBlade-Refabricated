@@ -1,7 +1,6 @@
 package mods.flammpfeil.slashblade.ability;
 
-import cn.sh1rocu.slashblade.api.event.RenderTickEvent;
-import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
+import cn.sh1rocu.slashblade.api.event.RenderFrameEvent;
 import mods.flammpfeil.slashblade.capability.inputstate.CapabilityInputState;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.event.handler.InputCommandEvent;
@@ -39,7 +38,7 @@ public class LockOnManager {
     }
 
     public void register() {
-        InputCommandEvent.CALLBACK.register(this::onInputChange);
+        InputCommandEvent.EVENT.register(this::onInputChange);
     }
 
     public void onInputChange(InputCommandEvent event) {
@@ -68,14 +67,14 @@ public class LockOnManager {
                 EntityHitResult er = (EntityHitResult) r;
                 Entity target = er.getEntity();
 
-                if (target instanceof PartEntity) {
-                    target = ((PartEntity<?>) target).getParent();
-                }
+//                if (target instanceof PartEntity) {
+//                    target = ((PartEntity<?>) target).getParent();
+//                }
 
                 boolean isMatch = false;
 
                 if (target instanceof LivingEntity)
-                    isMatch = TargetSelector.lockon.test(player, (LivingEntity) target);
+                    isMatch = TargetSelector.lockon.test(player.level(), player, (LivingEntity) target);
 
                 return isMatch;
             }).map(r -> ((EntityHitResult) r).getEntity());
@@ -88,8 +87,9 @@ public class LockOnManager {
                         .min(Comparator.comparingDouble(e -> e.distanceToSqr(player)));
             }
 
-            targetEntity = foundEntity.map(e -> (e instanceof PartEntity) ? ((PartEntity<?>) e).getParent() : e)
-                    .orElse(null);
+//            targetEntity = foundEntity.map(e -> (e instanceof PartEntity) ? ((PartEntity<?>) e).getParent() : e)
+//                    .orElse(null);
+            targetEntity = foundEntity.orElse(null);
         }
 
         CapabilitySlashBlade.getBladeState(stack).ifPresent(
@@ -99,7 +99,7 @@ public class LockOnManager {
 
     @Environment(EnvType.CLIENT)
     public static class Client {
-        public static void onEntityUpdate(RenderTickEvent.Pre event) {
+        public static void onEntityUpdate(RenderFrameEvent.Pre event) {
             final Minecraft mcinstance = Minecraft.getInstance();
             if (mcinstance.player == null)
                 return;
@@ -127,7 +127,7 @@ public class LockOnManager {
                         .filter(input -> input.getCommands().contains(InputCommand.SNEAK)).isEmpty())
                     return;
 
-                float partialTicks = mcinstance.getTimer().getGameTimeDeltaPartialTick(false);
+                float partialTicks = mcinstance.getDeltaTracker().getGameTimeDeltaPartialTick(false);
 
                 float oldYawHead = entity.yHeadRot;
                 float oldYawOffset = entity.yBodyRot;

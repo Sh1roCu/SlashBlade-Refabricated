@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.recipe;
 
+import cn.sh1rocu.slashblade.SlashBladeFabric;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import mods.flammpfeil.slashblade.SlashBladeConfig;
@@ -9,38 +10,33 @@ import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.registry.slashblade.SlashBladeDefinition;
 import net.fabricmc.fabric.api.item.v1.EnchantingContext;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.SmithingRecipe;
-import net.minecraft.world.item.crafting.SmithingRecipeInput;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.Optional;
 
-public record SlashBladeSmithingRecipe(ResourceLocation outputBlade, Ingredient template, Ingredient base,
+public record SlashBladeSmithingRecipe(Identifier outputBlade, Ingredient template, Ingredient base,
                                        Ingredient addition) implements SmithingRecipe {
     public static final MapCodec<SlashBladeSmithingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            ResourceLocation.CODEC.fieldOf("blade").forGetter(SlashBladeSmithingRecipe::outputBlade),
+            Identifier.CODEC.fieldOf("blade").forGetter(SlashBladeSmithingRecipe::outputBlade),
             Ingredient.CODEC.fieldOf("template").forGetter(SlashBladeSmithingRecipe::template),
             Ingredient.CODEC.fieldOf("base").forGetter(SlashBladeSmithingRecipe::base),
             Ingredient.CODEC.fieldOf("addition").forGetter(SlashBladeSmithingRecipe::addition)
     ).apply(instance, SlashBladeSmithingRecipe::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SlashBladeSmithingRecipe> STREAM_CODEC = StreamCodec.composite(
-            ResourceLocation.STREAM_CODEC,
+            Identifier.STREAM_CODEC,
             SlashBladeSmithingRecipe::outputBlade,
             Ingredient.CONTENTS_STREAM_CODEC,
             SlashBladeSmithingRecipe::template,
@@ -51,23 +47,22 @@ public record SlashBladeSmithingRecipe(ResourceLocation outputBlade, Ingredient 
             SlashBladeSmithingRecipe::new
     );
 
-    public static final RecipeSerializer<SlashBladeSmithingRecipe> SERIALIZER = new SlashBladeSmithingRecipe.Serializer();
+    public static final RecipeSerializer<SlashBladeSmithingRecipe> SERIALIZER = new RecipeSerializer<>(SlashBladeSmithingRecipe.CODEC, SlashBladeSmithingRecipe.STREAM_CODEC);
 
 
-    private static ItemStack getResultBlade(ResourceLocation outputBlade) {
-        Item bladeItem = BuiltInRegistries.ITEM.containsKey(outputBlade) ? BuiltInRegistries.ITEM.get(outputBlade)
+    private static ItemStack getResultBlade(Identifier outputBlade) {
+        Item bladeItem = BuiltInRegistries.ITEM.containsKey(outputBlade) ? BuiltInRegistries.ITEM.getValue(outputBlade)
                 : SBItems.SLASHBLADE;
 
         return bladeItem.getDefaultInstance();
     }
 
-    @Override
-    public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider provider) {
+    public @NotNull ItemStack getResultItem() {
         ItemStack result = SlashBladeSmithingRecipe.getResultBlade(outputBlade);
 
         if (!BuiltInRegistries.ITEM.getKey(result.getItem()).equals(outputBlade)) {
-            result = provider.lookupOrThrow(SlashBladeDefinition.REGISTRY_KEY).getOrThrow(ResourceKey.create(SlashBladeDefinition.REGISTRY_KEY, outputBlade))
-                    .value().getBlade(provider);
+            result = SlashBladeDefinition.ACCESS.lookupOrThrow(SlashBladeDefinition.REGISTRY_KEY).getOrThrow(ResourceKey.create(SlashBladeDefinition.REGISTRY_KEY, outputBlade))
+                    .value().getBlade(SlashBladeFabric.SERVER_ACCESS);
         }
 
         return result;
@@ -79,8 +74,23 @@ public record SlashBladeSmithingRecipe(ResourceLocation outputBlade, Ingredient 
     }
 
     @Override
-    public @NotNull ItemStack assemble(@NotNull SmithingRecipeInput container, HolderLookup.@NotNull Provider provider) {
-        var result = this.getResultItem(provider);
+    public Optional<Ingredient> templateIngredient() {
+        return Optional.of(template);
+    }
+
+    @Override
+    public Ingredient baseIngredient() {
+        return base;
+    }
+
+    @Override
+    public Optional<Ingredient> additionIngredient() {
+        return Optional.of(addition);
+    }
+
+    @Override
+    public @NotNull ItemStack assemble(@NotNull SmithingRecipeInput container) {
+        var result = this.getResultItem();
         if (!(result.getItem() instanceof ItemSlashBlade)) {
             result = new ItemStack(SBItems.SLASHBLADE);
         }
@@ -104,28 +114,23 @@ public record SlashBladeSmithingRecipe(ResourceLocation outputBlade, Ingredient 
     }
 
     @Override
-    public @NotNull RecipeSerializer<?> getSerializer() {
+    public boolean showNotification() {
+        return false;
+    }
+
+    @Override
+    public String group() {
+        return "";
+    }
+
+    @Override
+    public RecipeSerializer<? extends SmithingRecipe> getSerializer() {
         return SlashBladeSmithingRecipe.SERIALIZER;
     }
 
     @Override
-    public boolean isIncomplete() {
-        return Stream.of(this.template, this.base, this.addition).anyMatch(SlashBladeSmithingRecipe::hasNoElements);
-    }
-
-    @Override
-    public boolean isTemplateIngredient(@NotNull ItemStack stack) {
-        return this.template.test(stack);
-    }
-
-    @Override
-    public boolean isBaseIngredient(@NotNull ItemStack stack) {
-        return this.base.test(stack);
-    }
-
-    @Override
-    public boolean isAdditionIngredient(@NotNull ItemStack stack) {
-        return this.addition.test(stack);
+    public PlacementInfo placementInfo() {
+        return PlacementInfo.create(List.of(this.template, this.base, this.addition));
     }
 
     private void updateEnchantment(ItemStack result, ItemStack ingredient) {
@@ -155,28 +160,5 @@ public record SlashBladeSmithingRecipe(ResourceLocation outputBlade, Ingredient 
                 }
             }
         }
-    }
-
-    public static class Serializer implements RecipeSerializer<SlashBladeSmithingRecipe> {
-        @Override
-        public @NotNull MapCodec<SlashBladeSmithingRecipe> codec() {
-            return SlashBladeSmithingRecipe.CODEC;
-        }
-
-        @Override
-        public @NotNull StreamCodec<RegistryFriendlyByteBuf, SlashBladeSmithingRecipe> streamCodec() {
-            return SlashBladeSmithingRecipe.STREAM_CODEC;
-        }
-    }
-
-    private static boolean hasNoElements(Ingredient ingredient) {
-        ItemStack[] items = ingredient.getItems();
-        if (items.length == 0) return true;
-        if (items.length == 1) {
-            //If we potentially added a barrier due to the ingredient being an empty tag, try and check if it is the stack we added
-            ItemStack item = items[0];
-            return item.getItem() == Items.BARRIER && item.getHoverName() instanceof MutableComponent hoverName && hoverName.getString().startsWith("Empty Tag: ");
-        }
-        return false;
     }
 }

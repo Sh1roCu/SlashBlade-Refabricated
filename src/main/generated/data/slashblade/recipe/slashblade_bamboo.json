@@ -3,12 +3,8 @@
   "blade": "slashblade:slashblade_bamboo",
   "category": "equipment",
   "key": {
-    "B": {
-      "item": "slashblade:slashblade_wood"
-    },
-    "L": {
-      "tag": "c:bamboo"
-    }
+    "B": "slashblade:slashblade_wood",
+    "L": "#c:bamboo"
   },
   "pattern": [
     "  L",
@@ -16,7 +12,6 @@
     "B  "
   ],
   "result": {
-    "count": 1,
     "id": "slashblade:slashblade"
   }
 }

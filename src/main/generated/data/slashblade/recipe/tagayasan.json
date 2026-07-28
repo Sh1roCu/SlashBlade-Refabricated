@@ -16,15 +16,9 @@
         "refine": 10
       }
     },
-    "D": {
-      "item": "minecraft:ender_pearl"
-    },
-    "E": {
-      "item": "minecraft:ender_eye"
-    },
-    "S": {
-      "item": "slashblade:proudsoul_sphere"
-    }
+    "D": "minecraft:ender_pearl",
+    "E": "minecraft:ender_eye",
+    "S": "slashblade:proudsoul_sphere"
   },
   "pattern": [
     "SES",
@@ -32,7 +26,6 @@
     "SES"
   ],
   "result": {
-    "count": 1,
     "id": "slashblade:slashblade"
   }
 }

@@ -1,19 +1,19 @@
 package mods.flammpfeil.slashblade.compat.playerAnim;
 
 import com.google.common.collect.Maps;
-import dev.kosmx.playerAnim.api.layered.AnimationStack;
-import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
+import com.zigythebird.playeranim.api.PlayerAnimationAccess;
+import com.zigythebird.playeranimcore.animation.layered.AnimationStack;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.event.BladeMotionEvent;
 import mods.flammpfeil.slashblade.init.DefaultResources;
 import mods.flammpfeil.slashblade.registry.ComboStateRegistry;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Map;
 
 public class PlayerAnimationOverrider {
-    private final Map<ResourceLocation, VmdAnimation> animation = initAnimations();
+    private final Map<Identifier, VmdAnimation> animation = initAnimations();
 
     private static final class SingletonHolder {
         private static final PlayerAnimationOverrider instance = new PlayerAnimationOverrider();
@@ -27,13 +27,13 @@ public class PlayerAnimationOverrider {
     }
 
     public void register() {
-        BladeMotionEvent.CALLBACK.register(this::onBladeAnimationStart);
+        BladeMotionEvent.EVENT.register(this::onBladeAnimationStart);
     }
 
-    private static final ResourceLocation MotionLocation = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
+    private static final Identifier MotionLocation = Identifier.fromNamespaceAndPath(SlashBlade.MODID,
             "model/pa/player_motion.vmd");
 
-    public Map<ResourceLocation, VmdAnimation> getAnimation() {
+    public Map<Identifier, VmdAnimation> getAnimation() {
         return animation;
     }
 
@@ -41,7 +41,7 @@ public class PlayerAnimationOverrider {
         if (!(event.getEntity() instanceof AbstractClientPlayer player))
             return;
 
-        AnimationStack animationStack = PlayerAnimationAccess.getPlayerAnimLayer(player);
+        AnimationStack animationStack = PlayerAnimationAccess.getPlayerAnimManager(player);
 
         VmdAnimation animation = this.getAnimation().get(event.getCombo());
 
@@ -53,8 +53,8 @@ public class PlayerAnimationOverrider {
 
     }
 
-    private Map<ResourceLocation, VmdAnimation> initAnimations() {
-        Map<ResourceLocation, VmdAnimation> map = Maps.newHashMap();
+    private Map<Identifier, VmdAnimation> initAnimations() {
+        Map<Identifier, VmdAnimation> map = Maps.newHashMap();
 
         map.put(ComboStateRegistry.getId(ComboStateRegistry.PIERCING), new VmdAnimation(DefaultResources.testPLLocation, 1, 90, false));
         map.put(ComboStateRegistry.getId(ComboStateRegistry.PIERCING_JUST), new VmdAnimation(DefaultResources.testPLLocation, 34, 90, false));

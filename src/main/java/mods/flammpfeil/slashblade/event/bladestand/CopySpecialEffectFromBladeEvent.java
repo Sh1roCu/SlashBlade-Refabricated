@@ -4,14 +4,14 @@ import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.event.SlashBladeEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
 public class CopySpecialEffectFromBladeEvent extends SlashBladeEvent {
-    private final ResourceLocation SEKey;
+    private final Identifier SEKey;
     private final boolean isRemovable;
     private final boolean isCopiable;
     private final BladeStandAttackEvent originalEvent;
@@ -23,7 +23,7 @@ public class CopySpecialEffectFromBladeEvent extends SlashBladeEvent {
         }
     });
 
-    public CopySpecialEffectFromBladeEvent(ItemStack blade, ISlashBladeState state, ResourceLocation SEKey,
+    public CopySpecialEffectFromBladeEvent(ItemStack blade, ISlashBladeState state, Identifier SEKey,
                                            BladeStandAttackEvent originalEvent, boolean isRemovable, boolean isCopiable,
                                            ItemStack orb, ItemEntity itemEntity) {
         super(blade, state);
@@ -41,7 +41,7 @@ public class CopySpecialEffectFromBladeEvent extends SlashBladeEvent {
                 pe.isCopiable(), orb, itemEntity);
     }
 
-    public ResourceLocation getSEKey() {
+    public Identifier getSEKey() {
         return SEKey;
     }
 

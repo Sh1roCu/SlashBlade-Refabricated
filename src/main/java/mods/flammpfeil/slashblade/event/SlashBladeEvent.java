@@ -9,12 +9,14 @@ import mods.flammpfeil.slashblade.slasharts.SlashArts;
 import mods.flammpfeil.slashblade.util.KnockBacks;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class SlashBladeEvent extends BaseEvent {
     private final ItemStack blade;
@@ -140,9 +142,9 @@ public abstract class SlashBladeEvent extends BaseEvent {
 
     public static class NextComboEvent extends SlashBladeEvent implements ICancellableEvent {
         private final LivingEntity user;
-        private ResourceLocation nextCombo;
+        private Identifier nextCombo;
 
-        public NextComboEvent(ItemStack blade, ISlashBladeState state, LivingEntity user, ResourceLocation combo) {
+        public NextComboEvent(ItemStack blade, ISlashBladeState state, LivingEntity user, Identifier combo) {
             super(blade, state);
             this.user = user;
             this.setNextCombo(combo);
@@ -152,21 +154,21 @@ public abstract class SlashBladeEvent extends BaseEvent {
             return user;
         }
 
-        public ResourceLocation getNextCombo() {
+        public Identifier getNextCombo() {
             return nextCombo;
         }
 
-        public void setNextCombo(ResourceLocation nextCombo) {
+        public void setNextCombo(Identifier nextCombo) {
             this.nextCombo = nextCombo;
         }
 
     }
 
     public static class NextOfTimeOutComboEvent extends SlashBladeEvent implements ICancellableEvent {
-        private ResourceLocation nextCombo;
+        private Identifier nextCombo;
         private final LivingEntity user;
 
-        public NextOfTimeOutComboEvent(ItemStack blade, ISlashBladeState state, LivingEntity user, ResourceLocation combo) {
+        public NextOfTimeOutComboEvent(ItemStack blade, ISlashBladeState state, LivingEntity user, Identifier combo) {
             super(blade, state);
             this.user = user;
             this.setNextCombo(combo);
@@ -176,11 +178,11 @@ public abstract class SlashBladeEvent extends BaseEvent {
             return user;
         }
 
-        public ResourceLocation getNextCombo() {
+        public Identifier getNextCombo() {
             return nextCombo;
         }
 
-        public void setNextCombo(ResourceLocation nextCombo) {
+        public void setNextCombo(Identifier nextCombo) {
             this.nextCombo = nextCombo;
         }
 
@@ -313,16 +315,14 @@ public abstract class SlashBladeEvent extends BaseEvent {
     public static class UpdateEvent extends SlashBladeEvent implements ICancellableEvent {
         private final Level level;
         private final Entity entity;
-        private final int itemSlot;
-        private final boolean isSelected;
+        private final @Nullable EquipmentSlot slot;
 
         public UpdateEvent(ItemStack blade, ISlashBladeState state,
-                           Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+                           Level worldIn, Entity entityIn, @Nullable EquipmentSlot slot) {
             super(blade, state);
             this.level = worldIn;
             this.entity = entityIn;
-            this.itemSlot = itemSlot;
-            this.isSelected = isSelected;
+            this.slot = slot;
         }
 
         public Level getLevel() {
@@ -333,12 +333,8 @@ public abstract class SlashBladeEvent extends BaseEvent {
             return entity;
         }
 
-        public int getItemSlot() {
-            return itemSlot;
-        }
-
-        public boolean isSelected() {
-            return isSelected;
+        public EquipmentSlot getEquipmentSlot() {
+            return slot;
         }
 
     }
@@ -412,10 +408,10 @@ public abstract class SlashBladeEvent extends BaseEvent {
         private final LivingEntity entityLiving;
         private final int elapsed;
         private final ISlashBladeState state;
-        private ResourceLocation comboState;
+        private Identifier comboState;
         private final SlashArts.ArtsType type;
 
-        public PerformSlashArtEvent(LivingEntity entityLiving, int elapsed, ISlashBladeState state, ResourceLocation comboState, SlashArts.ArtsType type) {
+        public PerformSlashArtEvent(LivingEntity entityLiving, int elapsed, ISlashBladeState state, Identifier comboState, SlashArts.ArtsType type) {
             this.entityLiving = entityLiving;
             this.elapsed = elapsed;
             this.state = state;
@@ -435,11 +431,11 @@ public abstract class SlashBladeEvent extends BaseEvent {
             return state;
         }
 
-        public ResourceLocation getComboState() {
+        public Identifier getComboState() {
             return comboState;
         }
 
-        public void setComboState(ResourceLocation comboState) {
+        public void setComboState(Identifier comboState) {
             this.comboState = comboState;
         }
 

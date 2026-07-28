@@ -2,11 +2,14 @@ package mods.flammpfeil.slashblade.registry.specialeffects;
 
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.registry.SpecialEffectsRegistry;
-import net.minecraft.Util;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Util;
+
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SpecialEffect {
     public static final ResourceKey<Registry<SpecialEffect>> REGISTRY_KEY = ResourceKey
@@ -42,16 +45,24 @@ public class SpecialEffect {
         return se.requestLevel <= level;
     }
 
-    public static boolean isEffective(ResourceLocation id, int level) {
-        return SpecialEffectsRegistry.SPECIAL_EFFECT.get(id).getRequestLevel() <= level;
+    public static boolean isEffective(Identifier id, int level) {
+        return getRequestLevel(id) <= level;
     }
 
-    public static Component getDescription(ResourceLocation id) {
-        return SpecialEffectsRegistry.SPECIAL_EFFECT.get(id).getDescription();
+    public static Component getDescription(Identifier id) {
+        AtomicReference<Component> result = new AtomicReference<>(Component.empty());
+        SpecialEffectsRegistry.SPECIAL_EFFECT.getOptional(id).ifPresent(s -> {
+            result.set(s.getDescription());
+        });
+        return result.get();
     }
 
-    public static int getRequestLevel(ResourceLocation id) {
-        return SpecialEffectsRegistry.SPECIAL_EFFECT.get(id).getRequestLevel();
+    public static int getRequestLevel(Identifier id) {
+        AtomicInteger result = new AtomicInteger();
+        SpecialEffectsRegistry.SPECIAL_EFFECT.getOptional(id).ifPresent(s -> {
+            result.set(s.getRequestLevel());
+        });
+        return result.get();
     }
 
     public Component getDescription() {

@@ -97,7 +97,8 @@ public class EntityStormSwords extends EntityAbstractSummonedSword {
             /* && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)*/) {
             this.onHit(raytraceresult);
             this.resetAlreadyHits();
-            this.hasImpulse = true;
+            // TODO?
+            // this.hasImpulse = true;
         }
     }
 

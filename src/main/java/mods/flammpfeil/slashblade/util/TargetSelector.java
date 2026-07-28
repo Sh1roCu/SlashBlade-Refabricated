@@ -1,8 +1,6 @@
 package mods.flammpfeil.slashblade.util;
 
 import com.google.common.collect.Lists;
-import io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity;
-import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.data.tag.SlashBladeEntityTypeTagProvider.EntityTypeTags;
@@ -33,7 +31,6 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -58,17 +55,16 @@ public class TargetSelector {
         return areaAttack.range(reach);
     }
 
-    public static class AttackablePredicate implements Predicate<LivingEntity> {
-
-        public boolean test(LivingEntity livingentity) {
-
+    public static class AttackablePredicate implements TargetingConditions.Selector {
+        @Override
+        public boolean test(LivingEntity livingentity, ServerLevel level) {
             if (!SlashBladeConfig.PVP_ENABLE.get() && livingentity instanceof Player)
                 return false;
 
             if (livingentity instanceof ArmorStand)
                 return ((ArmorStand) livingentity).isMarker();
 
-            if (livingentity.getTags().contains(AttackableTag)) {
+            if (livingentity.entityTags().contains(AttackableTag)) {
                 livingentity.removeTag(AttackableTag);
                 return true;
             }
@@ -86,7 +82,7 @@ public class TargetSelector {
             if (livingentity.getTeam() != null)
                 return true;
 
-            return !livingentity.getType().is(EntityTypeTags.ATTACKABLE_BLACKLIST);
+            return !livingentity.is(EntityTypeTags.ATTACKABLE_BLACKLIST);
         }
     }
 
@@ -135,30 +131,30 @@ public class TargetSelector {
         list1.addAll(getReflectableEntitiesWithinAABB(attacker));
         list1.addAll(getExtinguishableEntitiesWithinAABB(attacker));
 
-        list1.addAll(world.getEntitiesOfClass(LivingEntity.class, aabb.inflate(5), e -> e instanceof MultiPartEntity me && me.isMultipartEntity()).stream()
-                .flatMap(e -> (e instanceof MultiPartEntity me && me.isMultipartEntity()) ? Stream.of(me.getParts()) : Stream.of(e)).filter(t -> {
-                    boolean result = false;
-                    var check = new AttackablePredicate();
-                    if (t instanceof LivingEntity living) {
-                        result = check.test(living);
-                    } else if (t instanceof PartEntity<?> part) {
-                        if (part.getParent() instanceof LivingEntity living)
-                            result = check.test(living) && part.distanceToSqr(attacker) < (reach * reach);
-                    }
-                    return result;
-                }).toList());
+//        list1.addAll(world.getEntitiesOfClass(LivingEntity.class, aabb.inflate(5), e -> e instanceof MultiPartEntity me && me.isMultipartEntity()).stream()
+//                .flatMap(e -> (e instanceof MultiPartEntity me && me.isMultipartEntity()) ? Stream.of(me.getParts()) : Stream.of(e)).filter(t -> {
+//                    boolean result = false;
+//                    var check = new AttackablePredicate();
+//                    if (t instanceof LivingEntity living) {
+//                        result = check.test(living);
+//                    } else if (t instanceof PartEntity<?> part) {
+//                        if (part.getParent() instanceof LivingEntity living)
+//                            result = check.test(living) && part.distanceToSqr(attacker) < (reach * reach);
+//                    }
+//                    return result;
+//                }).toList());
 
         TargetingConditions predicate = getAreaAttackPredicate(reach);
 
         list1.addAll(world.getEntitiesOfClass(LivingEntity.class, aabb).stream()
-                .flatMap(e -> (e instanceof MultiPartEntity me && me.isMultipartEntity()) ? Stream.of(me.getParts()) : Stream.of(e)).filter(t -> {
+                .flatMap(e -> /*(e instanceof MultiPartEntity me && me.isMultipartEntity()) ? Stream.of(me.getParts()) :*/ Stream.of(e)).filter(t -> {
                     boolean result = false;
-                    if (t instanceof LivingEntity living) {
-                        result = predicate.test(attacker, living);
-                    } else if (t instanceof PartEntity<?> part) {
+                    if (t instanceof LivingEntity living && world instanceof ServerLevel serverLevel) {
+                        result = predicate.test(serverLevel, attacker, living);
+                    }/* else if (t instanceof PartEntity<?> part) {
                         if (part.getParent() instanceof LivingEntity living)
                             result = predicate.test(attacker, living) && part.distanceToSqr(attacker) < (reach * reach);
-                    }
+                    }*/
                     return result;
                 }).toList());
 
@@ -185,8 +181,10 @@ public class TargetSelector {
 
         TargetingConditions predicate = getAreaAttackPredicate(0); // reach check has already been completed
 
-        list1.addAll(world.getEntitiesOfClass(LivingEntity.class, aabb, (e) -> true).stream()
-                .filter(t -> predicate.test(user, t)).toList());
+        if (world instanceof ServerLevel serverLevel) {
+            list1.addAll(world.getEntitiesOfClass(LivingEntity.class, aabb, (e) -> true).stream()
+                    .filter(t -> predicate.test(serverLevel, user, t)).toList());
+        }
 
         return list1;
     }
@@ -264,7 +262,7 @@ public class TargetSelector {
 
             if (target.level() instanceof ServerLevel sw) {
 
-                sw.sendParticles(sender, ParticleTypes.ANGRY_VILLAGER, false, target.getX(),
+                sw.sendParticles(sender, ParticleTypes.ANGRY_VILLAGER, ParticleTypes.ANGRY_VILLAGER.getOverrideLimiter(), false, target.getX(),
                         target.getY() + target.getEyeHeight(), target.getZ(), 5, target.getBbWidth() * 1.5,
                         target.getBbHeight(), target.getBbWidth() * 1.5, 0.02D);
             }
@@ -278,7 +276,7 @@ public class TargetSelector {
         }
 
         @Override
-        public boolean test(@Nullable LivingEntity attacker, LivingEntity target) {
+        public boolean test(ServerLevel level, @Nullable LivingEntity attacker, LivingEntity target) {
             boolean isAttackable = false;
 
             isAttackable |= isAttackable(target.getLastHurtByMob(), attacker);
@@ -289,7 +287,7 @@ public class TargetSelector {
             if (isAttackable)
                 target.addTag(AttackableTag);
 
-            return super.test(attacker, target);
+            return super.test(level, attacker, target);
         }
     }
 

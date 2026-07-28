@@ -48,13 +48,10 @@
     "slashblade.emi.mixins.json",
     "slashblade.ar.mixins.json"
   ],
-  "accessWidener": "slashblade.accesswidener",
+  "accessWidener": "slashblade.classtweaker",
   "depends": {
-    "fabricloader": ">=${loader_version}",
-    "fabric": ">=0.116.1+1.21.1",
-    "minecraft": [
-      "1.21.1"
-    ],
+    "fabric-api": "*",
+    "minecraft": ">=26.1",
     "forgeconfigapiport": "*"
   }
 }

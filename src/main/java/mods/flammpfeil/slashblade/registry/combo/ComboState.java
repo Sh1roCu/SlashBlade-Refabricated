@@ -12,8 +12,8 @@ import mods.flammpfeil.slashblade.util.AdvancementHelper;
 import mods.flammpfeil.slashblade.util.TimeValueHelper;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -27,9 +27,9 @@ import java.util.function.Function;
 
 public class ComboState {
     public static final ResourceKey<Registry<ComboState>> REGISTRY_KEY = ResourceKey
-            .createRegistryKey(ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID, "combo_state"));
+            .createRegistryKey(Identifier.fromNamespaceAndPath(SlashBlade.MODID, "combo_state"));
 
-    private final ResourceLocation motionLoc;
+    private final Identifier motionLoc;
 
     // frame
     private final int start;
@@ -42,8 +42,8 @@ public class ComboState {
     // Next input acceptance period *ms
     public int timeout;
 
-    private final Function<LivingEntity, ResourceLocation> next;
-    private final Function<LivingEntity, ResourceLocation> nextOfTimeout;
+    private final Function<LivingEntity, Identifier> next;
+    private final Function<LivingEntity, Identifier> nextOfTimeout;
 
     private final Consumer<LivingEntity> holdAction;
 
@@ -59,7 +59,7 @@ public class ComboState {
 
     private final int priority;
 
-    public ResourceLocation getMotionLoc() {
+    public Identifier getMotionLoc() {
         return motionLoc;
     }
 
@@ -104,7 +104,7 @@ public class ComboState {
         return this.releaseAction.apply(user, elapsed);
     }
 
-    public static ResourceLocation getRegistryKey(ComboState state) {
+    public static Identifier getRegistryKey(ComboState state) {
         return ComboStateRegistry.COMBO_STATE.getKey(state);
     }
 
@@ -136,17 +136,17 @@ public class ComboState {
         this.priority = builder.priority;
     }
 
-    public ResourceLocation getNext(LivingEntity living) {
+    public Identifier getNext(LivingEntity living) {
         return this.next.apply(living);
     }
 
-    public ResourceLocation getNextOfTimeout(LivingEntity living) {
+    public Identifier getNextOfTimeout(LivingEntity living) {
         return this.nextOfTimeout.apply(living);
     }
 
     @Nonnull
     public ComboState checkTimeOut(LivingEntity living, float msec) {
-        return this.getTimeoutMS() < msec ? ComboStateRegistry.COMBO_STATE.get(this.nextOfTimeout.apply(living))
+        return this.getTimeoutMS() < msec ? ComboStateRegistry.COMBO_STATE.getOptional(this.nextOfTimeout.apply(living)).orElse(ComboStateRegistry.NONE)
                 : this;
     }
 
@@ -169,22 +169,22 @@ public class ComboState {
             return SlashArts.ArtsType.Fail;
     }
 
-    public static class TimeoutNext implements Function<LivingEntity, ResourceLocation> {
+    public static class TimeoutNext implements Function<LivingEntity, Identifier> {
 
         long timeout;
-        Function<LivingEntity, ResourceLocation> next;
+        Function<LivingEntity, Identifier> next;
 
-        public static TimeoutNext buildFromFrame(int timeoutFrame, Function<LivingEntity, ResourceLocation> next) {
+        public static TimeoutNext buildFromFrame(int timeoutFrame, Function<LivingEntity, Identifier> next) {
             return new TimeoutNext((int) TimeValueHelper.getTicksFromFrames(timeoutFrame), next);
         }
 
-        public TimeoutNext(long timeout, Function<LivingEntity, ResourceLocation> next) {
+        public TimeoutNext(long timeout, Function<LivingEntity, Identifier> next) {
             this.timeout = timeout;
             this.next = next;
         }
 
         @Override
-        public ResourceLocation apply(LivingEntity livingEntity) {
+        public Identifier apply(LivingEntity livingEntity) {
 
             long elapsed = ComboState.getElapsed(livingEntity);
 
@@ -259,9 +259,9 @@ public class ComboState {
         private float speed;
         private boolean loop;
         private int timeout;
-        private ResourceLocation motionLoc;
-        private Function<LivingEntity, ResourceLocation> next;
-        private Function<LivingEntity, ResourceLocation> nextOfTimeout;
+        private Identifier motionLoc;
+        private Function<LivingEntity, Identifier> next;
+        private Function<LivingEntity, Identifier> nextOfTimeout;
 
         private boolean aerial;
 
@@ -328,17 +328,17 @@ public class ComboState {
             return this;
         }
 
-        public Builder motionLoc(ResourceLocation motionLoc) {
+        public Builder motionLoc(Identifier motionLoc) {
             this.motionLoc = motionLoc;
             return this;
         }
 
-        public Builder next(Function<LivingEntity, ResourceLocation> next) {
+        public Builder next(Function<LivingEntity, Identifier> next) {
             this.next = next;
             return this;
         }
 
-        public Builder nextOfTimeout(Function<LivingEntity, ResourceLocation> nextOfTimeout) {
+        public Builder nextOfTimeout(Function<LivingEntity, Identifier> nextOfTimeout) {
             this.nextOfTimeout = nextOfTimeout;
             return this;
         }

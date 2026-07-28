@@ -1,36 +1,29 @@
 package mods.flammpfeil.slashblade.recipe;
 
-import cn.sh1rocu.slashblade.SlashBladeFabric;
 import com.google.common.collect.Lists;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.SlashBladeState;
 import mods.flammpfeil.slashblade.item.SwordType;
 import mods.flammpfeil.slashblade.registry.slashblade.EnchantmentDefinition;
-import net.minecraft.Util;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 public class RequestDefinition {
 
     public static final Codec<RequestDefinition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    ResourceLocation.CODEC.optionalFieldOf("name", SlashBlade.prefix("none"))
+                    Identifier.CODEC.optionalFieldOf("name", SlashBlade.prefix("none"))
                             .forGetter(RequestDefinition::getName),
                     Codec.INT.optionalFieldOf("proud_soul", 0).forGetter(RequestDefinition::getProudSoulCount),
                     Codec.INT.optionalFieldOf("kill", 0).forGetter(RequestDefinition::getKillCount),
@@ -42,7 +35,7 @@ public class RequestDefinition {
             .apply(instance, RequestDefinition::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, RequestDefinition> STREAM_CODEC = StreamCodec.composite(
-            ResourceLocation.STREAM_CODEC,
+            Identifier.STREAM_CODEC,
             RequestDefinition::getName,
             ByteBufCodecs.INT,
             RequestDefinition::getProudSoulCount,
@@ -57,14 +50,14 @@ public class RequestDefinition {
             RequestDefinition::new
     );
 
-    private final ResourceLocation name;
+    private final Identifier name;
     private final int proudSoulCount;
     private final int killCount;
     private final int refineCount;
     private final List<EnchantmentDefinition> enchantments;
     private final List<SwordType> defaultType;
 
-    public RequestDefinition(ResourceLocation name, int proud, int kill, int refine,
+    public RequestDefinition(Identifier name, int proud, int kill, int refine,
                              List<EnchantmentDefinition> enchantments, List<SwordType> defaultType) {
         this.name = name;
         this.proudSoulCount = proud;
@@ -74,7 +67,7 @@ public class RequestDefinition {
         this.defaultType = defaultType;
     }
 
-    public ResourceLocation getName() {
+    public Identifier getName() {
         return name;
     }
 
@@ -98,43 +91,6 @@ public class RequestDefinition {
         return defaultType;
     }
 
-    public static RequestDefinition fromJSON(JsonObject json) {
-        return CODEC.parse(JsonOps.INSTANCE, json).resultOrPartial(msg -> {
-            SlashBlade.LOGGER.error("Failed to parse : {}", msg);
-        }).orElseGet(Builder.newInstance()::build);
-    }
-
-    public JsonElement toJson() {
-        return CODEC.encodeStart(JsonOps.INSTANCE, this).resultOrPartial(msg -> {
-            SlashBlade.LOGGER.error("Failed to encode : {}", msg);
-        }).orElseThrow();
-    }
-
-    public static void toNetwork(RegistryFriendlyByteBuf buffer, RequestDefinition request) {
-        buffer.writeResourceLocation(request.getName());
-        buffer.writeInt(request.getProudSoulCount());
-        buffer.writeInt(request.getKillCount());
-        buffer.writeInt(request.getRefineCount());
-        buffer.writeCollection(request.getEnchantments(), (buf, enchantment) -> {
-            buf.writeResourceLocation(enchantment.getEnchantmentID());
-            buf.writeByte(enchantment.getEnchantmentLevel());
-        });
-
-        buffer.writeCollection(request.getDefaultType(), (buf, swordType) -> {
-            buf.writeUtf(swordType.name().toLowerCase(Locale.ENGLISH));
-        });
-    }
-
-    public static RequestDefinition fromNetwork(FriendlyByteBuf buffer) {
-        ResourceLocation name = buffer.readResourceLocation();
-        int proud = buffer.readInt();
-        int kill = buffer.readInt();
-        int refine = buffer.readInt();
-        var enchantments = buffer.readList((buf) -> new EnchantmentDefinition(buf.readResourceLocation(), buf.readByte()));
-        var types = buffer.readList((buf) -> SwordType.valueOf(buf.readUtf().toUpperCase(Locale.ENGLISH)));
-        return new RequestDefinition(name, proud, kill, refine, enchantments, types);
-    }
-
     public void initItemStack(ItemStack blade) {
         var state = CapabilitySlashBlade.getBladeState(blade).orElse(new SlashBladeState(blade));
         state.setNonEmpty();
@@ -144,12 +100,8 @@ public class RequestDefinition {
         state.setKillCount(getKillCount());
         state.setRefine(getRefineCount());
 
-        var lookup = SlashBladeFabric.REGISTRY_ACCESS.lookupOrThrow(Registries.ENCHANTMENT);
-        this.getEnchantments()
-                .forEach(enchantment -> blade.enchant(lookup.getOrThrow(
-                                ResourceKey.create(Registries.ENCHANTMENT, enchantment.getEnchantmentID())
-                        ),
-                        enchantment.getEnchantmentLevel()));
+        this.getEnchantments().forEach(enchantment ->
+                blade.enchant(enchantment.getEnchantment(), enchantment.getEnchantmentLevel()));
         this.defaultType.forEach(type -> {
             switch (type) {
                 case BEWITCHED -> state.setDefaultBewitched(true);
@@ -181,14 +133,14 @@ public class RequestDefinition {
         boolean killCheck = state.getKillCount() >= this.getKillCount();
         boolean refineCheck = state.getRefine() >= this.getRefineCount();
 
-        var matching = blade.getEnchantments().entrySet();
-
         for (var enchantment : this.getEnchantments()) {
-            for (var entry : matching) {
-                if (entry.getKey().is(enchantment.getEnchantmentID()) && entry.getIntValue() < enchantment.getEnchantmentLevel()) {
-                    return false;
-                }
+            var ench = enchantment.getEnchantment();
+            var requiredLevel = enchantment.getEnchantmentLevel();
+
+            if (EnchantmentHelper.getItemEnchantmentLevel(ench, blade) < requiredLevel) {
+                return false;
             }
+
         }
 
         boolean types = SwordType.from(blade).containsAll(this.getDefaultType());
@@ -201,7 +153,7 @@ public class RequestDefinition {
     }
 
     public static class Builder {
-        private ResourceLocation name;
+        private Identifier name;
         private int proudCount;
         private int killCount;
         private int refineCount;
@@ -221,7 +173,7 @@ public class RequestDefinition {
             return new Builder();
         }
 
-        public Builder name(ResourceLocation name) {
+        public Builder name(Identifier name) {
             this.name = name;
             return this;
         }

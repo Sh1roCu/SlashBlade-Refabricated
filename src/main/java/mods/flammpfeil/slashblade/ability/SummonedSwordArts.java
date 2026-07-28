@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.ability;
 
+import cn.sh1rocu.slashblade.util.SoundUtil;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.concentrationrank.CapabilityConcentrationRank;
@@ -14,7 +15,7 @@ import mods.flammpfeil.slashblade.init.SBStatTypes;
 import mods.flammpfeil.slashblade.item.SwordType;
 import mods.flammpfeil.slashblade.util.*;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -48,18 +49,18 @@ public class SummonedSwordArts {
     }
 
     public void register() {
-        InputCommandEvent.CALLBACK.register(this::onInputChange);
+        InputCommandEvent.EVENT.register(this::onInputChange);
     }
 
-    public static final ResourceLocation ADVANCEMENT_SUMMONEDSWORDS = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
+    public static final Identifier ADVANCEMENT_SUMMONEDSWORDS = Identifier.fromNamespaceAndPath(SlashBlade.MODID,
             "arts/shooting/summonedswords");
-    public static final ResourceLocation ADVANCEMENT_SPIRAL_SWORDS = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
+    public static final Identifier ADVANCEMENT_SPIRAL_SWORDS = Identifier.fromNamespaceAndPath(SlashBlade.MODID,
             "arts/shooting/spiral_swords");
-    public static final ResourceLocation ADVANCEMENT_STORM_SWORDS = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
+    public static final Identifier ADVANCEMENT_STORM_SWORDS = Identifier.fromNamespaceAndPath(SlashBlade.MODID,
             "arts/shooting/storm_swords");
-    public static final ResourceLocation ADVANCEMENT_BLISTERING_SWORDS = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
+    public static final Identifier ADVANCEMENT_BLISTERING_SWORDS = Identifier.fromNamespaceAndPath(SlashBlade.MODID,
             "arts/shooting/blistering_swords");
-    public static final ResourceLocation ADVANCEMENT_HEAVY_RAIN_SWORDS = ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID,
+    public static final Identifier ADVANCEMENT_HEAVY_RAIN_SWORDS = Identifier.fromNamespaceAndPath(SlashBlade.MODID,
             "arts/shooting/heavy_rain_swords");
 
     public void onInputChange(InputCommandEvent event) {
@@ -143,7 +144,7 @@ public class SummonedSwordArts {
                 ss.setRoll(sender.getRandom().nextFloat() * 360.0f);
                 worldIn.addFreshEntity(ss);
 
-                sender.playNotifySound(SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 0.2F, 1.45F);
+                SoundUtil.playNotifySound(sender, SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 0.2F, 1.45F);
             });
         }
     }
@@ -159,7 +160,7 @@ public class SummonedSwordArts {
 
                                     boolean isMatch = true;
                                     if (target instanceof LivingEntity)
-                                        isMatch = TargetSelector.lockon.test(sender, (LivingEntity) target);
+                                        isMatch = TargetSelector.lockon.test(sender.level(), sender, (LivingEntity) target);
 
                                     if (target instanceof IShootable)
                                         isMatch = ((IShootable) target).getShooter() != sender;
@@ -239,13 +240,13 @@ public class SummonedSwordArts {
                     ss.setRoll(0);
                     ss.setDamage(powerLevel);
                     // force riding
-                    ss.startRiding(entity, true);
+                    ss.startRiding(entity, true, true);
 
                     ss.setDelay(360 / count * i);
 
                     worldIn.addFreshEntity(ss);
 
-                    entity.playNotifySound(SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 0.2F,
+                    SoundUtil.playNotifySound(entity, SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 0.2F,
                             1.45F);
                 }
             });
@@ -300,11 +301,11 @@ public class SummonedSwordArts {
                 ss.setRoll(0);
                 ss.setDamage(powerLevel);
                 // force riding
-                ss.startRiding(target, true);
+                ss.startRiding(target, true, true);
                 ss.setDelay(360 / count * i);
                 worldIn.addFreshEntity(ss);
 
-                entity.playNotifySound(SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 0.2F,
+                SoundUtil.playNotifySound(entity, SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 0.2F,
                         1.45F);
             }
         });
@@ -356,13 +357,13 @@ public class SummonedSwordArts {
                 ss.setRoll(0);
                 ss.setDamage(powerLevel);
                 // force riding
-                ss.startRiding(entity, true);
+                ss.startRiding(entity, true, true);
 
                 ss.setDelay(i);
 
                 worldIn.addFreshEntity(ss);
 
-                entity.playNotifySound(SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 0.2F,
+                SoundUtil.playNotifySound(entity, SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 0.2F,
                         1.45F);
             }
         });
@@ -420,7 +421,7 @@ public class SummonedSwordArts {
                 ss.setRoll(0);
                 ss.setDamage(powerLevel);
                 // force riding
-                ss.startRiding(entity, true);
+                ss.startRiding(entity, true, true);
 
                 ss.setDelay(0);
 
@@ -443,7 +444,7 @@ public class SummonedSwordArts {
                     ss.setRoll(0);
                     ss.setDamage(powerLevel);
                     // force riding
-                    ss.startRiding(entity, true);
+                    ss.startRiding(entity, true, true);
 
                     ss.setDelay(i);
 
@@ -453,7 +454,7 @@ public class SummonedSwordArts {
 
                     worldIn.addFreshEntity(ss);
 
-                    entity.playNotifySound(SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 0.2F,
+                    SoundUtil.playNotifySound(entity, SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 0.2F,
                             1.45F);
                 }
         });

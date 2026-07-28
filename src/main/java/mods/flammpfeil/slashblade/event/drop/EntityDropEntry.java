@@ -6,13 +6,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import mods.flammpfeil.slashblade.SlashBlade;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 
 public class EntityDropEntry {
     public static final Codec<EntityDropEntry> CODEC = RecordCodecBuilder.create(instance -> instance
-            .group(ResourceLocation.CODEC.fieldOf("entity_type").forGetter(EntityDropEntry::getEntityType),
-                    ResourceLocation.CODEC.fieldOf("blade").forGetter(EntityDropEntry::getBladeName),
+            .group(Identifier.CODEC.fieldOf("entity_type").forGetter(EntityDropEntry::getEntityType),
+                    Identifier.CODEC.fieldOf("blade").forGetter(EntityDropEntry::getBladeName),
                     Codec.FLOAT.optionalFieldOf("drop_rate", 1.0F).forGetter(EntityDropEntry::getDropRate),
                     Codec.BOOL.optionalFieldOf("request_slashblade", false)
                             .forGetter(EntityDropEntry::isRequestSlashBladeKill),
@@ -24,22 +24,22 @@ public class EntityDropEntry {
     public static final ResourceKey<Registry<EntityDropEntry>> REGISTRY_KEY = ResourceKey
             .createRegistryKey(SlashBlade.prefix("entity_drop"));
 
-    private final ResourceLocation entityType;
-    private final ResourceLocation bladeName;
+    private final Identifier entityType;
+    private final Identifier bladeName;
     private final float dropRate;
     private final boolean requestSlashBladeKill;
     private final boolean dropFixedPoint;
     private final Vec3 dropPoint;
 
-    public EntityDropEntry(ResourceLocation entityType, ResourceLocation bladeName, float dropRate) {
+    public EntityDropEntry(Identifier entityType, Identifier bladeName, float dropRate) {
         this(entityType, bladeName, dropRate, true, false, new Vec3(0, 0, 0));
     }
 
-    public EntityDropEntry(ResourceLocation entityType, ResourceLocation bladeName, float dropRate, boolean request) {
+    public EntityDropEntry(Identifier entityType, Identifier bladeName, float dropRate, boolean request) {
         this(entityType, bladeName, dropRate, request, false, new Vec3(0, 0, 0));
     }
 
-    public EntityDropEntry(ResourceLocation entityType, ResourceLocation bladeName, float dropRate, boolean request,
+    public EntityDropEntry(Identifier entityType, Identifier bladeName, float dropRate, boolean request,
             boolean pointFixed, Vec3 point) {
         this.entityType = entityType;
         this.bladeName = bladeName;
@@ -49,11 +49,11 @@ public class EntityDropEntry {
         this.dropPoint = point;
     }
 
-    public ResourceLocation getBladeName() {
+    public Identifier getBladeName() {
         return bladeName;
     }
 
-    public ResourceLocation getEntityType() {
+    public Identifier getEntityType() {
         return entityType;
     }
 

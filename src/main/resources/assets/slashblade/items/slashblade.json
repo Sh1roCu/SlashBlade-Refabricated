@@ -1,0 +1,80 @@
+{
+  "oversized_in_gui": true,
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "fallback": {
+      "type": "minecraft:special",
+      "base": "slashblade:eproudsoul",
+      "model": {
+        "type": "slashblade:blade_base"
+      }
+    },
+    "cases": [
+      {
+        "when": [
+          "none",
+          "thirdperson_lefthand",
+          "thirdperson_righthand"
+        ],
+        "model": {
+          "type": "minecraft:special",
+          "base": "slashblade:eproudsoul",
+          "model": {
+            "type": "slashblade:blade_no_data"
+          }
+        }
+      },
+      {
+        "when": "firstperson_lefthand",
+        "model": {
+          "type": "minecraft:special",
+          "base": "slashblade:eproudsoul",
+          "model": {
+            "type": "slashblade:blade_fp_left"
+          }
+        }
+      },
+      {
+        "when": "firstperson_righthand",
+        "model": {
+          "type": "minecraft:special",
+          "base": "slashblade:eproudsoul",
+          "model": {
+            "type": "slashblade:blade_fp_right"
+          }
+        }
+      },
+      {
+        "when": "gui",
+        "model": {
+          "type": "minecraft:special",
+          "base": "slashblade:eproudsoul",
+          "model": {
+            "type": "slashblade:blade_gui"
+          }
+        }
+      },
+      {
+        "when": "fixed",
+        "model": {
+          "type": "minecraft:special",
+          "base": "slashblade:eproudsoul",
+          "model": {
+            "type": "slashblade:blade_fixed"
+          }
+        }
+      },
+      {
+        "when": "ground",
+        "model": {
+          "type": "minecraft:special",
+          "base": "slashblade:eproudsoul",
+          "model": {
+            "type": "slashblade:blade_ground"
+          }
+        }
+      }
+    ]
+  }
+}

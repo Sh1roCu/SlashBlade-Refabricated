@@ -1,18 +1,10 @@
 {
   "type": "slashblade:proudsoul",
   "ingredients": [
-    {
-      "item": "slashblade:proudsoul_tiny"
-    },
-    {
-      "item": "slashblade:proudsoul_tiny"
-    },
-    {
-      "item": "slashblade:proudsoul_tiny"
-    },
-    {
-      "item": "slashblade:proudsoul_tiny"
-    }
+    "slashblade:proudsoul_tiny",
+    "slashblade:proudsoul_tiny",
+    "slashblade:proudsoul_tiny",
+    "slashblade:proudsoul_tiny"
   ],
   "result": {
     "id": "slashblade:proudsoul"

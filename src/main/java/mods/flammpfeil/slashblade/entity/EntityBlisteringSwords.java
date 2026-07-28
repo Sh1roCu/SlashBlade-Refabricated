@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.entity;
 
+import cn.sh1rocu.slashblade.util.SoundUtil;
 import mods.flammpfeil.slashblade.ability.StunManager;
 import mods.flammpfeil.slashblade.capability.inputstate.CapabilityInputState;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
@@ -10,6 +11,7 @@ import mods.flammpfeil.slashblade.util.TargetSelector;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -57,7 +59,7 @@ public class EntityBlisteringSwords extends EntityAbstractSummonedSword {
     public void tick() {
         if (!itFired()) {
             if (getVehicle() == null && this.getOwner() != null) {
-                startRiding(this.getOwner(), true);
+                startRiding(this.getOwner(), true, true);
             }
         }
 
@@ -99,8 +101,8 @@ public class EntityBlisteringSwords extends EntityAbstractSummonedSword {
                                         Entity target = er.getEntity();
 
                                         boolean isMatch = true;
-                                        if (target instanceof LivingEntity) {
-                                            isMatch = TargetSelector.test.test(sender, (LivingEntity) target);
+                                        if (target instanceof LivingEntity && target.level() instanceof ServerLevel serverLevel) {
+                                            isMatch = TargetSelector.test.test(serverLevel, sender, (LivingEntity) target);
                                         }
 
                                         if (target instanceof IShootable) {
@@ -126,7 +128,7 @@ public class EntityBlisteringSwords extends EntityAbstractSummonedSword {
 
             this.shoot(dir.x, dir.y, dir.z, 3.0f, 1.0f);
             if (sender instanceof ServerPlayer) {
-                ((ServerPlayer) sender).playNotifySound(SoundEvents.ENDER_DRAGON_FLAP, SoundSource.PLAYERS, 1.0F, 1.0F);
+                SoundUtil.playNotifySound(((ServerPlayer) sender), SoundEvents.ENDER_DRAGON_FLAP, SoundSource.PLAYERS, 1.0F, 1.0F);
             }
 
             return;

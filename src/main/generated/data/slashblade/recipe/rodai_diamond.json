@@ -13,15 +13,9 @@
         ]
       }
     },
-    "P": {
-      "item": "slashblade:proudsoul_trapezohedron"
-    },
-    "S": {
-      "tag": "c:strings"
-    },
-    "W": {
-      "item": "minecraft:diamond_sword"
-    }
+    "P": "slashblade:proudsoul_trapezohedron",
+    "S": "#c:strings",
+    "W": "minecraft:diamond_sword"
   },
   "pattern": [
     "  P",
@@ -29,7 +23,6 @@
     "WS "
   ],
   "result": {
-    "count": 1,
     "id": "slashblade:slashblade"
   }
 }

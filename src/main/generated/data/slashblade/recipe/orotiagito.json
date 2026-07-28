@@ -13,12 +13,8 @@
         "refine": 10
       }
     },
-    "P": {
-      "item": "slashblade:proudsoul"
-    },
-    "S": {
-      "item": "slashblade:proudsoul_sphere"
-    }
+    "P": "slashblade:proudsoul",
+    "S": "slashblade:proudsoul_sphere"
   },
   "pattern": [
     "PSP",
@@ -26,7 +22,6 @@
     "PSP"
   ],
   "result": {
-    "count": 1,
     "id": "slashblade:slashblade"
   }
 }

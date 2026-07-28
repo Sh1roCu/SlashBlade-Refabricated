@@ -1,8 +1,9 @@
 package mods.flammpfeil.slashblade.event.handler;
 
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingHurtEvent;
 import mods.flammpfeil.slashblade.capability.concentrationrank.CapabilityConcentrationRank;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -19,20 +20,18 @@ public class RankPointHandler {
     }
 
     public void register() {
-        LivingHurtEvent.EVENT.register(this::onLivingDeathEvent);
+        ServerLivingEntityEvents.AFTER_DAMAGE.register(this::onLivingDeathEvent);
     }
 
     /**
      * Not reached if canceled.
      */
-    public void onLivingDeathEvent(LivingHurtEvent event) {
-
-        LivingEntity victim = event.getEntity();
+    public void onLivingDeathEvent(LivingEntity victim, DamageSource source, float baseDamageTaken, float damageTaken, boolean blocked) {
         if (victim != null)
             CapabilityConcentrationRank.RANK_POINT.maybeGet(victim)
                     .ifPresent(cr -> cr.addRankPoint(victim, -cr.getUnitCapacity()));
 
-        Entity trueSource = event.getSource().getEntity();
+        Entity trueSource = source.getEntity();
         if (!(trueSource instanceof LivingEntity sourceEntity))
             return;
 
@@ -40,6 +39,6 @@ public class RankPointHandler {
             return;
 
         CapabilityConcentrationRank.RANK_POINT.maybeGet(trueSource)
-                .ifPresent(cr -> cr.addRankPoint(event.getSource()));
+                .ifPresent(cr -> cr.addRankPoint(source));
     }
 }

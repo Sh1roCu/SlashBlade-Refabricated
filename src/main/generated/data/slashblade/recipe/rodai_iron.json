@@ -13,15 +13,9 @@
         ]
       }
     },
-    "P": {
-      "item": "slashblade:proudsoul_crystal"
-    },
-    "S": {
-      "tag": "c:strings"
-    },
-    "W": {
-      "item": "minecraft:iron_sword"
-    }
+    "P": "slashblade:proudsoul_crystal",
+    "S": "#c:strings",
+    "W": "minecraft:iron_sword"
   },
   "pattern": [
     "  P",
@@ -29,7 +23,6 @@
     "WS "
   ],
   "result": {
-    "count": 1,
     "id": "slashblade:slashblade"
   }
 }

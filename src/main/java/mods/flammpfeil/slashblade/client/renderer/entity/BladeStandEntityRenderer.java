@@ -1,41 +1,38 @@
 package mods.flammpfeil.slashblade.client.renderer.entity;
 
+import cn.sh1rocu.slashblade.api.extension.IEntityRepresentation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import mods.flammpfeil.slashblade.client.renderer.entity.state.BladeStandEntityRenderState;
 import mods.flammpfeil.slashblade.client.renderer.util.MSAutoCloser;
 import mods.flammpfeil.slashblade.entity.BladeStandEntity;
 import mods.flammpfeil.slashblade.init.SBItems;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemFrameRenderer;
-import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.entity.state.ItemFrameRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 
 public class BladeStandEntityRenderer extends ItemFrameRenderer<BladeStandEntity> {
-    private final ItemRenderer itemRenderer;
-
     public BladeStandEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
 
-        this.itemRenderer = Minecraft.getInstance().getItemRenderer();
     }
 
     @Override
-    public void render(BladeStandEntity entity, float entityYaw, float partialTicks, PoseStack matrixStackIn,
-                       MultiBufferSource bufferIn, int packedLightIn) {
-        doRender(entity, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+    public ItemFrameRenderState createRenderState() {
+        return new BladeStandEntityRenderState();
     }
 
-    public void doRender(BladeStandEntity entity, float entityYaw, float partialTicks, PoseStack matrixStackIn,
-                         MultiBufferSource bufferIn, int packedLightIn) {
+    @Override
+    public void extractRenderState(BladeStandEntity entity, ItemFrameRenderState state, float partialTicks) {
+        super.extractRenderState(entity, state, partialTicks);
 
         if (entity.currentTypeStack.isEmpty()) {
             if (entity.currentType == null || entity.currentType == Items.AIR) {
@@ -43,22 +40,40 @@ public class BladeStandEntityRenderer extends ItemFrameRenderer<BladeStandEntity
             } else {
                 entity.currentTypeStack = new ItemStack(entity.currentType);
             }
-            entity.currentTypeStack.setEntityRepresentation(entity);
+            ((IEntityRepresentation) (Object) entity.currentTypeStack).sb$setEntityRepresentation(entity);
         }
 
+        if (state instanceof BladeStandEntityRenderState bState) {
+            bState.blockPos = entity.getPos();
+            bState.position = entity.position();
+            bState.xRot = entity.getXRot();
+            bState.yRot = entity.getYRot();
+            bState.rotation = entity.getRotation();
+            bState.currentType = entity.currentType;
+        }
+    }
+
+    @Override
+    public void submit(ItemFrameRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
+        if (state instanceof BladeStandEntityRenderState bState) {
+            doRender(bState, poseStack, submitNodeCollector);
+        }
+    }
+
+    public void doRender(BladeStandEntityRenderState state, PoseStack matrixStackIn, SubmitNodeCollector submitNodeCollector) {
         try (MSAutoCloser msac = MSAutoCloser.pushMatrix(matrixStackIn)) {
-            BlockPos blockpos = entity.getPos();
-            Vec3 vec = Vec3.upFromBottomCenterOf(blockpos, 0.75).subtract(entity.position());
+            BlockPos blockpos = state.blockPos;
+            Vec3 vec = Vec3.upFromBottomCenterOf(blockpos, 0.75).subtract(state.position);
             matrixStackIn.translate(vec.x, vec.y, vec.z);
-            matrixStackIn.mulPose(Axis.XP.rotationDegrees(entity.getXRot()));
-            matrixStackIn.mulPose(Axis.YP.rotationDegrees(180.0F - entity.getYRot()));
+            matrixStackIn.mulPose(Axis.XP.rotationDegrees(state.xRot));
+            matrixStackIn.mulPose(Axis.YP.rotationDegrees(180.0F - state.yRot));
 
             try (MSAutoCloser msacB = MSAutoCloser.pushMatrix(matrixStackIn)) {
-                int i = entity.getRotation();
+                int i = state.rotation;
                 matrixStackIn.mulPose(Axis.ZP.rotationDegrees((float) i * 360.0F / 8.0F));
 
                 matrixStackIn.scale(2, 2, 2);
-                Item type = entity.currentType;
+                Item type = state.currentType;
                 if (type == SBItems.BLADESTAND_1) {
                     matrixStackIn.mulPose(Axis.XP.rotationDegrees(-90f));
                 } else if (type == SBItems.BLADESTAND_2) {
@@ -76,45 +91,26 @@ public class BladeStandEntityRenderer extends ItemFrameRenderer<BladeStandEntity
                 }
 
                 // stand render
-                matrixStackIn.pushPose();
-                matrixStackIn.mulPose(Axis.XP.rotationDegrees(90));
-                matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-                matrixStackIn.translate(0, 0, 0.44);
-                this.renderItem(entity, entity.currentTypeStack, matrixStackIn, bufferIn, packedLightIn);
-                matrixStackIn.popPose();
+                if (!state.frameModel.isEmpty()) {
+                    matrixStackIn.pushPose();
+                    matrixStackIn.mulPose(Axis.XP.rotationDegrees(90));
+                    matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+                    matrixStackIn.translate(0, 0, 0.44);
+                    state.frameModel.submitWithZOffset(matrixStackIn, submitNodeCollector, state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
+                    matrixStackIn.popPose();
+                }
 
-                if (entity.currentType == SBItems.BLADESTAND_1_W || type == SBItems.BLADESTAND_2_W) {
+                if (state.currentType == SBItems.BLADESTAND_1_W || type == SBItems.BLADESTAND_2_W) {
                     matrixStackIn.translate(0, 0, -0.19f);
-                } else if (entity.currentType == SBItems.BLADESTAND_1) {
+                } else if (state.currentType == SBItems.BLADESTAND_1) {
                 }
                 // blade render
-                matrixStackIn.mulPose(Axis.YP.rotationDegrees(-180f));
-                this.renderItem(entity, entity.getItem(), matrixStackIn, bufferIn, packedLightIn);
+                if (!state.item.isEmpty()) {
+                    matrixStackIn.mulPose(Axis.YP.rotationDegrees(-180f));
+                    state.item.submit(matrixStackIn, submitNodeCollector, state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
+                }
 
             }
-        }
-
-        // net.minecraftforge.client.event.RenderNameTagEvent renderNameplateEvent = new net.minecraftforge.client.event.RenderNameTagEvent(
-        //        entity, entity.getDisplayName(), this, matrixStackIn, bufferIn, packedLightIn, partialTicks);
-        // net.minecraftforge.client.event.RenderNameplateEvent renderNameplateEvent =
-        // new net.minecraftforge.client.event.RenderNameplateEvent(entity,
-        // entity.getDisplayName().getFormatedText(), this, matrixStackIn, bufferIn,
-        // packedLightIn);
-        // net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(renderNameplateEvent);
-        // if (renderNameplateEvent.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY
-        //        && (renderNameplateEvent.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW
-        //                || this.shouldShowName(entity))) {
-        if (this.shouldShowName(entity)) {
-            this.renderNameTag(entity, /*renderNameplateEvent.getContent()*/entity.getDisplayName(), matrixStackIn, bufferIn, packedLightIn, partialTicks);
-        }
-    }
-
-    private void renderItem(BladeStandEntity entity, ItemStack itemstack, PoseStack matrixStackIn,
-                            MultiBufferSource bufferIn, int packedLightIn) {
-        if (!itemstack.isEmpty()) {
-            BakedModel ibakedmodel = this.itemRenderer.getModel(itemstack, entity.level(), null, 0);
-            this.itemRenderer.render(itemstack, ItemDisplayContext.FIXED, false, matrixStackIn, bufferIn, packedLightIn,
-                    OverlayTexture.NO_OVERLAY, ibakedmodel);
         }
     }
 

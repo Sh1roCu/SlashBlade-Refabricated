@@ -6,7 +6,7 @@ import com.google.common.collect.RangeMap;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.network.RankSyncPacket;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,6 +15,7 @@ import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 
 import java.util.Optional;
 
+@SuppressWarnings("UnstableApiUsage")
 public interface IConcentrationRank extends AutoSyncedComponent {
 
     enum ConcentrationRanks {
@@ -124,7 +125,7 @@ public interface IConcentrationRank extends AutoSyncedComponent {
 
         ItemStack stack = user.getMainHandItem();
 
-        Optional<ResourceLocation> combo = CapabilitySlashBlade.getBladeState(stack)
+        Optional<Identifier> combo = CapabilitySlashBlade.getBladeState(stack)
                 .map(s -> s.resolvCurrentComboState(user));
 
         float modifier = combo.map(this::getRankPointModifier).orElse(getRankPointModifier(src));
@@ -134,5 +135,5 @@ public interface IConcentrationRank extends AutoSyncedComponent {
 
     float getRankPointModifier(DamageSource ds);
 
-    float getRankPointModifier(ResourceLocation combo);
+    float getRankPointModifier(Identifier combo);
 }

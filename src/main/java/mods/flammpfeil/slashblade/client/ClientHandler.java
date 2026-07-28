@@ -1,37 +1,29 @@
 package mods.flammpfeil.slashblade.client;
 
-import cn.sh1rocu.slashblade.mixin.accessor.LivingEntityRendererAccessor;
 import mods.flammpfeil.slashblade.client.renderer.LockonCircleRender;
 import mods.flammpfeil.slashblade.client.renderer.gui.RankRenderer;
 import mods.flammpfeil.slashblade.client.renderer.layers.LayerMainBlade;
 import mods.flammpfeil.slashblade.client.renderer.model.BladeModel;
 import mods.flammpfeil.slashblade.compat.playerAnim.PlayerAnimationOverrider;
-import mods.flammpfeil.slashblade.event.client.AdvancementsRecipeRenderer;
 import mods.flammpfeil.slashblade.event.client.SneakingMotionCanceller;
 import mods.flammpfeil.slashblade.event.client.UserPoseOverrider;
 import mods.flammpfeil.slashblade.init.SBItems;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier;
-import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityRenderLayerRegistrationCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.client.resources.PlayerSkin;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
-import org.apache.logging.log4j.util.LoaderUtil;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 @Environment(EnvType.CLIENT)
@@ -39,54 +31,24 @@ public class ClientHandler {
     public static void doClientStuff() {
         SneakingMotionCanceller.getInstance().register();
 
-        if (LoaderUtil.isClassAvailable("dev.kosmx.playerAnim.api.layered.AnimationStack")) {
+        if (FabricLoader.getInstance().isModLoaded("player_animation_library")) {
             PlayerAnimationOverrider.getInstance().register();
         } else {
             UserPoseOverrider.getInstance().register();
         }
         LockonCircleRender.getInstance().register();
-        AdvancementsRecipeRenderer.getInstance().register();
+        // TODO
+        // AdvancementsRecipeRenderer.getInstance().register();
 
 
         RankRenderer.getInstance().register();
-
-        ItemProperties.register(SBItems.SLASHBLADE, ResourceLocation.parse("slashblade:user"),
-                (itemStack, level, livingEntity, i) -> {
-                    BladeModel.user = livingEntity;
-                    return 0;
-                });
-
-        ItemProperties.register(SBItems.SLASHBLADE_BAMBOO, ResourceLocation.parse("slashblade:user"),
-                (itemStack, level, livingEntity, i) -> {
-                    BladeModel.user = livingEntity;
-                    return 0;
-                });
-
-        ItemProperties.register(SBItems.SLASHBLADE_SILVERBAMBOO, ResourceLocation.parse("slashblade:user"),
-                (itemStack, level, livingEntity, i) -> {
-                    BladeModel.user = livingEntity;
-                    return 0;
-                });
-
-        ItemProperties.register(SBItems.SLASHBLADE_WHITE, ResourceLocation.parse("slashblade:user"),
-                (itemStack, level, livingEntity, i) -> {
-                    BladeModel.user = livingEntity;
-                    return 0;
-                });
-
-        ItemProperties.register(SBItems.SLASHBLADE_WOOD, ResourceLocation.parse("slashblade:user"),
-                (itemStack, level, livingEntity, i) -> {
-                    BladeModel.user = livingEntity;
-                    return 0;
-                });
-
 
         registerKeyMapping();
     }
 
     public static void registerKeyMapping() {
-        KeyBindingHelper.registerKeyBinding(SlashBladeKeyMappings.KEY_SPECIAL_MOVE);
-        KeyBindingHelper.registerKeyBinding(SlashBladeKeyMappings.KEY_SUMMON_BLADE);
+        KeyMappingHelper.registerKeyMapping(SlashBladeKeyMappings.KEY_SPECIAL_MOVE);
+        KeyMappingHelper.registerKeyMapping(SlashBladeKeyMappings.KEY_SUMMON_BLADE);
     }
 
     private static final Set<Item> blades = new HashSet<>() {{
@@ -97,62 +59,28 @@ public class ClientHandler {
         add(SBItems.SLASHBLADE_BAMBOO);
     }};
 
-    public static BakedModel Baked(BakedModel bakedModel, ModelModifier.AfterBake.Context context) {
+    public static ItemModel baked(ItemModel bakedModel, ModelModifier.AfterBakeItem.Context context) {
         for (Item blade : blades) {
-            ModelResourceLocation modelLoc = ModelResourceLocation.inventory(BuiltInRegistries.ITEM.getKey(blade));
-            ModelResourceLocation id = context.topLevelId();
-            if (id != null && id.equals(modelLoc)) {
-                return bakeBlade(bakedModel, context.loader());
+            Identifier modelLoc = BuiltInRegistries.ITEM.getKey(blade);
+            Identifier id = context.itemId();
+            if (id.equals(modelLoc)) {
+                return bakeBlade(bakedModel, context.bakingContext());
             }
         }
         return bakedModel;
     }
 
-    public static BakedModel bakeBlade(BakedModel bakedModel, ModelBakery bakery) {
+    public static ItemModel bakeBlade(ItemModel bakedModel, ItemModel.BakingContext bakery) {
         return new BladeModel(bakedModel, bakery);
     }
 
+    @SuppressWarnings("rawtypes,unchecked")
     public static void addLayers(
-            Map<EntityType<?>, EntityRenderer<?>> renderers,
-            Map<PlayerSkin.Model, EntityRenderer<? extends Player>> skinMap,
-            EntityRendererProvider.Context context,
-            EntityModelSet entityModelSet
-    ) {
-        addPlayerLayer(skinMap, PlayerSkin.Model.WIDE);
-        addPlayerLayer(skinMap, PlayerSkin.Model.SLIM);
+            EntityType<? extends LivingEntity> entityType,
+            LivingEntityRenderer<?, ?, ?> entityRenderer,
+            LivingEntityRenderLayerRegistrationCallback.RegistrationHelper registrationHelper,
+            EntityRendererProvider.Context context) {
 
-        for (EntityType<?> type : BuiltInRegistries.ENTITY_TYPE) {
-            addEntityLayer(renderers, type);
-        }
-
-//        addEntityLayer(renderers, EntityType.ZOMBIE);
-//        addEntityLayer(renderers, EntityType.HUSK);
-//        addEntityLayer(renderers, EntityType.ZOMBIE_VILLAGER);
-//
-//        addEntityLayer(renderers, EntityType.WITHER_SKELETON);
-//        addEntityLayer(renderers, EntityType.SKELETON);
-//        addEntityLayer(renderers, EntityType.STRAY);
-//
-//        addEntityLayer(renderers, EntityType.PIGLIN);
-//        addEntityLayer(renderers, EntityType.PIGLIN_BRUTE);
-//        addEntityLayer(renderers, EntityType.ZOMBIFIED_PIGLIN);
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public static void addPlayerLayer(Map<PlayerSkin.Model, EntityRenderer<? extends Player>> skinMap, PlayerSkin.Model skin) {
-        EntityRenderer<? extends Player> renderer = skinMap.get(skin);
-
-        if (renderer instanceof LivingEntityRenderer livingRenderer) {
-            ((LivingEntityRendererAccessor) livingRenderer).sb$addLayer(new LayerMainBlade<>(livingRenderer));
-        }
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private static void addEntityLayer(Map<EntityType<?>, EntityRenderer<?>> renderers, EntityType type) {
-        EntityRenderer<?> renderer = renderers.get(type);
-
-        if (renderer instanceof LivingEntityRenderer livingRenderer) {
-            ((LivingEntityRendererAccessor) livingRenderer).sb$addLayer(new LayerMainBlade<>(livingRenderer));
-        }
+        registrationHelper.register(new LayerMainBlade<>((LivingEntityRenderer) entityRenderer));
     }
 }

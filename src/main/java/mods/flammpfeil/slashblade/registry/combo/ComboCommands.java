@@ -3,7 +3,7 @@ package mods.flammpfeil.slashblade.registry.combo;
 import mods.flammpfeil.slashblade.capability.inputstate.CapabilityInputState;
 import mods.flammpfeil.slashblade.registry.ComboStateRegistry;
 import mods.flammpfeil.slashblade.util.InputCommand;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.Comparator;
@@ -13,21 +13,21 @@ import java.util.Map;
 
 public class ComboCommands {
     public static final EnumSet<InputCommand> COMBO_B1_ALT = EnumSet.of(InputCommand.BACK, InputCommand.R_DOWN);
-    private static final Map<EnumSet<InputCommand>, ResourceLocation> DEAFULT_STANDBY = new HashMap<>();
+    private static final Map<EnumSet<InputCommand>, Identifier> DEAFULT_STANDBY = new HashMap<>();
 
-    public static ResourceLocation initStandByCommand(LivingEntity a) {
+    public static Identifier initStandByCommand(LivingEntity a) {
         return initStandByCommand(a, DEAFULT_STANDBY);
     }
 
-    public static ResourceLocation initStandByCommand(LivingEntity a,
-                                                      Map<EnumSet<InputCommand>, ResourceLocation> map) {
+    public static Identifier initStandByCommand(LivingEntity a,
+                                                      Map<EnumSet<InputCommand>, Identifier> map) {
         EnumSet<InputCommand> commands = CapabilityInputState.INPUT_STATE.maybeGet(a)
                 .map((state) -> state.getCommands(a)).orElseGet(() -> EnumSet.noneOf(InputCommand.class));
 
         return map.entrySet().stream().filter((entry) -> commands.containsAll(entry.getKey()))
                 // .findFirst()
                 .min(Comparator.comparingInt(
-                        (entry) -> ComboStateRegistry.COMBO_STATE.get(entry.getValue()).getPriority()))
+                        (entry) -> ComboStateRegistry.COMBO_STATE.getValue(entry.getValue()).getPriority()))
                 .map(Map.Entry::getValue).orElseGet(() -> ComboStateRegistry.getId(ComboStateRegistry.NONE));
     }
 

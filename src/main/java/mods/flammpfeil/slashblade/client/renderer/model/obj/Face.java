@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
@@ -77,8 +77,8 @@ public class Face {
         float offsetU, offsetV;
         wr.addVertex(transform, vertices[i].x, vertices[i].y, vertices[i].z);
 
-        wr.setColor(FastColor.ARGB32.red(color), FastColor.ARGB32.green(color), FastColor.ARGB32.blue(color),
-                alphaOverride.apply(new Vector4f(vertices[i].x, vertices[i].y, vertices[i].z, 1.0F), FastColor.ARGB32.alpha(color))
+        wr.setColor(ARGB.red(color), ARGB.green(color), ARGB.blue(color),
+                alphaOverride.apply(new Vector4f(vertices[i].x, vertices[i].y, vertices[i].z, 1.0F), ARGB.alpha(color))
         );
 
         if ((textureCoordinates != null) && (textureCoordinates.length > 0)) {

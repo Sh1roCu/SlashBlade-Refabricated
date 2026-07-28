@@ -1,5 +1,5 @@
 {
-  "parent": "builtin/entity",
+  "parent": "item/generated",
   "textures": {
     "layer0": "slashblade:item/soul"
   },
@@ -89,13 +89,5 @@
         0.65
       ]
     }
-  },
-  "overrides": [
-    {
-      "predicate": {
-        "slashblade:user": 1.0
-      },
-      "model": "slashblade:eproudsoul"
-    }
-  ]
+  }
 }

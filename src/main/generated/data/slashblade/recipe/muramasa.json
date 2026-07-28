@@ -11,9 +11,7 @@
         "refine": 20
       }
     },
-    "S": {
-      "item": "slashblade:proudsoul_sphere"
-    }
+    "S": "slashblade:proudsoul_sphere"
   },
   "pattern": [
     "SSS",
@@ -21,7 +19,6 @@
     "SSS"
   ],
   "result": {
-    "count": 1,
     "id": "slashblade:slashblade"
   }
 }

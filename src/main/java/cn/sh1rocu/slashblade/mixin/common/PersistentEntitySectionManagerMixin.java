@@ -15,7 +15,7 @@ public class PersistentEntitySectionManagerMixin<T extends EntityAccess> {
     public void tlm$entityJoinLevelEvent(T entityAccess, boolean loadedFromDisk, CallbackInfoReturnable<Boolean> cir) {
         if (entityAccess instanceof Entity entity) {
             EntityJoinLevelEvent event = new EntityJoinLevelEvent(entity, entity.level(), loadedFromDisk);
-            EntityJoinLevelEvent.CALLBACK.invoker().post(event);
+            EntityJoinLevelEvent.EVENT.invoker().post(event);
             if (event.isCanceled())
                 cir.setReturnValue(false);
         }

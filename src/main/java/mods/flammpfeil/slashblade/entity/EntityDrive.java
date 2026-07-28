@@ -1,7 +1,7 @@
 package mods.flammpfeil.slashblade.entity;
 
 import cn.sh1rocu.slashblade.util.PotionUtils;
-import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
+import cn.sh1rocu.slashblade.util.SoundUtil;
 import mods.flammpfeil.slashblade.ability.StunManager;
 import mods.flammpfeil.slashblade.capability.concentrationrank.CapabilityConcentrationRank;
 import mods.flammpfeil.slashblade.capability.concentrationrank.IConcentrationRank;
@@ -10,10 +10,6 @@ import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.util.AttackManager;
 import mods.flammpfeil.slashblade.util.EnumSetConverter;
 import mods.flammpfeil.slashblade.util.KnockBacks;
-import mods.flammpfeil.slashblade.util.NBTHelper;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -33,6 +29,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -100,30 +98,40 @@ public class EntityDrive extends EntityAbstractSummonedSword {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
+    public void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
 
-        NBTHelper.getNBTCoupler(compound).put("RotationOffset", this.getRotationOffset())
-                .put("RotationRoll", this.getRotationRoll()).put("BaseSize", this.getBaseSize())
-                .put("Speed", this.getSpeed()).put("Color", this.getColor()).put("Rank", this.getRank())
-                .put("damage", this.damage).put("crit", this.getIsCritical()).put("clip", this.isNoClip())
-                .put("Lifetime", this.getLifetime()).put("Knockback", this.getKnockBack().ordinal());
+        output.putFloat("RotationOffset", this.getRotationOffset());
+        output.putFloat("RotationRoll", this.getRotationRoll());
+        output.putFloat("BaseSize", this.getBaseSize());
+        output.putFloat("Speed", this.getSpeed());
+        output.putInt("Color", this.getColor());
+        output.putFloat("Rank", this.getRank());
+        output.putDouble("damage", this.damage);
+        output.putBoolean("crit", this.getIsCritical());
+        output.putBoolean("clip", this.isNoClip());
+        output.putFloat("Lifetime", this.getLifetime());
+        output.putInt("Knockback", this.getKnockBack().ordinal());
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
+    public void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
 
-        NBTHelper.getNBTCoupler(compound).get("RotationOffset", this::setRotationOffset)
-                .get("RotationRoll", this::setRotationRoll).get("BaseSize", this::setBaseSize)
-                .get("Speed", this::setSpeed).get("Color", this::setColor).get("Rank", this::setRank)
-                .get("damage", ((Double v) -> this.damage = v), this.damage).get("crit", this::setIsCritical)
-                .get("clip", this::setNoClip).get("Lifetime", this::setLifetime)
-                .get("Knockback", this::setKnockBackOrdinal);
+        this.setRotationOffset(input.getFloatOr("RotationOffset", 0));
+        this.setRotationRoll(input.getFloatOr("RotationRoll", 0));
+        this.setBaseSize(input.getFloatOr("BaseSize", 1F));
+        this.setSpeed(input.getFloatOr("Speed", 0.5F));
+        this.setColor(input.getIntOr("Color", 0x3333FF));
+        this.setRank(input.getFloatOr("Rank", 0));
+        this.damage = input.getDoubleOr("damage", 0);
+        this.setIsCritical(input.getBooleanOr("crit", false));
+        this.setNoClip(input.getBooleanOr("clip", false));
+        this.setLifetime(input.getFloatOr("Lifetime", 10F));
+        this.setKnockBackOrdinal(input.getIntOr("Knockback", 0));
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public boolean shouldRenderAtSqrDistance(double distance) {
         double d0 = this.getBoundingBox().getSize() * 10.0D;
         if (Double.isNaN(d0)) {
@@ -270,9 +278,9 @@ public class EntityDrive extends EntityAbstractSummonedSword {
             damagesource = this.damageSources().indirectMagic(this, shooter);
             if (shooter instanceof LivingEntity) {
                 Entity hits = targetEntity;
-                if (targetEntity instanceof PartEntity) {
-                    hits = ((PartEntity<?>) targetEntity).getParent();
-                }
+//                if (targetEntity instanceof PartEntity) {
+//                    hits = ((PartEntity<?>) targetEntity).getParent();
+//                }
                 ((LivingEntity) shooter).setLastHurtMob(hits);
             }
         }
@@ -289,7 +297,7 @@ public class EntityDrive extends EntityAbstractSummonedSword {
             //评分等级加成
             if (living instanceof Player player) {
                 IConcentrationRank.ConcentrationRanks rankBonus = CapabilityConcentrationRank.RANK_POINT.maybeGet(player)
-                        .map(rp -> rp.getRank(player.getCommandSenderWorld().getGameTime()))
+                        .map(rp -> rp.getRank(player.level().getGameTime()))
                         .orElse(IConcentrationRank.ConcentrationRanks.NONE);
                 float rankDamageBonus = rankBonus.level / 2.0f;
                 if (IConcentrationRank.ConcentrationRanks.S.level <= rankBonus.level) {
@@ -305,11 +313,11 @@ public class EntityDrive extends EntityAbstractSummonedSword {
             }
         }
 
-        if (targetEntity.hurt(damagesource, damageValue)) {
+        if (targetEntity.level() instanceof ServerLevel serverLevel && targetEntity.hurtServer(serverLevel, damagesource, damageValue)) {
             Entity hits = targetEntity;
-            if (targetEntity instanceof PartEntity) {
-                hits = ((PartEntity<?>) targetEntity).getParent();
-            }
+//            if (targetEntity instanceof PartEntity) {
+//                hits = ((PartEntity<?>) targetEntity).getParent();
+//            }
 
             if (hits instanceof LivingEntity targetLivingEntity) {
 
@@ -322,7 +330,7 @@ public class EntityDrive extends EntityAbstractSummonedSword {
 
                 if (shooter != null && targetLivingEntity != shooter && targetLivingEntity instanceof Player
                         && shooter instanceof ServerPlayer) {
-                    ((ServerPlayer) shooter).playNotifySound(this.getHitEntityPlayerSound(), SoundSource.PLAYERS, 0.18F,
+                    SoundUtil.playNotifySound(((ServerPlayer) shooter), this.getHitEntityPlayerSound(), SoundSource.PLAYERS, 0.18F,
                             0.45F);
                 }
             }

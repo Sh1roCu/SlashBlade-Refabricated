@@ -1,34 +1,38 @@
 package mods.flammpfeil.slashblade.client.renderer.model;
 
+import cn.sh1rocu.slashblade.mixin.accessor.MultiPlayerGameModeAccessor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.client.renderer.layers.LayerMainBlade;
 import mods.flammpfeil.slashblade.client.renderer.util.MSAutoCloser;
+import mods.flammpfeil.slashblade.compat.iris.IrisCompat;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
 
 /**
  * Created by Furia on 2016/02/07.
  */
 public class BladeFirstPersonRender {
-    private LayerMainBlade<LocalPlayer, ?> layer = null;
+    private LayerMainBlade<EntityRenderState, ?> layer = null;
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private BladeFirstPersonRender() {
         Minecraft mc = Minecraft.getInstance();
 
-        EntityRenderer<?> renderer = mc.getEntityRenderDispatcher().getRenderer(mc.player);
-        if (renderer instanceof RenderLayerParent)
-            layer = new LayerMainBlade((RenderLayerParent) renderer);
+        EntityRenderer<?, ?> renderer = mc.getEntityRenderDispatcher().getRenderer(mc.player);
+        if (renderer instanceof RenderLayerParent parent)
+            layer = new LayerMainBlade(parent);
     }
 
     private static final class SingletonHolder {
@@ -39,7 +43,7 @@ public class BladeFirstPersonRender {
         return SingletonHolder.instance;
     }
 
-    public void render(PoseStack matrixStack, MultiBufferSource bufferIn, int combinedLightIn) {
+    public void render(PoseStack matrixStack, SubmitNodeCollector submitNodeCollector, int combinedLightIn) {
         if (layer == null)
             return;
 
@@ -47,7 +51,7 @@ public class BladeFirstPersonRender {
         boolean flag = mc.getCameraEntity() instanceof LivingEntity
                 && ((LivingEntity) mc.getCameraEntity()).isSleeping();
         if (!(mc.options.getCameraType() == CameraType.FIRST_PERSON && !flag && !mc.options.hideGui
-                && !mc.gameMode.isAlwaysFlying())) {
+                && !(((MultiPlayerGameModeAccessor) mc.gameMode).sb$getLocalPlayerMode() == GameType.SPECTATOR))) {
             return;
         }
         LocalPlayer player = mc.player;
@@ -62,9 +66,13 @@ public class BladeFirstPersonRender {
             me.pose().identity();
             me.normal().identity();
 
-            float partialTicks = mc.getTimer().getGameTimeDeltaPartialTick(false);
+            float partialTicks = mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
 
-            matrixStack.mulPose(Axis.YP.rotationDegrees(180.0F - Mth.lerp(partialTicks, player.yRotO, player.getYRot())));
+            if (IrisCompat.isUsingRenderPack()) {
+                matrixStack.mulPose(Axis.XP.rotationDegrees(player.getXRot()));
+            } else {
+                matrixStack.mulPose(Axis.YP.rotationDegrees(180.0F - Mth.lerp(partialTicks, player.yRotO, player.getYRot())));
+            }
 
             matrixStack.translate(0.0f, 0.0f, -0.5f);
             matrixStack.mulPose(Axis.ZP.rotationDegrees(180.0f));
@@ -74,7 +82,7 @@ public class BladeFirstPersonRender {
             matrixStack.mulPose(Axis.XP.rotationDegrees(-Mth.clamp(player.getXRot(), -60F, 10F)));
 
             // layer.disableOffhandRendering();
-            layer.render(matrixStack, bufferIn, combinedLightIn, mc.player, 0, 0, partialTicks, 0, 0, 0);
+            layer.submit(matrixStack, submitNodeCollector, combinedLightIn, mc.getEntityRenderDispatcher().extractEntity(mc.player, partialTicks), 0, 0);
         }
     }
 }

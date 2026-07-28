@@ -12,7 +12,7 @@ public class SlashArtsRegistry {
     }
 
     public static final Registry<SlashArts> SLASH_ARTS = FabricRegistryBuilder
-            .createSimple(SlashArts.REGISTRY_KEY)
+            .create(SlashArts.REGISTRY_KEY)
             .attribute(RegistryAttribute.SYNCED)
             .buildAndRegister();
 

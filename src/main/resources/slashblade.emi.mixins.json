@@ -1,13 +1,13 @@
 {
   "package": "mods.flammpfeil.slashblade.emi.mixin",
   "plugin": "mods.flammpfeil.slashblade.emi.mixin.EMIMixinPlugin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "required": true,
   "minVersion": "0.8",
   "refmap": "slashblade.refmap.json",
   "mixins": [
-    "MixinItemEmiStack",
-    "MixinItemEmiStackSerializer"
+    //"MixinItemEmiStack",
+    //"MixinItemEmiStackSerializer"
   ],
   "client": [
   ],

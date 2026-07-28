@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.recipe;
 
+import cn.sh1rocu.slashblade.SlashBladeFabric;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -8,16 +9,20 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.ItemLike;
 
@@ -29,22 +34,22 @@ import java.util.Set;
 
 public class SlashBladeShapedRecipeBuilder implements RecipeBuilder {
     private final RecipeCategory category = RecipeCategory.COMBAT;
-    private final Item result;
-    private final int count;
+    private final HolderGetter<Item> items;
+    private final ItemStackTemplate result;
     private final List<String> rows = Lists.newArrayList();
     private final Map<Character, Ingredient> key = Maps.newLinkedHashMap();
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
     @Nullable
     private String group;
     private boolean showNotification = true;
-    private ResourceLocation blade = null;
+    private Identifier blade = null;
 
     public SlashBladeShapedRecipeBuilder(ItemLike item, int count) {
-        this.result = item.asItem();
-        this.count = count;
+        this.result = new ItemStackTemplate(item.asItem(), count);
+        this.items = SlashBladeFabric.SERVER_ACCESS.lookupOrThrow(Registries.ITEM);
     }
 
-    public static SlashBladeShapedRecipeBuilder shaped(ResourceLocation blade) {
+    public static SlashBladeShapedRecipeBuilder shaped(Identifier blade) {
         return shaped(SBItems.SLASHBLADE, 1).blade(blade);
     }
 
@@ -57,14 +62,14 @@ public class SlashBladeShapedRecipeBuilder implements RecipeBuilder {
     }
 
     public SlashBladeShapedRecipeBuilder define(Character key, TagKey<Item> tag) {
-        return this.define(key, Ingredient.of(tag));
+        return this.define(key, Ingredient.of(this.items.getOrThrow(tag)));
     }
 
     public SlashBladeShapedRecipeBuilder define(Character key, ItemLike tag) {
         return this.define(key, Ingredient.of(tag));
     }
 
-    public SlashBladeShapedRecipeBuilder blade(ResourceLocation blade) {
+    public SlashBladeShapedRecipeBuilder blade(Identifier blade) {
         this.blade = blade;
         return this;
     }
@@ -100,31 +105,38 @@ public class SlashBladeShapedRecipeBuilder implements RecipeBuilder {
         return this;
     }
 
+    @Override
+    public ResourceKey<Recipe<?>> defaultId() {
+        return RecipeBuilder.getDefaultRecipeId(this.result);
+    }
+
     public SlashBladeShapedRecipeBuilder showNotification(boolean show) {
         this.showNotification = show;
         return this;
     }
 
-    public Item getResult() {
+    public ItemStackTemplate getResult() {
         return this.result;
     }
 
     @Override
     public void save(RecipeOutput consumer) {
-        this.save(consumer, this.blade != null ? this.blade : BuiltInRegistries.ITEM.getKey(this.getResult()));
+        this.save(consumer, this.blade != null ? ResourceKey.create(Registries.RECIPE, this.blade) :
+                ResourceKey.create(Registries.RECIPE, BuiltInRegistries.ITEM.getKey(this.getResult().item().value())));
     }
 
-    public void save(RecipeOutput consumer, ResourceLocation id) {
-        ShapedRecipePattern pattern = this.ensureValid(id);
-        Advancement.Builder builder = consumer.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
-                .rewards(AdvancementRewards.Builder.recipe(id)).requirements(AdvancementRequirements.Strategy.OR);
+    @Override
+    public void save(RecipeOutput consumer, ResourceKey<Recipe<?>> key) {
+        ShapedRecipePattern pattern = this.ensureValid(key.identifier());
+        Advancement.Builder builder = consumer.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(key))
+                .rewards(AdvancementRewards.Builder.recipe(key)).requirements(AdvancementRequirements.Strategy.OR);
         this.criteria.forEach(builder::addCriterion);
-        SlashBladeShapedRecipe recipe = new SlashBladeShapedRecipe(this.group == null ? "" : this.group, RecipeBuilder.determineBookCategory(this.category), pattern,
-                new ItemStack(this.result, this.count), this.showNotification, this.blade);
-        consumer.accept(id, recipe, builder.build(id.withPrefix("recipes/" + this.category.getFolderName() + "/")));
+        SlashBladeShapedRecipe recipe = new SlashBladeShapedRecipe(this.group == null ? "" : this.group, RecipeBuilder.determineCraftingBookCategory(this.category), pattern,
+                this.result, this.showNotification, this.blade);
+        consumer.accept(key, recipe, builder.build(key.identifier().withPrefix("recipes/" + this.category.getFolderName() + "/")));
     }
 
-    private ShapedRecipePattern ensureValid(ResourceLocation id) {
+    private ShapedRecipePattern ensureValid(Identifier id) {
         if (this.rows.isEmpty()) {
             throw new IllegalStateException("No pattern is defined for shaped recipe " + id + "!");
         } else {

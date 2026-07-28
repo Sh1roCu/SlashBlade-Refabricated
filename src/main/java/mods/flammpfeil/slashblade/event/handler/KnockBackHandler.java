@@ -1,8 +1,11 @@
 package mods.flammpfeil.slashblade.event.handler;
 
+import cn.sh1rocu.slashblade.api.event.LivingKnockBackEvent;
 import cn.sh1rocu.slashblade.api.extension.EntityExtension;
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingKnockBackEvent;
 import mods.flammpfeil.slashblade.util.NBTHelper;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -51,7 +54,8 @@ public class KnockBackHandler {
         if ((target.getRandom().nextDouble() < target.getAttribute(Attributes.KNOCKBACK_RESISTANCE).getValue()))
             return;
 
-        target.hasImpulse = true;
+        // TODO?
+        // target.hasImpulse = true;
 
         Vec3 motion = target.getDeltaMovement();
 

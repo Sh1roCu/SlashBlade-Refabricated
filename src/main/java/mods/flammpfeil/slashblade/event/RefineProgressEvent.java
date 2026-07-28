@@ -15,7 +15,7 @@ public class RefineProgressEvent extends SlashBladeEvent implements ICancellable
     private int levelCost;
     private final int costResult;
     private int refineResult;
-    public static final Event<Callback> CALLBACK = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+    public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
         for (Callback callback : callbacks) {
             callback.onRefineProgress(event);
         }

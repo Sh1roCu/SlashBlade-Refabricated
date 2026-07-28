@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade.client.renderer;
 
-import cn.sh1rocu.slashblade.api.event.LivingEntityRenderEvents;
+import cn.sh1rocu.slashblade.api.RenderStateKeys;
+import cn.sh1rocu.slashblade.api.event.RenderLivingEvent;
 import cn.sh1rocu.slashblade.mixin.accessor.EntityRendererAccessor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mods.flammpfeil.slashblade.capability.inputstate.CapabilityInputState;
@@ -8,13 +9,12 @@ import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.client.renderer.model.BladeModelManager;
 import mods.flammpfeil.slashblade.client.renderer.model.obj.WavefrontObject;
+import mods.flammpfeil.slashblade.client.renderer.special.state.BladeItemRenderState;
 import mods.flammpfeil.slashblade.client.renderer.util.BladeRenderState;
 import mods.flammpfeil.slashblade.util.InputCommand;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -36,17 +36,20 @@ public class LockonCircleRender {
     }
 
     public void register() {
-        LivingEntityRenderEvents.PRE.register((LivingEntity entity, LivingEntityRenderer<?, ?> renderer, float partialRenderTick, PoseStack matrixStack, MultiBufferSource buffers, int light) -> {
-            this.onRenderLiving(entity, renderer, partialRenderTick, matrixStack, buffers, light);
-            return false;
-        });
-        LivingEntityRenderEvents.POST.register(this::onRenderLiving);
+        RenderLivingEvent.PRE.register(this::onRenderLiving);
+        RenderLivingEvent.POST.register(this::onRenderLiving);
     }
 
-    static final ResourceLocation modelLoc = ResourceLocation.fromNamespaceAndPath("slashblade", "model/util/lockon.obj");
-    static final ResourceLocation textureLoc = ResourceLocation.fromNamespaceAndPath("slashblade", "model/util/lockon.png");
+    static final Identifier modelLoc = Identifier.fromNamespaceAndPath("slashblade", "model/util/lockon.obj");
+    static final Identifier textureLoc = Identifier.fromNamespaceAndPath("slashblade", "model/util/lockon.png");
 
-    public void onRenderLiving(LivingEntity livingEntity, LivingEntityRenderer<?, ?> renderer, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int light) {
+    @SuppressWarnings("rawtypes")
+    public void onRenderLiving(RenderLivingEvent event) {
+        LivingEntityRenderState livingEntity = event.getRenderState();
+        var renderer = event.getRenderer();
+        PoseStack poseStack = event.getPoseStack();
+        float partialTicks = event.getPartialTick();
+        var submitNodeCollector = event.getSubmitNodeCollector();
         final Minecraft minecraftInstance = Minecraft.getInstance();
         Player player = minecraftInstance.player;
         if (player == null)
@@ -58,55 +61,56 @@ public class LockonCircleRender {
         ItemStack stack = player.getMainHandItem();
         Level level = player.level();
         Optional<Color> effectColor = CapabilitySlashBlade.getBladeState(stack)
-                .filter(s -> livingEntity.equals(s.getTargetEntity(level))).map(ISlashBladeState::getEffectColor);
+                .filter(s -> livingEntity.getDataOrDefault(RenderStateKeys.ENTITY_ID, -99) == s.getTargetEntityId()).map(ISlashBladeState::getEffectColor);
 
         if (effectColor.isEmpty())
             return;
 
-        if (!livingEntity.isAlive())
+        if (!livingEntity.getDataOrDefault(RenderStateKeys.IS_ALIVE, false))
             return;
 
-        float health = livingEntity.getHealth() / livingEntity.getMaxHealth();
+        float health = livingEntity.getDataOrDefault(RenderStateKeys.HP, 0F)
+                / livingEntity.getDataOrDefault(RenderStateKeys.MAX_HP, 0F);
 
         Color col = new Color(effectColor.get().getRGB() & 0xFFFFFF | 0xAA000000, true);
 
-        float f = livingEntity.getBbHeight() * 0.5f;
+        float f = livingEntity.getDataOrDefault(RenderStateKeys.BB_HEIGHT, 0F) * 0.5f;
 
         poseStack.pushPose();
         poseStack.translate(0.0D, f, 0.0D);
 
-        Vec3 offset = ((EntityRendererAccessor) renderer).sb$getEntityRenderDispatcher().camera.getPosition()
-                .subtract(livingEntity.getPosition(partialTicks).add(0, f, 0));
+        Vec3 offset = ((EntityRendererAccessor) renderer).sb$getEntityRenderDispatcher().camera.position()
+                .subtract(livingEntity.getDataOrDefault(RenderStateKeys.POSITION, Vec3.ZERO).add(0, f, 0));
         offset = offset.scale(0.5f);
         poseStack.translate(offset.x(), offset.y(), offset.z());
 
-        poseStack.mulPose(((EntityRendererAccessor) renderer).sb$getEntityRenderDispatcher().cameraOrientation());
+        poseStack.mulPose(((EntityRendererAccessor) renderer).sb$getEntityRenderDispatcher().camera.rotation());
         // poseStack.scale(-0.025F, -0.025F, 0.025F);
 
         float scale = 0.0025f;
         poseStack.scale(scale, -scale, scale);
 
         WavefrontObject model = BladeModelManager.getInstance().getModel(modelLoc);
-        ResourceLocation resourceTexture = textureLoc;
+        Identifier resourceTexture = textureLoc;
 
         final String base = "lockonBase";
         final String mask = "lockonHealthMask";
         final String value = "lockonHealth";
 
         BladeRenderState.setCol(col);
-        BladeRenderState.renderOverridedLuminous(ItemStack.EMPTY, model, base, resourceTexture, poseStack, buffer,
+        BladeRenderState.renderOverridedLuminous(BladeItemRenderState.EMPTY, model, base, resourceTexture, poseStack, submitNodeCollector,
                 BladeRenderState.MAX_LIGHT);
         {
             poseStack.pushPose();
             poseStack.translate(0, 0, health * 10.0f);
             BladeRenderState.setCol(new Color(0x20000000, true));
-            BladeRenderState.renderOverridedLuminousDepthWrite(ItemStack.EMPTY, model, mask, resourceTexture, poseStack,
-                    buffer, BladeRenderState.MAX_LIGHT);
+            BladeRenderState.renderOverridedLuminousDepthWrite(BladeItemRenderState.EMPTY, model, mask, resourceTexture, poseStack,
+                    submitNodeCollector, BladeRenderState.MAX_LIGHT);
             poseStack.popPose();
         }
         BladeRenderState.setCol(col);
-        BladeRenderState.renderOverridedLuminousDepthWrite(ItemStack.EMPTY, model, value, resourceTexture, poseStack,
-                buffer, BladeRenderState.MAX_LIGHT);
+        BladeRenderState.renderOverridedLuminousDepthWrite(BladeItemRenderState.EMPTY, model, value, resourceTexture, poseStack,
+                submitNodeCollector, BladeRenderState.MAX_LIGHT);
 
         poseStack.popPose();
     }

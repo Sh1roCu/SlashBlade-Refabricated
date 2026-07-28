@@ -47,7 +47,7 @@ import jp.nyatla.nymmd.types.MmdTexUV;
 import jp.nyatla.nymmd.types.MmdVector3;
 import jp.nyatla.nymmd.types.PmdMaterial;
 import jp.nyatla.nymmd.types.PmdSkinInfo;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.InputStream;
 import java.util.Arrays;
@@ -81,7 +81,7 @@ public abstract class MmdPmdModel_BasicClass {
     private final IResourceProvider _res_provider;
 
     public interface IResourceProvider {
-        ResourceLocation getTextureStream(String i_name) throws MmdException;
+        Identifier getTextureStream(String i_name) throws MmdException;
     }
 
     public MmdPmdModel_BasicClass(InputStream i_stream, IResourceProvider i_provider) throws MmdException {

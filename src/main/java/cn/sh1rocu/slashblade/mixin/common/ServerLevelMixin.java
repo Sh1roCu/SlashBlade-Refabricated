@@ -19,14 +19,14 @@ import java.util.function.Supplier;
 
 @Mixin(ServerLevel.class)
 public abstract class ServerLevelMixin extends Level {
-    protected ServerLevelMixin(WritableLevelData levelData, ResourceKey<Level> dimension, RegistryAccess registryAccess, Holder<DimensionType> dimensionTypeRegistration, Supplier<ProfilerFiller> profiler, boolean isClientSide, boolean isDebug, long biomeZoomSeed, int maxChainedNeighborUpdates) {
-        super(levelData, dimension, registryAccess, dimensionTypeRegistration, profiler, isClientSide, isDebug, biomeZoomSeed, maxChainedNeighborUpdates);
+    protected ServerLevelMixin(WritableLevelData levelData, ResourceKey<Level> dimension, RegistryAccess registryAccess, Holder<DimensionType> dimensionTypeRegistration, boolean isClientSide, boolean isDebug, long biomeZoomSeed, int maxChainedNeighborUpdates) {
+        super(levelData, dimension, registryAccess, dimensionTypeRegistration, isClientSide, isDebug, biomeZoomSeed, maxChainedNeighborUpdates);
     }
 
     @Inject(method = "addPlayer", at = @At("HEAD"), cancellable = true)
     public void sb$addEntityEvent(ServerPlayer serverPlayer, CallbackInfo ci) {
         EntityJoinLevelEvent event = new EntityJoinLevelEvent(serverPlayer, this);
-        EntityJoinLevelEvent.CALLBACK.invoker().post(event);
+        EntityJoinLevelEvent.EVENT.invoker().post(event);
         if (event.isCanceled())
             ci.cancel();
     }

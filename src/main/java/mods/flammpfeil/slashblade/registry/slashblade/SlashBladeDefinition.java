@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.registry.slashblade;
 
+import cn.sh1rocu.slashblade.mixin.accessor.VanillaRegistriesAccessor;
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -7,20 +8,23 @@ import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.SlashBladeCreativeGroup;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.SlashBladeState;
+import mods.flammpfeil.slashblade.data.builtin.SlashBladeBuiltInRegistry;
 import mods.flammpfeil.slashblade.event.SlashBladeRegistryEvent;
 import mods.flammpfeil.slashblade.init.SBItems;
-import net.minecraft.Util;
 import net.minecraft.core.Holder.Reference;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Unit;
+import net.minecraft.util.Util;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.Unbreakable;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 import java.util.Comparator;
 import java.util.List;
@@ -28,49 +32,52 @@ import java.util.List;
 public class SlashBladeDefinition {
 
     public static final Codec<SlashBladeDefinition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    ResourceLocation.CODEC.optionalFieldOf("item", SlashBlade.prefix("slashblade"))
+                    Identifier.CODEC.optionalFieldOf("item", SlashBlade.prefix("slashblade"))
                             .forGetter(SlashBladeDefinition::getItemName),
-                    ResourceLocation.CODEC.fieldOf("name").forGetter(SlashBladeDefinition::getName),
+                    Identifier.CODEC.fieldOf("name").forGetter(SlashBladeDefinition::getName),
                     RenderDefinition.CODEC.fieldOf("render").forGetter(SlashBladeDefinition::getRenderDefinition),
                     PropertiesDefinition.CODEC.fieldOf("properties").forGetter(SlashBladeDefinition::getStateDefinition),
                     EnchantmentDefinition.CODEC.listOf().optionalFieldOf("enchantments", Lists.newArrayList())
                             .forGetter(SlashBladeDefinition::getEnchantments),
-                    ResourceLocation.CODEC.optionalFieldOf("creativeGroup", BuiltInRegistries.CREATIVE_MODE_TAB.getKey(SlashBladeCreativeGroup.SLASHBLADE_GROUP))
+                    Identifier.CODEC.optionalFieldOf("creativeGroup", BuiltInRegistries.CREATIVE_MODE_TAB.getKey(SlashBladeCreativeGroup.SLASHBLADE_GROUP))
                             .forGetter(SlashBladeDefinition::getCreativeGroup))
             .apply(instance, SlashBladeDefinition::new));
 
     public static final ResourceKey<Registry<SlashBladeDefinition>> REGISTRY_KEY = ResourceKey
             .createRegistryKey(SlashBlade.prefix("named_blades"));
 
-    private final ResourceLocation item;
-    private final ResourceLocation name;
+    public static final HolderLookup.Provider ACCESS = VanillaRegistriesAccessor.sb$getBUILDER().add(REGISTRY_KEY, SlashBladeBuiltInRegistry::registerAll)
+            .build(RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY));
+
+    private final Identifier item;
+    private final Identifier name;
     private final RenderDefinition renderDefinition;
     private final PropertiesDefinition stateDefinition;
     private final List<EnchantmentDefinition> enchantments;
 
-    private final ResourceLocation creativeGroup;
+    private final Identifier creativeGroup;
 
-    public SlashBladeDefinition(ResourceLocation name, RenderDefinition renderDefinition,
+    public SlashBladeDefinition(Identifier name, RenderDefinition renderDefinition,
                                 PropertiesDefinition stateDefinition, List<EnchantmentDefinition> enchantments) {
         this(SlashBlade.prefix("slashblade"), name, renderDefinition, stateDefinition, enchantments,
                 BuiltInRegistries.CREATIVE_MODE_TAB.getKey(SlashBladeCreativeGroup.SLASHBLADE_GROUP));
     }
 
-    public SlashBladeDefinition(ResourceLocation name, RenderDefinition renderDefinition,
+    public SlashBladeDefinition(Identifier name, RenderDefinition renderDefinition,
                                 PropertiesDefinition stateDefinition, List<EnchantmentDefinition> enchantments,
-                                ResourceLocation creativeGroup) {
+                                Identifier creativeGroup) {
         this(SlashBlade.prefix("slashblade"), name, renderDefinition, stateDefinition, enchantments, creativeGroup);
     }
 
-    public SlashBladeDefinition(ResourceLocation item, ResourceLocation name, RenderDefinition renderDefinition,
+    public SlashBladeDefinition(Identifier item, Identifier name, RenderDefinition renderDefinition,
                                 PropertiesDefinition stateDefinition, List<EnchantmentDefinition> enchantments) {
         this(item, name, renderDefinition, stateDefinition, enchantments,
                 BuiltInRegistries.CREATIVE_MODE_TAB.getKey(SlashBladeCreativeGroup.SLASHBLADE_GROUP));
     }
 
-    public SlashBladeDefinition(ResourceLocation item, ResourceLocation name, RenderDefinition renderDefinition,
+    public SlashBladeDefinition(Identifier item, Identifier name, RenderDefinition renderDefinition,
                                 PropertiesDefinition stateDefinition, List<EnchantmentDefinition> enchantments,
-                                ResourceLocation creativeGroup) {
+                                Identifier creativeGroup) {
         this.item = item;
         this.name = name;
         this.renderDefinition = renderDefinition;
@@ -79,11 +86,11 @@ public class SlashBladeDefinition {
         this.creativeGroup = creativeGroup;
     }
 
-    public ResourceLocation getItemName() {
+    public Identifier getItemName() {
         return item;
     }
 
-    public ResourceLocation getName() {
+    public Identifier getName() {
         return name;
     }
 
@@ -144,15 +151,13 @@ public class SlashBladeDefinition {
         if (!this.getName().equals(SlashBlade.prefix("none")))
             state.setTranslationKey(this.getTranslationKey());
 
-        var lookup = access.lookupOrThrow(Registries.ENCHANTMENT);
         for (var instance : this.enchantments) {
-            var key = ResourceKey.create(Registries.ENCHANTMENT, instance.getEnchantmentID());
-            var enchantment = lookup.getOrThrow(key);
+            var enchantment = instance.getEnchantment();
             result.enchant(enchantment, instance.getEnchantmentLevel());
 
         }
         if (this.stateDefinition.isUnbreakable())
-            result.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
+            result.set(DataComponents.UNBREAKABLE, Unit.INSTANCE);
         var postRegistry = new SlashBladeRegistryEvent.Post(this, result);
         SlashBladeRegistryEvent.POST.invoker().onPost(postRegistry);
         return postRegistry.getBlade();
@@ -160,12 +165,12 @@ public class SlashBladeDefinition {
 
     public Item getItem() {
         if (BuiltInRegistries.ITEM.containsKey(this.item))
-            return BuiltInRegistries.ITEM.get(this.item);
+            return BuiltInRegistries.ITEM.getValue(this.item);
 
         return SBItems.SLASHBLADE;
     }
 
-    public ResourceLocation getCreativeGroup() {
+    public Identifier getCreativeGroup() {
         return creativeGroup;
     }
 
@@ -175,8 +180,8 @@ public class SlashBladeDefinition {
         @Override
         public int compare(Reference<SlashBladeDefinition> left, Reference<SlashBladeDefinition> right) {
 
-            ResourceLocation leftKey = left.key().location();
-            ResourceLocation rightKey = right.key().location();
+            Identifier leftKey = left.key().identifier();
+            Identifier rightKey = right.key().identifier();
             boolean checkSame = leftKey.getNamespace().equalsIgnoreCase(rightKey.getNamespace());
             if (!checkSame) {
                 if (leftKey.getNamespace().equalsIgnoreCase(SlashBlade.MODID))
