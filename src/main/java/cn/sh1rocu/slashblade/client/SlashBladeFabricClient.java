@@ -13,7 +13,6 @@ import mods.flammpfeil.slashblade.event.handler.MoveInputHandler;
 import mods.flammpfeil.slashblade.init.SBEntityTypes;
 import mods.flammpfeil.slashblade.network.NetworkManager;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.model.loading.v1.UnbakedModelDeserializer;
@@ -27,10 +26,8 @@ import net.minecraft.server.packs.PackType;
 public class SlashBladeFabricClient implements ClientModInitializer, ModelLoadingPlugin {
     @Override
     public void onInitializeClient() {
-        ClientLifecycleEvents.CLIENT_STARTED.register((client) -> {
-            UnbakedModelDeserializer.register(ObjLoader.ID, ObjLoader.INSTANCE);
-            ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(ObjLoader.ID, ObjLoader.INSTANCE);
-        });
+        UnbakedModelDeserializer.register(ObjLoader.ID, ObjLoader.INSTANCE);
+        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(ObjLoader.ID, ObjLoader.INSTANCE);
         ClientRecipeSynchronizedEvent.EVENT.register(ClientRecipeEvent::onRecipeReceived);
         ModelLoadingPlugin.register(this);
         PreloadedModelEvent.registerResourceLoaders();

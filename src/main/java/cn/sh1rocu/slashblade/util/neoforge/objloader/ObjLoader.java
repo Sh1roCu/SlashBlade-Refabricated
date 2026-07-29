@@ -10,6 +10,7 @@ import cn.sh1rocu.slashblade.util.neoforge.objloader.model.obj.ObjGeometry;
 import cn.sh1rocu.slashblade.util.neoforge.objloader.model.obj.ObjMaterialLibrary;
 import cn.sh1rocu.slashblade.util.neoforge.objloader.model.obj.ObjModel;
 import cn.sh1rocu.slashblade.util.neoforge.objloader.model.obj.ObjTokenizer;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
@@ -26,6 +27,7 @@ import net.minecraft.util.GsonHelper;
 
 import java.io.FileNotFoundException;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * A loader for {@link ObjModel OBJ models}.
@@ -41,7 +43,7 @@ public class ObjLoader implements UnbakedModelDeserializer, ResourceManagerReloa
     private final Map<ObjGeometry.Settings, ObjGeometry> geometryCache = Maps.newConcurrentMap();
     private final Map<Identifier, ObjMaterialLibrary> materialCache = Maps.newConcurrentMap();
 
-    private final ResourceManager manager = Minecraft.getInstance().getResourceManager();
+    private final Supplier<ResourceManager> manager = Suppliers.memoize(() -> Minecraft.getInstance().getResourceManager());
 
     @Override
     public void onResourceManagerReload(ResourceManager resourceManager) {
@@ -69,7 +71,7 @@ public class ObjLoader implements UnbakedModelDeserializer, ResourceManagerReloa
 
     public ObjGeometry loadGeometry(ObjGeometry.Settings settings) {
         return geometryCache.computeIfAbsent(settings, (data) -> {
-            Resource resource = manager.getResource(settings.modelLocation()).orElseThrow();
+            Resource resource = manager.get().getResource(settings.modelLocation()).orElseThrow();
             try (ObjTokenizer tokenizer = new ObjTokenizer(resource.open())) {
                 return ObjGeometry.parse(tokenizer, data);
             } catch (FileNotFoundException e) {
@@ -82,7 +84,7 @@ public class ObjLoader implements UnbakedModelDeserializer, ResourceManagerReloa
 
     public ObjMaterialLibrary loadMaterialLibrary(Identifier materialLocation) {
         return materialCache.computeIfAbsent(materialLocation, (location) -> {
-            Resource resource = manager.getResource(location).orElseThrow();
+            Resource resource = manager.get().getResource(location).orElseThrow();
             try (ObjTokenizer rdr = new ObjTokenizer(resource.open())) {
                 return new ObjMaterialLibrary(rdr);
             } catch (FileNotFoundException e) {
