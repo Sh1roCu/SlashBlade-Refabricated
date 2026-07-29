@@ -40,7 +40,7 @@ public class SummonedSwordRenderer<T extends EntityAbstractSummonedSword> extend
 
     @Override
     public void extractRenderState(T entity, SummonedSwordRenderState state, float partialTicks) {
-        super.extractRenderState(entity, state, state.sb$partialTick());
+        super.extractRenderState(entity, state, partialTicks);
         Entity hits = entity.getHitEntity();
         boolean hasHitEntity = hits != null;
         state.hasHitEntity = hasHitEntity;
@@ -57,7 +57,6 @@ public class SummonedSwordRenderer<T extends EntityAbstractSummonedSword> extend
         state.offsetYaw = entity.getOffsetYaw();
         state.modelLoc = entity.getModelLoc();
         state.textureLoc = getTextureLocation(entity);
-
     }
 
     @Override

@@ -40,7 +40,7 @@ public class SlashEffectRenderer<T extends EntitySlashEffect> extends EntityRend
 
     @Override
     public void extractRenderState(T entity, SlashEffectRenderState state, float partialTicks) {
-        super.extractRenderState(entity, state, state.sb$partialTick());
+        super.extractRenderState(entity, state, partialTicks);
         state.lifetime = entity.getLifetime();
         state.tickCount = entity.tickCount;
         state.yRotO = entity.yRotO;
