@@ -22,16 +22,16 @@ public class EnchantmentDefinition {
             EnchantmentDefinition::new
     );
 
-    private final Holder<Enchantment> enchantmentHolder;
+    private final Holder<Enchantment> holder;
     private final int lvl;
 
     public EnchantmentDefinition(Holder<Enchantment> enchantment, int level) {
-        this.enchantmentHolder = enchantment;
+        this.holder = enchantment;
         this.lvl = level;
     }
 
     public Holder<Enchantment> getEnchantment() {
-        return enchantmentHolder;
+        return holder;
     }
 
     public int getEnchantmentLevel() {

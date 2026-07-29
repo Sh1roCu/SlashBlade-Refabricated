@@ -5,16 +5,15 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
+import mods.flammpfeil.slashblade.event.handler.RegistryHandler;
 import mods.flammpfeil.slashblade.init.SBItems;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import mods.flammpfeil.slashblade.registry.slashblade.SlashBladeDefinition;
 import net.fabricmc.fabric.api.item.v1.EnchantingContext;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
@@ -61,8 +60,7 @@ public record SlashBladeSmithingRecipe(Identifier outputBlade, Ingredient templa
         ItemStack result = SlashBladeSmithingRecipe.getResultBlade(outputBlade);
 
         if (!BuiltInRegistries.ITEM.getKey(result.getItem()).equals(outputBlade)) {
-            result = SlashBladeDefinition.ACCESS.lookupOrThrow(SlashBladeDefinition.REGISTRY_KEY).getOrThrow(ResourceKey.create(SlashBladeDefinition.REGISTRY_KEY, outputBlade))
-                    .value().getBlade(SlashBladeFabric.SERVER_ACCESS);
+            result = RegistryHandler.DEFINITIONS.get(outputBlade).getBlade();
         }
 
         return result;

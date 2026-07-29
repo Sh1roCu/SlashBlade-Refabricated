@@ -1,6 +1,7 @@
 package mods.flammpfeil.slashblade.registry.slashblade;
 
 import cn.sh1rocu.slashblade.mixin.accessor.VanillaRegistriesAccessor;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -15,7 +16,6 @@ import net.minecraft.core.Holder.Reference;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -24,10 +24,10 @@ import net.minecraft.util.Unit;
 import net.minecraft.util.Util;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantments;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class SlashBladeDefinition {
 
@@ -45,9 +45,6 @@ public class SlashBladeDefinition {
 
     public static final ResourceKey<Registry<SlashBladeDefinition>> REGISTRY_KEY = ResourceKey
             .createRegistryKey(SlashBlade.prefix("named_blades"));
-
-    public static final HolderLookup.Provider ACCESS = VanillaRegistriesAccessor.sb$getBUILDER().add(REGISTRY_KEY, SlashBladeBuiltInRegistry::registerAll)
-            .build(RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY));
 
     private final Identifier item;
     private final Identifier name;
@@ -110,11 +107,11 @@ public class SlashBladeDefinition {
         return enchantments;
     }
 
-    public ItemStack getBlade(HolderLookup.Provider access) {
-        return getBlade(getItem(), access);
+    public ItemStack getBlade() {
+        return getBlade(getItem());
     }
 
-    public ItemStack getBlade(Item bladeItem, HolderLookup.Provider access) {
+    public ItemStack getBlade(Item bladeItem) {
         SlashBladeRegistryEvent.Pre event = new SlashBladeRegistryEvent.Pre(this);
         SlashBladeRegistryEvent.PRE.invoker().onPre(event);
         if (event.isCanceled())

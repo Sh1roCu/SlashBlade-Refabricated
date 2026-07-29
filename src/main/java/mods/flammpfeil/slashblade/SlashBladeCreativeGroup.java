@@ -72,7 +72,7 @@ public class SlashBladeCreativeGroup {
                     if (!Objects.equals(BuiltInRegistries.CREATIVE_MODE_TAB.getKey(group), entry.value().getCreativeGroup()))
                         return;
 
-                    var blade = entry.value().getBlade(entries.getContext().holders());
+                    var blade = entry.value().getBlade();
                     if (!blade.isEmpty())
                         entries.accept(blade);
                 });
@@ -82,7 +82,7 @@ public class SlashBladeCreativeGroup {
     private static void fillBlades(CreativeModeTab.ItemDisplayParameters features, CreativeModeTab.Output output) {
         SlashBlade.getSlashBladeDefinitionRegistry(features.holders()).listElements()
                 .sorted(SlashBladeDefinition.COMPARATOR).forEach(entry -> {
-                    var blade = entry.value().getBlade(features.holders());
+                    var blade = entry.value().getBlade();
                     if (!blade.isEmpty())
                         output.accept(blade);
                 });

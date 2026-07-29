@@ -11,7 +11,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 
 public class RecipeSerializerRegistry {
     public static final RecipeSerializer<SlashBladeShapedRecipe> SLASHBLADE_SHAPED = register("shaped_blade", SlashBladeShapedRecipe.SERIALIZER);
-    public static final RecipeType<SlashBladeShapedRecipe> SLASHBLADE_SHAPED_TYPE = register("shaped_blade", simple(SlashBlade.prefix("shaped_blade")));
+    public static final RecipeType<CraftingRecipe> SLASHBLADE_SHAPED_TYPE = register("shaped_blade", simple(SlashBlade.prefix("shaped_blade")));
 
     public static final RecipeSerializer<ProudsoulShapelessRecipe> PROUDSOUL_RECIPE = register("proudsoul", ProudsoulShapelessRecipe.SERIALIZER);
 

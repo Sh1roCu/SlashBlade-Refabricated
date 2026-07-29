@@ -17,6 +17,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.model.loading.v1.UnbakedModelDeserializer;
+import net.fabricmc.fabric.api.client.recipe.v1.sync.ClientRecipeSynchronizedEvent;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityRenderLayerRegistrationCallback;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.client.renderer.entity.EntityRenderers;
@@ -26,17 +27,17 @@ import net.minecraft.server.packs.PackType;
 public class SlashBladeFabricClient implements ClientModInitializer, ModelLoadingPlugin {
     @Override
     public void onInitializeClient() {
+        ClientLifecycleEvents.CLIENT_STARTED.register((client) -> {
+            UnbakedModelDeserializer.register(ObjLoader.ID, ObjLoader.INSTANCE);
+            ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(ObjLoader.ID, ObjLoader.INSTANCE);
+        });
+        ClientRecipeSynchronizedEvent.EVENT.register(ClientRecipeEvent::onRecipeReceived);
         ModelLoadingPlugin.register(this);
         PreloadedModelEvent.registerResourceLoaders();
         NetworkManager.registerClientReceivers();
         regisetEntityRenderers();
         registerSpecialModelRenderers();
         ClientHandler.doClientStuff();
-
-        ClientLifecycleEvents.CLIENT_STARTED.register((client) -> {
-            UnbakedModelDeserializer.register(ObjLoader.ID, ObjLoader.INSTANCE);
-            ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(ObjLoader.ID, ObjLoader.INSTANCE);
-        });
 
         IrisCompat.init();
 

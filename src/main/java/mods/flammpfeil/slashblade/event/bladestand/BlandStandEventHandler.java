@@ -67,7 +67,7 @@ public class BlandStandEventHandler {
         if (!in.test(event.getBlade())) {
             return;
         }
-        event.getBladeStand().setItem(Objects.requireNonNull(slashBladeDefinitionRegistry.getValue(SlashBladeBuiltInRegistry.KOSEKI)).getBlade(event.getBladeStand().registryAccess()));
+        event.getBladeStand().setItem(Objects.requireNonNull(slashBladeDefinitionRegistry.getValue(SlashBladeBuiltInRegistry.KOSEKI)).getBlade());
         event.setCanceled(true);
     }
 

@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade.recipe;
 import cn.sh1rocu.slashblade.SlashBladeFabric;
 import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
+import mods.flammpfeil.slashblade.event.handler.RegistryHandler;
 import mods.flammpfeil.slashblade.init.SBItems;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import mods.flammpfeil.slashblade.registry.slashblade.SlashBladeDefinition;
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class SlashBladeShapedRecipe extends NormalCraftingRecipe {
+public class SlashBladeShapedRecipe implements CraftingRecipe {
     public static final RecipeSerializer<SlashBladeShapedRecipe> SERIALIZER = new RecipeSerializer<>(
             SlashBladeShapedRecipeSerializer.CODEC, SlashBladeShapedRecipeSerializer.STREAM_CODEC
     );
@@ -41,7 +42,6 @@ public class SlashBladeShapedRecipe extends NormalCraftingRecipe {
     public SlashBladeShapedRecipe(String group,
                                   CraftingBookCategory craftingBookCategory,
                                   ShapedRecipePattern shapedRecipePattern, ItemStackTemplate itemStack, boolean showNotification, Identifier blade) {
-        super(new CommonInfo(showNotification), new CraftingBookInfo(craftingBookCategory, group));
         this.group = group;
         this.category = craftingBookCategory;
         this.pattern = shapedRecipePattern;
@@ -50,8 +50,9 @@ public class SlashBladeShapedRecipe extends NormalCraftingRecipe {
         this.outputBlade = blade;
     }
 
-    public String getGroup() {
-        return this.group;
+    @Override
+    public RecipeType<CraftingRecipe> getType() {
+        return RecipeSerializerRegistry.SLASHBLADE_SHAPED_TYPE;
     }
 
     @Override
@@ -60,8 +61,23 @@ public class SlashBladeShapedRecipe extends NormalCraftingRecipe {
     }
 
     @Override
-    protected PlacementInfo createPlacementInfo() {
+    public PlacementInfo placementInfo() {
         return PlacementInfo.createFromOptionals(this.pattern.ingredients());
+    }
+
+    @Override
+    public CraftingBookCategory category() {
+        return category;
+    }
+
+    @Override
+    public boolean showNotification() {
+        return showNotification;
+    }
+
+    @Override
+    public String group() {
+        return group;
     }
 
     @Override
@@ -101,8 +117,7 @@ public class SlashBladeShapedRecipe extends NormalCraftingRecipe {
         ItemStack result = SlashBladeShapedRecipe.getResultBlade(this.getOutputBlade());
 
         if (!BuiltInRegistries.ITEM.getKey(result.getItem()).equals(getOutputBlade())) {
-            result = SlashBladeDefinition.ACCESS.lookupOrThrow(SlashBladeDefinition.REGISTRY_KEY).getOrThrow(getOutputBladeKey())
-                    .value().getBlade(SlashBladeFabric.SERVER_ACCESS);
+            result = RegistryHandler.DEFINITIONS.get(getOutputBlade()).getBlade();
         }
 
         return result;
@@ -110,7 +125,7 @@ public class SlashBladeShapedRecipe extends NormalCraftingRecipe {
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
-        return false;
+        return this.pattern.matches(input);
     }
 
     @Override

@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class SlashBladeShapedRecipeSerializer  {
     public static final MapCodec<SlashBladeShapedRecipe> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            Codec.STRING.optionalFieldOf("group", "").forGetter(SlashBladeShapedRecipe::getGroup),
+            Codec.STRING.optionalFieldOf("group", "").forGetter(SlashBladeShapedRecipe::group),
             CraftingBookCategory.CODEC.fieldOf("category").orElse(CraftingBookCategory.MISC).forGetter(SlashBladeShapedRecipe::category),
             ShapedRecipePattern.MAP_CODEC.forGetter(SlashBladeShapedRecipe::getPattern),
             ItemStackTemplate.CODEC.fieldOf("result").forGetter(recipe -> recipe.result),

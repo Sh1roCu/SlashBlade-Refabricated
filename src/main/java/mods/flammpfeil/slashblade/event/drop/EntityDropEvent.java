@@ -1,8 +1,8 @@
 package mods.flammpfeil.slashblade.event.drop;
 
-import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.entity.BladeItemEntity;
+import mods.flammpfeil.slashblade.event.handler.RegistryHandler;
 import mods.flammpfeil.slashblade.init.SBEntityTypes;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,11 +18,10 @@ import net.minecraft.world.item.enchantment.Enchantments;
 
 public class EntityDropEvent {
     public static void dropBlade(LivingEntity entity, DamageSource source, boolean recentlyHit) {
-        var bladeRegistry = SlashBlade.getSlashBladeDefinitionRegistry(entity.level());
         entity.level().registryAccess().lookupOrThrow(EntityDropEntry.REGISTRY_KEY).forEach(entry -> {
             if (!BuiltInRegistries.ENTITY_TYPE.containsKey(entry.getEntityType()))
                 return;
-            if (!bladeRegistry.containsKey(entry.getBladeName()))
+            if (!RegistryHandler.DEFINITIONS.containsKey(entry.getBladeName()))
                 return;
 
             if (!(source.getEntity() instanceof LivingEntity attacker))
@@ -39,11 +38,11 @@ public class EntityDropEvent {
 
             if (entry.isDropFixedPoint())
                 dropBlade(entity, BuiltInRegistries.ENTITY_TYPE.getValue(entry.getEntityType()),
-                        bladeRegistry.getValue(entry.getBladeName()).getBlade(entity.registryAccess()), resultRate, entry.getDropPoint().x,
+                        RegistryHandler.DEFINITIONS.get(entry.getBladeName()).getBlade(), resultRate, entry.getDropPoint().x,
                         entry.getDropPoint().y, entry.getDropPoint().z);
             else
                 dropBlade(entity, BuiltInRegistries.ENTITY_TYPE.getValue(entry.getEntityType()),
-                        bladeRegistry.getValue(entry.getBladeName()).getBlade(entity.registryAccess()), resultRate, entity.getX(), entity.getY(),
+                        RegistryHandler.DEFINITIONS.get(entry.getBladeName()).getBlade(), resultRate, entity.getX(), entity.getY(),
                         entity.getZ());
         });
 

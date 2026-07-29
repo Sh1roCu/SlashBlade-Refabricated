@@ -25,9 +25,7 @@ public class EntitySpawnEventHandler {
         RandomSource random = event.getLevel().getRandom();
         float difficultyMultiplier = event.getDifficulty().getSpecialMultiplier();
 
-        Registry<SlashBladeDefinition> bladeRegistry = SlashBlade
-                .getSlashBladeDefinitionRegistry(event.getEntity().level());
-        if (!bladeRegistry.containsKey(SlashBladeBuiltInRegistry.SABIGATANA.identifier()))
+        if (!RegistryHandler.DEFINITIONS.containsKey(SlashBladeBuiltInRegistry.SABIGATANA.identifier()))
             return;
 
         float rngResult = random.nextFloat();
@@ -35,10 +33,10 @@ public class EntitySpawnEventHandler {
         if (rngResult < SlashBladeConfig.BROKEN_SABIGATANA_SPAWN_CHANCE.get() * difficultyMultiplier) {
             if (rngResult < SlashBladeConfig.SABIGATANA_SPAWN_CHANCE.get() * difficultyMultiplier) {
                 entity.setItemSlot(EquipmentSlot.MAINHAND,
-                        bladeRegistry.getValue(SlashBladeBuiltInRegistry.SABIGATANA.identifier()).getBlade(event.getEntity().registryAccess()));
+                        RegistryHandler.DEFINITIONS.get(SlashBladeBuiltInRegistry.SABIGATANA.identifier()).getBlade());
             } else {
                 entity.setItemSlot(EquipmentSlot.MAINHAND,
-                        bladeRegistry.getValue(SlashBladeBuiltInRegistry.SABIGATANA_BROKEN.identifier()).getBlade(event.getEntity().registryAccess()));
+                        RegistryHandler.DEFINITIONS.get(SlashBladeBuiltInRegistry.SABIGATANA_BROKEN.identifier()).getBlade());
             }
         }
     }
