@@ -354,7 +354,7 @@ public class EntityJudgementCut extends Projectile implements IShootable {
         // this.world.getEntitiesWithinAABB(LivingEntity.class, axisalignedbb);
 
         list.stream().filter(e -> e instanceof LivingEntity).map(e -> (LivingEntity) e).forEach(e -> {
-            double distanceSq = this.distanceToSqr(e);
+            double distanceSq = TargetSelector.distanceSqrBetweenEntity(this, e);
             if (distanceSq < 9.0D) {
                 double factor = 1.0D - Math.sqrt(distanceSq) / 4.0D;
                 if (e == focusEntity) {

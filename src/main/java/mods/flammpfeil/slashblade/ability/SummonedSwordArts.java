@@ -33,6 +33,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -190,7 +191,7 @@ public class SummonedSwordArts {
                 .filter(input -> input.getCommands().contains(targetCommnad)
                         && (!InputCommand.anyMatch(input.getCommands(), InputCommand.move)
                         || !input.getCommands().contains(InputCommand.SNEAK))
-                        && input.getLastPressTime(targetCommnad) == pressTime)
+                        && Objects.equals(input.getLastPressTime(targetCommnad), pressTime))
                 .isPresent();
 
         if (!inputSucceed)
@@ -205,7 +206,7 @@ public class SummonedSwordArts {
             List<Entity> list = entity.getPassengers().stream()
                     .filter(e -> e instanceof EntitySpiralSwords).toList();
 
-            list.stream().forEach(e -> {
+            list.forEach(e -> {
                 ((EntitySpiralSwords) e).doFire();
             });
         } else {
@@ -241,7 +242,6 @@ public class SummonedSwordArts {
                     ss.setDamage(powerLevel);
                     // force riding
                     ss.startRiding(entity, true, true);
-
                     ss.setDelay(360 / count * i);
 
                     worldIn.addFreshEntity(ss);

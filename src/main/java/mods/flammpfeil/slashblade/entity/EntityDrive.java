@@ -347,8 +347,8 @@ public class EntityDrive extends EntityAbstractSummonedSword {
     }
 
     @Nullable
-    public EntityHitResult getRayTrace(Vec3 p_213866_1_, Vec3 p_213866_2_) {
-        return ProjectileUtil.getEntityHitResult(this.level(), this, p_213866_1_, p_213866_2_,
+    public EntityHitResult getRayTrace(Vec3 from, Vec3 to) {
+        return ProjectileUtil.getEntityHitResult(this.level(), this, from, to,
                 this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0D), (entity) ->
                         !entity.isSpectator() && entity.isAlive() && entity.isPickable()
                                 && (entity != this.getShooter())

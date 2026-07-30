@@ -2,6 +2,7 @@ package mods.flammpfeil.slashblade.entity;
 
 import mods.flammpfeil.slashblade.ability.StunManager;
 import mods.flammpfeil.slashblade.util.KnockBacks;
+import mods.flammpfeil.slashblade.util.TargetSelector;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;

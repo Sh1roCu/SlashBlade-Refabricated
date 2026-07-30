@@ -84,7 +84,7 @@ public class LockOnManager {
                         TargetSelector.lockon, player, player.getBoundingBox().inflate(12.0D, 6.0D, 12.0D));
 
                 foundEntity = entities.stream().map(s -> (Entity) s)
-                        .min(Comparator.comparingDouble(e -> e.distanceToSqr(player)));
+                        .min(Comparator.comparingDouble(e -> TargetSelector.distanceSqrBetweenEntity(player, e)));
             }
 
 //            targetEntity = foundEntity.map(e -> (e instanceof PartEntity) ? ((PartEntity<?>) e).getParent() : e)

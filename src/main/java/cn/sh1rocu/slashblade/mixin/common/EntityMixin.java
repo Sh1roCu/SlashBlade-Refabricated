@@ -1,8 +1,11 @@
 package cn.sh1rocu.slashblade.mixin.common;
 
 import cn.sh1rocu.slashblade.api.extension.EntityExtension;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.spongepowered.asm.mixin.Mixin;
@@ -33,5 +36,23 @@ public abstract class EntityMixin implements EntityExtension {
     @Inject(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;readAdditionalSaveData(Lnet/minecraft/world/level/storage/ValueInput;)V"))
     private void sb$loadPersistentData(ValueInput input, CallbackInfo ci) {
         input.read("NeoForgeData", CompoundTag.CODEC).ifPresent((neoData) -> this.sb$persistentData = neoData);
+    }
+
+    @WrapOperation(
+            method = "startRiding(Lnet/minecraft/world/entity/Entity;ZZ)Z",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/entity/EntityType;canSerialize()Z"
+            )
+    )
+    @SuppressWarnings("ConstantConditions")
+    private boolean sb$allowPlayerToBeRidden(EntityType<?> instance, Operation<Boolean> original) {
+        // 也许不止玩家实体类型在构建时调用了noSave（即canSerialize为false）
+        // 因此这里暂时注释掉玩家类型判断，以防不兼容其他实体
+        if (/*instance == EntityType.PLAYER && */(Entity) (Object) this instanceof mods.flammpfeil.slashblade.entity.Projectile) {
+            return true;
+        } else {
+            return original.call(instance);
+        }
     }
 }

@@ -281,8 +281,9 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
                 delay--;
                 setDelay(delay);
 
-                if (!this.level().isClientSide() && delay < 0)
+                if (!this.level().isClientSide() && delay < 0) {
                     this.burst();
+                }
             }
 
             return;
@@ -309,7 +310,7 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
         }
 
         if (this.inGround && !disallowedHitBlock) {
-            if (this.inBlockState != blockstate && this.level().noCollision(this.getBoundingBox().inflate(0.06D))) {
+            if (!this.inBlockState.equals(blockstate) && this.level().noCollision(this.getBoundingBox().inflate(0.06D))) {
                 // block breaked
                 this.burst();
             } else if (!this.level().isClientSide()) {
@@ -339,46 +340,50 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
 
             while (this.isAlive()) {
                 // todo : replace TargetSelector
-                EntityHitResult entityraytraceresult = this.getRayTrace(positionVec, movedVec);
-                if (entityraytraceresult != null) {
-                    raytraceresult = entityraytraceresult;
+                EntityHitResult entityHit = this.getRayTrace(positionVec, movedVec);
+                if (entityHit != null) {
+                    raytraceresult = entityHit;
                 }
 
-                if (raytraceresult == null)
+                if (raytraceresult == null) {
                     break;
+                }
 
-                if (raytraceresult.getType() == HitResult.Type.ENTITY) {
-                    Entity entity = null;
-                    if (raytraceresult instanceof EntityHitResult) {
-                        entity = ((EntityHitResult) raytraceresult).getEntity();
+                // boolean impactCheck = !net.neoforged.neoforge.event.EventHooks.onProjectileImpact(this, raytraceresult);
+
+                if (raytraceresult.getType() == HitResult.Type.ENTITY /*&& impactCheck*/) {
+                    Entity target = null;
+                    if (raytraceresult instanceof EntityHitResult entityHitResult) {
+                        target = entityHitResult.getEntity();
                     }
                     Entity shooter = this.getShooter();
-                    if (entity instanceof LivingEntity && shooter instanceof LivingEntity && shooter.level() instanceof ServerLevel serverlevel) {
-                        if (!TargetSelector.test.test(serverlevel, (LivingEntity) shooter, (LivingEntity) entity)) {
-                            if (this.alreadyHits == null)
-                                this.alreadyHits = new IntOpenHashSet(5);
-                            this.alreadyHits.add(entity.getId());
+                    if (target instanceof LivingEntity && shooter instanceof LivingEntity && target.level() instanceof ServerLevel serverLevel) {
+                        if (!TargetSelector.test.test(serverLevel, (LivingEntity) shooter, (LivingEntity) target)) {
                             raytraceresult = null;
+                            entityHit = null;
                         }
                     }
                 }
 
-                if (raytraceresult != null && !(disallowedHitBlock && raytraceresult.getType() == HitResult.Type.BLOCK)
-                    /*&& !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)*/) {
+                if (raytraceresult != null
+                        && !(disallowedHitBlock && raytraceresult.getType() == HitResult.Type.BLOCK)
+                       /* && impactCheck*/) {
                     this.onHit(raytraceresult);
-                    // TODO?
-                    // this.hasImpulse = true;
+                    //this.hasImpulse = true;
+                } else if (/*!impactCheck &&*/ entityHit != null) {
+                    Entity cancelledTarget = entityHit.getEntity();
+                    if (this.alreadyHits == null) {
+                        this.alreadyHits = new IntOpenHashSet(5);
+                    }
+                    this.alreadyHits.add(cancelledTarget.getId());
                 }
 
-                if (this.getPierce() <= 0) {
+                if (entityHit == null || this.getPierce() <= 0) {
                     break;
                 }
 
                 raytraceresult = null;
             }
-
-            if (!this.isAlive())
-                return;
 
             motionVec = this.getDeltaMovement();
             double mx = motionVec.x;
@@ -436,9 +441,10 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
             this.applyEffectsFromBlocks();
         }
 
-        if (!this.level().isClientSide() && ticksInGround <= 0 && 100 < this.tickCount && !this.isPassenger()) {
+        if (!this.level().isClientSide() && ticksInGround <= 0 && 100 < this.tickCount) {
             this.remove(RemovalReason.DISCARDED);
         }
+
     }
 
     protected void tryDespawn() {
@@ -614,8 +620,8 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
     }
 
     @Nullable
-    protected EntityHitResult getRayTrace(Vec3 p_213866_1_, Vec3 p_213866_2_) {
-        return ProjectileUtil.getEntityHitResult(this.level(), this, p_213866_1_, p_213866_2_,
+    protected EntityHitResult getRayTrace(Vec3 from, Vec3 to) {
+        return ProjectileUtil.getEntityHitResult(this.level(), this, from, to,
                 this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0D), (entity) ->
                         entity.canBeHitByProjectile() && !entity.isSpectator()
                                 && (entity != this.getShooter() || this.ticksInAir >= 5)
@@ -662,7 +668,7 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
         // this.world.getEntitiesWithinAABB(LivingEntity.class, axisalignedbb);
 
         list.stream().filter(e -> e instanceof LivingEntity).map(e -> (LivingEntity) e).forEach(e -> {
-            double distanceSq = this.distanceToSqr(e);
+            double distanceSq = TargetSelector.distanceSqrBetweenEntity(this, e);
             if (distanceSq < 9.0D) {
                 double factor = 1.0D - Math.sqrt(distanceSq) / 4.0D;
                 if (e == focusEntity) {
