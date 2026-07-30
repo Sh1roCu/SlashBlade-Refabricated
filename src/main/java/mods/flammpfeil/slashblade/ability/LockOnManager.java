@@ -1,6 +1,6 @@
 package mods.flammpfeil.slashblade.ability;
 
-import cn.sh1rocu.slashblade.api.event.RenderTickEvent;
+import cn.sh1rocu.slashblade.api.event.RenderFrameEvent;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import mods.flammpfeil.slashblade.capability.inputstate.CapabilityInputState;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
@@ -99,7 +99,7 @@ public class LockOnManager {
 
     @Environment(EnvType.CLIENT)
     public static class Client {
-        public static void onEntityUpdate(RenderTickEvent.Pre event) {
+        public static void onEntityUpdate(RenderFrameEvent.Pre event) {
             final Minecraft mcinstance = Minecraft.getInstance();
             if (mcinstance.player == null)
                 return;

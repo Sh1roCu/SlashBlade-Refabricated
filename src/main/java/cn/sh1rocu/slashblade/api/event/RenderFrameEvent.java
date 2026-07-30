@@ -4,10 +4,10 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.DeltaTracker;
 
-public class RenderTickEvent extends BaseEvent {
+public class RenderFrameEvent extends BaseEvent {
     private final DeltaTracker.Timer timer;
 
-    public RenderTickEvent(DeltaTracker.Timer timer) {
+    public RenderFrameEvent(DeltaTracker.Timer timer) {
         this.timer = timer;
     }
 
@@ -30,13 +30,13 @@ public class RenderTickEvent extends BaseEvent {
         void onEnd(Post event);
     }
 
-    public static final class Pre extends RenderTickEvent {
+    public static final class Pre extends RenderFrameEvent {
         public Pre(DeltaTracker.Timer timer) {
             super(timer);
         }
     }
 
-    public static final class Post extends RenderTickEvent {
+    public static final class Post extends RenderFrameEvent {
         public Post(DeltaTracker.Timer timer) {
             super(timer);
         }

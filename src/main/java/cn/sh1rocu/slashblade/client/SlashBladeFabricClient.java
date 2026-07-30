@@ -1,7 +1,7 @@
 package cn.sh1rocu.slashblade.client;
 
 import cn.sh1rocu.slashblade.api.event.EntityAddedLayerCallback;
-import cn.sh1rocu.slashblade.api.event.RenderTickEvent;
+import cn.sh1rocu.slashblade.api.event.RenderFrameEvent;
 import cn.sh1rocu.slashblade.api.extension.ItemSlashBladeExtension;
 import mods.flammpfeil.slashblade.ability.LockOnManager;
 import mods.flammpfeil.slashblade.client.ClientHandler;
@@ -37,7 +37,7 @@ public class SlashBladeFabricClient implements ClientModInitializer, ModelLoadin
 
         EntityAddedLayerCallback.EVENT.register(ClientHandler::addLayers);
         ClientTickEvents.END_CLIENT_TICK.register(MoveInputHandler::onPlayerPostTick);
-        RenderTickEvent.START.register(LockOnManager.Client::onEntityUpdate);
+        RenderFrameEvent.START.register(LockOnManager.Client::onEntityUpdate);
         BlockPickCanceller.getInstance().register();
     }
 

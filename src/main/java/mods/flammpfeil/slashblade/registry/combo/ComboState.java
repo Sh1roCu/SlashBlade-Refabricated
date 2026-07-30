@@ -1,5 +1,6 @@
 package mods.flammpfeil.slashblade.registry.combo;
 
+import cn.sh1rocu.slashblade.api.extension.EntityExtension;
 import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.ability.ArrowReflector;
@@ -12,14 +13,17 @@ import mods.flammpfeil.slashblade.util.AdvancementHelper;
 import mods.flammpfeil.slashblade.util.TimeValueHelper;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -28,6 +32,8 @@ import java.util.function.Function;
 public class ComboState {
     public static final ResourceKey<Registry<ComboState>> REGISTRY_KEY = ResourceKey
             .createRegistryKey(ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID, "combo_state"));
+
+    public static final TimeLineTickAction EMPTY_TICK_ACTION = TimeLineTickAction.getBuilder().build();
 
     private final ResourceLocation motionLoc;
 
@@ -199,8 +205,6 @@ public class ComboState {
     }
 
     public static class TimeLineTickAction implements Consumer<LivingEntity> {
-        long offset = -1;
-
         public static TimeLineTickActionBuilder getBuilder() {
             return new TimeLineTickActionBuilder();
         }
@@ -218,29 +222,42 @@ public class ComboState {
             }
         }
 
-        Map<Integer, Consumer<LivingEntity>> timeLine = Maps.newHashMap();
+        private final Map<Integer, Consumer<LivingEntity>> timeLine;
+
+        public static final String LAST_PROCESSED_TICK_KEY = SlashBlade.MODID + ".lastProcessedTick";
 
         TimeLineTickAction(Map<Integer, Consumer<LivingEntity>> timeLine) {
-            this.timeLine.putAll(timeLine);
-
+            this.timeLine = Maps.newHashMap(timeLine);
         }
 
         @Override
         public void accept(LivingEntity livingEntity) {
-            long elapsed = getElapsed(livingEntity);
+            int elapsed = (int) getElapsed(livingEntity);
 
-            if (offset < 0) {
-                offset = elapsed;
-            }
-            long adjustElapsed = elapsed -= offset;
-            if (adjustElapsed < 0) {
-                offset = elapsed;
-                adjustElapsed = 0;
+            CompoundTag persistentData = ((EntityExtension) livingEntity).sb$getPersistentData();
+
+            if (persistentData.getInt(LAST_PROCESSED_TICK_KEY) == elapsed) {
+                return;
             }
 
-            Consumer<LivingEntity> action = timeLine.getOrDefault((int) adjustElapsed, this::defaultConsumer);
+            persistentData.putInt(LAST_PROCESSED_TICK_KEY, elapsed);
 
-            action.accept(livingEntity);
+            Consumer<LivingEntity> action = timeLine.get(elapsed);
+            if (action != null) {
+                action.accept(livingEntity);
+            }
+        }
+
+        @Override
+        public @NotNull Consumer<LivingEntity> andThen(@NotNull Consumer<? super LivingEntity> after) {
+            Objects.requireNonNull(after);
+            return (LivingEntity livingEntity) -> {
+                CompoundTag persistentData = ((EntityExtension) livingEntity).sb$getPersistentData();
+                int lastProcessedTick = persistentData.getInt(LAST_PROCESSED_TICK_KEY);
+                accept(livingEntity);
+                persistentData.putInt(LAST_PROCESSED_TICK_KEY, lastProcessedTick);
+                after.accept(livingEntity);
+            };
         }
 
         void defaultConsumer(LivingEntity entityIn) {
@@ -279,10 +296,9 @@ public class ComboState {
             this.loop = false;
             this.aerial = false;
             this.next = entity -> SlashBlade.prefix("none");
-            this.tickAction = ArrowReflector::doTicks;
+            this.tickAction = EMPTY_TICK_ACTION.andThen(ArrowReflector::doTicks);
             this.releaseAction = (u, e) -> SlashArts.ArtsType.Fail;
-            this.holdAction = (a) -> {
-            };
+            this.holdAction = EMPTY_TICK_ACTION;
             this.hitEffect = (a, b) -> {
             };
             this.clickAction = (user) -> {

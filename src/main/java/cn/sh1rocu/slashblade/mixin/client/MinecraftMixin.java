@@ -1,7 +1,8 @@
 package cn.sh1rocu.slashblade.mixin.client;
 
-import cn.sh1rocu.slashblade.api.event.RenderTickEvent;
+import cn.sh1rocu.slashblade.api.event.RenderFrameEvent;
 import cn.sh1rocu.slashblade.util.ClientHooks;
+import mods.flammpfeil.slashblade.event.handler.BlockPickCanceller;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
@@ -14,6 +15,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mixin(Minecraft.class)
 public class MinecraftMixin {
@@ -29,33 +32,21 @@ public class MinecraftMixin {
     @Nullable
     public LocalPlayer player;
 
-    @Inject(
-            method = "runTick",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V",
-                    ordinal = 0
-            )
-    )
+    @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;render(Lnet/minecraft/client/DeltaTracker;Z)V"))
     private void sb$onRenderStart(CallbackInfo ci) {
-        RenderTickEvent.START.invoker().onStart(new RenderTickEvent.Pre(this.timer));
+        RenderFrameEvent.START.invoker().onStart(new RenderFrameEvent.Pre(this.timer));
     }
 
-    @Inject(
-            method = "runTick",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/util/profiling/ProfilerFiller;pop()V",
-                    ordinal = 4
-            )
-    )
+    @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;render(Lnet/minecraft/client/DeltaTracker;Z)V", shift = At.Shift.AFTER))
     private void sb$onRenderEnd(CallbackInfo ci) {
-        RenderTickEvent.END.invoker().onEnd(new RenderTickEvent.Post(this.timer));
+        RenderFrameEvent.END.invoker().onEnd(new RenderFrameEvent.Post(this.timer));
     }
 
     @Inject(method = "pickBlock", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Abilities;instabuild:Z", ordinal = 0), cancellable = true)
     private void sb$inputClickEvent(CallbackInfo ci) {
-        if (ClientHooks.onClickInput(2, this.options.keyPickItem, InteractionHand.MAIN_HAND).isCanceled())
+        AtomicBoolean canceled = new AtomicBoolean(false);
+        BlockPickCanceller.onBlockPick(canceled);
+        if (canceled.get())
             ci.cancel();
     }
 }
