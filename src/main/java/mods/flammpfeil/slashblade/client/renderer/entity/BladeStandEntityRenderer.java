@@ -8,15 +8,12 @@ import mods.flammpfeil.slashblade.client.renderer.util.MSAutoCloser;
 import mods.flammpfeil.slashblade.entity.BladeStandEntity;
 import mods.flammpfeil.slashblade.init.SBItems;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.block.BlockModelResolver;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.ItemFrameRenderer;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -77,7 +74,8 @@ public class BladeStandEntityRenderer extends EntityRenderer<BladeStandEntity, B
     public void doRender(BladeStandEntityRenderState state, PoseStack matrixStackIn, SubmitNodeCollector submitNodeCollector) {
         try (MSAutoCloser msac = MSAutoCloser.pushMatrix(matrixStackIn)) {
             BlockPos blockpos = state.blockPos;
-            Vec3 vec = Vec3.upFromBottomCenterOf(blockpos, 0.75).subtract(state.position);
+            //Vec3 vec = Vec3.upFromBottomCenterOf(blockpos, 0.75).subtract(state.position);
+            Vec3 vec = Vec3.atCenterOf(blockpos).subtract(state.position);
             matrixStackIn.translate(vec.x, vec.y, vec.z);
             matrixStackIn.mulPose(Axis.XP.rotationDegrees(state.xRot));
             matrixStackIn.mulPose(Axis.YP.rotationDegrees(180.0F - state.yRot));
@@ -98,10 +96,10 @@ public class BladeStandEntityRenderer extends EntityRenderer<BladeStandEntity, B
                     matrixStackIn.mulPose(Axis.XP.rotationDegrees(-90f));
                 } else if (type == SBItems.BLADESTAND_1_W) {
                     matrixStackIn.mulPose(Axis.YP.rotationDegrees(180f));
-                    matrixStackIn.translate(0, 0, -0.15f);
+                    //matrixStackIn.translate(0, 0, -0.15f);
                 } else if (type == SBItems.BLADESTAND_2_W) {
                     matrixStackIn.mulPose(Axis.YP.rotationDegrees(180f));
-                    matrixStackIn.translate(0, 0, -0.15f);
+                    //matrixStackIn.translate(0, 0, -0.15f);
                 }
 
                 // stand render
