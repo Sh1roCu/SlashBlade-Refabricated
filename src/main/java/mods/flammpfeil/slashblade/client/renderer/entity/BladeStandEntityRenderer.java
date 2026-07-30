@@ -8,30 +8,36 @@ import mods.flammpfeil.slashblade.client.renderer.util.MSAutoCloser;
 import mods.flammpfeil.slashblade.entity.BladeStandEntity;
 import mods.flammpfeil.slashblade.init.SBItems;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockModelResolver;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemFrameRenderer;
-import net.minecraft.client.renderer.entity.state.ItemFrameRenderState;
+import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 
-public class BladeStandEntityRenderer extends ItemFrameRenderer<BladeStandEntity> {
+public class BladeStandEntityRenderer extends EntityRenderer<BladeStandEntity, BladeStandEntityRenderState> {
+    private final ItemModelResolver itemModelResolver;
+
     public BladeStandEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
-
+        this.itemModelResolver = context.getItemModelResolver();
     }
 
     @Override
-    public ItemFrameRenderState createRenderState() {
+    public BladeStandEntityRenderState createRenderState() {
         return new BladeStandEntityRenderState();
     }
 
     @Override
-    public void extractRenderState(BladeStandEntity entity, ItemFrameRenderState state, float partialTicks) {
+    public void extractRenderState(BladeStandEntity entity, BladeStandEntityRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
 
         if (entity.currentTypeStack.isEmpty()) {
@@ -43,21 +49,29 @@ public class BladeStandEntityRenderer extends ItemFrameRenderer<BladeStandEntity
             ((IEntityRepresentation) (Object) entity.currentTypeStack).sb$setEntityRepresentation(entity);
         }
 
-        if (state instanceof BladeStandEntityRenderState bState) {
-            bState.blockPos = entity.getPos();
-            bState.position = entity.position();
-            bState.xRot = entity.getXRot();
-            bState.yRot = entity.getYRot();
-            bState.rotation = entity.getRotation();
-            bState.currentType = entity.currentType;
-        }
+        state.blockPos = entity.getPos();
+        state.position = entity.position();
+        state.xRot = entity.getXRot();
+        state.yRot = entity.getYRot();
+        state.rotation = entity.getRotation();
+        state.currentType = entity.currentType;
+        this.itemModelResolver.updateForNonLiving(
+                state.bladeStand,
+                entity.currentTypeStack,
+                ItemDisplayContext.FIXED,
+                entity
+        );
+        this.itemModelResolver.updateForNonLiving(
+                state.blade,
+                entity.getItem(),
+                ItemDisplayContext.FIXED,
+                entity
+        );
     }
 
     @Override
-    public void submit(ItemFrameRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
-        if (state instanceof BladeStandEntityRenderState bState) {
-            doRender(bState, poseStack, submitNodeCollector);
-        }
+    public void submit(BladeStandEntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
+        doRender(state, poseStack, submitNodeCollector);
     }
 
     public void doRender(BladeStandEntityRenderState state, PoseStack matrixStackIn, SubmitNodeCollector submitNodeCollector) {
@@ -91,12 +105,12 @@ public class BladeStandEntityRenderer extends ItemFrameRenderer<BladeStandEntity
                 }
 
                 // stand render
-                if (!state.frameModel.isEmpty()) {
+                if (!state.bladeStand.isEmpty()) {
                     matrixStackIn.pushPose();
                     matrixStackIn.mulPose(Axis.XP.rotationDegrees(90));
                     matrixStackIn.scale(0.5f, 0.5f, 0.5f);
                     matrixStackIn.translate(0, 0, 0.44);
-                    state.frameModel.submitWithZOffset(matrixStackIn, submitNodeCollector, state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
+                    state.bladeStand.submit(matrixStackIn, submitNodeCollector, state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
                     matrixStackIn.popPose();
                 }
 
@@ -105,9 +119,9 @@ public class BladeStandEntityRenderer extends ItemFrameRenderer<BladeStandEntity
                 } else if (state.currentType == SBItems.BLADESTAND_1) {
                 }
                 // blade render
-                if (!state.item.isEmpty()) {
+                if (!state.blade.isEmpty()) {
                     matrixStackIn.mulPose(Axis.YP.rotationDegrees(-180f));
-                    state.item.submit(matrixStackIn, submitNodeCollector, state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
+                    state.blade.submit(matrixStackIn, submitNodeCollector, state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
                 }
 
             }
