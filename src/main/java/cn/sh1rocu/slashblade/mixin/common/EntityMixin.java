@@ -46,7 +46,7 @@ public abstract class EntityMixin implements EntityExtension {
             )
     )
     @SuppressWarnings("ConstantConditions")
-    private boolean sb$allowPlayerToBeRidden(EntityType<?> instance, Operation<Boolean> original) {
+    private boolean sb$allowModProjectileToRide(EntityType<?> instance, Operation<Boolean> original) {
         // 也许不止玩家实体类型在构建时调用了noSave（即canSerialize为false）
         // 因此这里暂时注释掉玩家类型判断，以防不兼容其他实体
         if (/*instance == EntityType.PLAYER && */(Entity) (Object) this instanceof mods.flammpfeil.slashblade.entity.Projectile) {
