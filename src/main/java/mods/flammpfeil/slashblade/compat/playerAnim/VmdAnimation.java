@@ -66,17 +66,17 @@ public class VmdAnimation implements IAnimation {
 
     static private Map<String, String> initNamemap() {
         Map<String, String> map = Maps.newHashMap();
-        map.put("leftArm", "left arm");
-        map.put("rightArm", "right arm");
-        map.put("leftLeg", "left leg");
-        map.put("rightLeg", "right leg");
+        map.put("left_arm", "left arm");
+        map.put("right_arm", "right arm");
+        map.put("left_leg", "left leg");
+        map.put("right_leg", "right leg");
         return map;
     }
 
     static final Map<String, String> nameMap = initNamemap();
 
-    static final List<String> arms = Lists.newArrayList("leftArm", "rightArm");
-    static final List<String> legs = Lists.newArrayList("leftLeg", "rightLeg");
+    static final List<String> arms = Lists.newArrayList("left_arm", "right_arm");
+    static final List<String> legs = Lists.newArrayList("left_leg", "right_leg");
 
     public VmdAnimation(Identifier loc, double start, double end, boolean loop) {
         this.loc = loc;
