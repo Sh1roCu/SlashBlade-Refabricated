@@ -158,6 +158,7 @@ public class ItemSlashBlade extends SwordItem implements IEnchantment, ItemSlash
         return 72000;
     }
 
+    @Override
     public @NotNull InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack itemstack = playerIn.getItemInHand(handIn);
         if (handIn == InteractionHand.OFF_HAND && !(playerIn.getMainHandItem().getItem() instanceof ItemSlashBlade)) {

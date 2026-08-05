@@ -1,13 +1,12 @@
 package cn.sh1rocu.slashblade.mixin.client;
 
 import cn.sh1rocu.slashblade.api.event.RenderTickEvent;
-import cn.sh1rocu.slashblade.util.ClientHooks;
+import mods.flammpfeil.slashblade.event.handler.BlockPickCanceller;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.Timer;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.InteractionHand;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,6 +14,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mixin(Minecraft.class)
 public class MinecraftMixin {
@@ -60,7 +61,9 @@ public class MinecraftMixin {
 
     @Inject(method = "pickBlock", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Abilities;instabuild:Z", ordinal = 0), cancellable = true)
     private void sb$inputClickEvent(CallbackInfo ci) {
-        if (ClientHooks.onClickInput(2, this.options.keyPickItem, InteractionHand.MAIN_HAND).isCanceled())
+        AtomicBoolean canceled = new AtomicBoolean(false);
+        BlockPickCanceller.onBlockPick(canceled);
+        if (canceled.get())
             ci.cancel();
     }
 }
