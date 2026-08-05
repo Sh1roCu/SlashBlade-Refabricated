@@ -1,7 +1,6 @@
 package mods.flammpfeil.slashblade.capability.slashblade;
 
 import cn.sh1rocu.slashblade.api.extension.EntityExtension;
-import cn.sh1rocu.slashblade.util.network.IEntityExtension;
 import com.google.common.collect.ImmutableRangeMap;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeMap;
@@ -366,7 +365,7 @@ public interface ISlashBladeState {
         }
         this.setComboSeq(event.getCombo());
         this.setLastActionTime(event.getActionTime());
-        ((EntityExtension)entity).sb$getPersistentData().remove(ComboState.LAST_PROCESSED_TICK_KEY);
+        ((EntityExtension) entity).sb$getPersistentData().remove(ComboState.LAST_PROCESSED_TICK_KEY);
         return true;
     }
 
