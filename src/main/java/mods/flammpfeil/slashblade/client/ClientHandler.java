@@ -5,6 +5,7 @@ import mods.flammpfeil.slashblade.client.renderer.gui.RankRenderer;
 import mods.flammpfeil.slashblade.client.renderer.layers.LayerMainBlade;
 import mods.flammpfeil.slashblade.client.renderer.model.BladeModel;
 import mods.flammpfeil.slashblade.compat.playerAnim.PlayerAnimationOverrider;
+import mods.flammpfeil.slashblade.event.client.BladeRuntimeSyncer;
 import mods.flammpfeil.slashblade.event.client.SneakingMotionCanceller;
 import mods.flammpfeil.slashblade.event.client.UserPoseOverrider;
 import mods.flammpfeil.slashblade.init.SBItems;
@@ -30,6 +31,7 @@ import java.util.Set;
 public class ClientHandler {
     public static void doClientStuff() {
         SneakingMotionCanceller.getInstance().register();
+        BladeRuntimeSyncer.getInstance().register();
 
         if (FabricLoader.getInstance().isModLoaded("player_animation_library")) {
             PlayerAnimationOverrider.getInstance().register();

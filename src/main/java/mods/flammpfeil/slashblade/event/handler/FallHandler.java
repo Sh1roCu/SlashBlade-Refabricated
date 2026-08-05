@@ -49,8 +49,8 @@ public class FallHandler {
                     ComboState combo = ComboStateRegistry.COMBO_STATE.getValue(state.getComboSeq()) != null
                             ? ComboStateRegistry.COMBO_STATE.getValue(state.getComboSeq())
                             : ComboStateRegistry.NONE;
-                    if (combo.isAerial()) {
-                        state.setComboSeq(combo.getNextOfTimeout(user));
+                    if (combo != null && combo.isAerial()) {
+                        state.synchronizeComboSeq(user, combo.getNextOfTimeout(user));
                     }
                 });
 
