@@ -1,5 +1,7 @@
 package mods.flammpfeil.slashblade.capability.slashblade;
 
+import cn.sh1rocu.slashblade.api.extension.EntityExtension;
+import cn.sh1rocu.slashblade.util.network.IEntityExtension;
 import com.google.common.collect.ImmutableRangeMap;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeMap;
@@ -311,13 +313,17 @@ public interface ISlashBladeState {
     }
 
     default void updateComboSeq(LivingEntity entity, ResourceLocation loc) {
-        BladeMotionEvent event = new BladeMotionEvent(entity, loc);
-        BladeMotionEvent.CALLBACK.invoker().onBladeMotion(event);
-        if (event.isCanceled()) return;
-        this.setComboSeq(event.getCombo());
-        this.setLastActionTime(entity.level().getGameTime());
-        ComboState cs = ComboStateRegistry.COMBO_STATE.get(event.getCombo());
-        cs.clickAction(event.getEntity());
+        if (!applyComboSeq(entity, loc, entity.level().getGameTime())) {
+            return;
+        }
+        ComboState cs = ComboStateRegistry.COMBO_STATE.get(this.getComboSeq());
+        if (cs != null) {
+            cs.clickAction(entity);
+        }
+    }
+
+    default void synchronizeComboSeq(LivingEntity entity, ResourceLocation loc) {
+        applyComboSeq(entity, loc, this.getLastActionTime());
     }
 
     default ResourceLocation resolvCurrentComboState(LivingEntity user) {
@@ -347,6 +353,21 @@ public interface ISlashBladeState {
 
         int ticks = (int) TimeValueHelper.getTicksFromMSec(time);
         return new AbstractMap.SimpleImmutableEntry<>(ticks, current);
+    }
+
+    private boolean applyComboSeq(LivingEntity entity, @Nullable ResourceLocation loc, long actionTime) {
+        if (loc == null || entity.level().isClientSide) {
+            return false;
+        }
+        BladeMotionEvent event = new BladeMotionEvent(entity, loc, actionTime);
+        BladeMotionEvent.CALLBACK.invoker().onBladeMotion(event);
+        if (event.isCanceled()) {
+            return false;
+        }
+        this.setComboSeq(event.getCombo());
+        this.setLastActionTime(event.getActionTime());
+        ((EntityExtension)entity).sb$getPersistentData().remove(ComboState.LAST_PROCESSED_TICK_KEY);
+        return true;
     }
 
     ResourceLocation getComboRoot();

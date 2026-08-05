@@ -19,11 +19,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -34,6 +32,7 @@ public class ComboState {
             .createRegistryKey(ResourceLocation.fromNamespaceAndPath(SlashBlade.MODID, "combo_state"));
 
     public static final TimeLineTickAction EMPTY_TICK_ACTION = TimeLineTickAction.getBuilder().build();
+    public static final String LAST_PROCESSED_TICK_KEY = SlashBlade.MODID + ".lastProcessedTick";
 
     private final ResourceLocation motionLoc;
 
@@ -204,7 +203,7 @@ public class ComboState {
         }
     }
 
-    public static class TimeLineTickAction implements Consumer<LivingEntity> {
+    public static class TimeLineTickAction implements TickAction {
         public static TimeLineTickActionBuilder getBuilder() {
             return new TimeLineTickActionBuilder();
         }
@@ -224,8 +223,6 @@ public class ComboState {
 
         private final Map<Integer, Consumer<LivingEntity>> timeLine;
 
-        public static final String LAST_PROCESSED_TICK_KEY = SlashBlade.MODID + ".lastProcessedTick";
-
         TimeLineTickAction(Map<Integer, Consumer<LivingEntity>> timeLine) {
             this.timeLine = Maps.newHashMap(timeLine);
         }
@@ -236,31 +233,19 @@ public class ComboState {
 
             CompoundTag persistentData = ((EntityExtension) livingEntity).sb$getPersistentData();
 
-            if (persistentData.getInt(LAST_PROCESSED_TICK_KEY) == elapsed) {
+            int lastProcessedTick = persistentData.getInt(LAST_PROCESSED_TICK_KEY);
+            if (lastProcessedTick > elapsed) {
                 return;
             }
 
-            persistentData.putInt(LAST_PROCESSED_TICK_KEY, elapsed);
-
-            Consumer<LivingEntity> action = timeLine.get(elapsed);
-            if (action != null) {
-                action.accept(livingEntity);
+            while (lastProcessedTick <= elapsed) {
+                Consumer<LivingEntity> action = timeLine.get(lastProcessedTick);
+                if (action != null) {
+                    action.accept(livingEntity);
+                    persistentData.putInt(LAST_PROCESSED_TICK_KEY, elapsed + 1);
+                }
+                lastProcessedTick++;
             }
-        }
-
-        @Override
-        public @NotNull Consumer<LivingEntity> andThen(@NotNull Consumer<? super LivingEntity> after) {
-            Objects.requireNonNull(after);
-            return (LivingEntity livingEntity) -> {
-                CompoundTag persistentData = ((EntityExtension) livingEntity).sb$getPersistentData();
-                int lastProcessedTick = persistentData.getInt(LAST_PROCESSED_TICK_KEY);
-                accept(livingEntity);
-                persistentData.putInt(LAST_PROCESSED_TICK_KEY, lastProcessedTick);
-                after.accept(livingEntity);
-            };
-        }
-
-        void defaultConsumer(LivingEntity entityIn) {
         }
     }
 
@@ -383,6 +368,22 @@ public class ComboState {
             this.releaseAction = clickAction;
             return this;
         }
+    }
 
+    public interface TickAction extends Consumer<LivingEntity> {
+        @Override
+        default TickAction andThen(Consumer<? super LivingEntity> after) {
+            return (LivingEntity livingEntity) -> {
+                if (after instanceof TimeLineTickAction) {
+                    CompoundTag persistentData = ((EntityExtension) livingEntity).sb$getPersistentData();
+                    int lastProcessedTick = persistentData.getInt(LAST_PROCESSED_TICK_KEY);
+                    accept(livingEntity);
+                    persistentData.putInt(LAST_PROCESSED_TICK_KEY, lastProcessedTick);
+                } else {
+                    accept(livingEntity);
+                }
+                after.accept(livingEntity);
+            };
+        }
     }
 }

@@ -3,6 +3,7 @@ package mods.flammpfeil.slashblade.network;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.event.BladeMotionEvent;
 import mods.flammpfeil.slashblade.registry.ComboStateRegistry;
+import mods.flammpfeil.slashblade.registry.combo.ComboState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -18,7 +19,7 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.UUID;
 
-public record MotionBroadcastPacket(UUID playerId, String combo) implements CustomPacketPayload {
+public record MotionBroadcastPacket(UUID playerId, String combo, long actionTime) implements CustomPacketPayload {
     private static final ResourceLocation ID = SlashBlade.prefix("s2c_motion_broadcast");
     public static final Type<MotionBroadcastPacket> TYPE = new Type<>(ID);
 
@@ -27,16 +28,18 @@ public record MotionBroadcastPacket(UUID playerId, String combo) implements Cust
             MotionBroadcastPacket::playerId,
             ByteBufCodecs.STRING_UTF8,
             MotionBroadcastPacket::combo,
+            ByteBufCodecs.VAR_LONG,
+            MotionBroadcastPacket::actionTime,
             MotionBroadcastPacket::new
     );
 
     @Environment(EnvType.CLIENT)
     public static void handle(MotionBroadcastPacket payload, ClientPlayNetworking.Context context) {
-        context.client().execute(() -> setPoint(payload.playerId, payload.combo));
+        context.client().execute(() -> setPoint(payload.playerId, payload.combo, payload.actionTime));
     }
 
     @Environment(EnvType.CLIENT)
-    public static void setPoint(UUID playerId, String combo) {
+    public static void setPoint(UUID playerId, String combo, long actionTime) {
         if (Minecraft.getInstance().level == null) return;
         Player target = Minecraft.getInstance().level.getPlayerByUUID(playerId);
 
@@ -46,10 +49,13 @@ public record MotionBroadcastPacket(UUID playerId, String combo) implements Cust
             return;
 
         ResourceLocation state = ResourceLocation.tryParse(combo);
-        if (state == null || !ComboStateRegistry.COMBO_STATE.containsKey(state))
+        ComboState comboState = ComboStateRegistry.COMBO_STATE.get(state);
+        if (comboState == null) {
             return;
+        }
 
-        BladeMotionEvent.CALLBACK.invoker().onBladeMotion(new BladeMotionEvent(target, state));
+        BladeMotionEvent.CALLBACK.invoker().onBladeMotion(new BladeMotionEvent(target, state, actionTime));
+        comboState.clickAction(target);
     }
 
     @Override

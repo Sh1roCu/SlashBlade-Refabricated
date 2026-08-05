@@ -10,6 +10,8 @@ import net.minecraft.world.entity.LivingEntity;
 public class BladeMotionEvent extends BaseEvent implements ICancellableEvent {
     private final LivingEntity entity;
     private ResourceLocation combo;
+    private long actionTime;
+
     public static final Event<Callback> CALLBACK = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
         for (Callback callback : callbacks) {
             callback.onBladeMotion(event);
@@ -20,9 +22,10 @@ public class BladeMotionEvent extends BaseEvent implements ICancellableEvent {
         void onBladeMotion(BladeMotionEvent event);
     }
 
-    public BladeMotionEvent(LivingEntity entity, ResourceLocation combo) {
+    public BladeMotionEvent(LivingEntity entity, ResourceLocation combo, long actionTime) {
         this.entity = entity;
         this.combo = combo;
+        this.actionTime = actionTime;
     }
 
     public LivingEntity getEntity() {
@@ -35,5 +38,13 @@ public class BladeMotionEvent extends BaseEvent implements ICancellableEvent {
 
     public void setCombo(ResourceLocation combo) {
         this.combo = combo;
+    }
+
+    public long getActionTime() {
+        return this.actionTime;
+    }
+
+    public void setActionTime(long actionTime) {
+        this.actionTime = actionTime;
     }
 }

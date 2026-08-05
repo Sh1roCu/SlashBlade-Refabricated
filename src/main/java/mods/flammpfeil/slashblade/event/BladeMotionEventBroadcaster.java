@@ -27,15 +27,13 @@ public class BladeMotionEventBroadcaster {
         if (!(event.getEntity() instanceof ServerPlayer sp))
             return;
 
-        // if(msg.combo == Extra.EX_JUDGEMENT_CUT.getName())
-        {
-            for (ServerPlayer player : PlayerLookup.around(sp.serverLevel(), new Vec3(
-                    sp.getX(),
-                    sp.getY(),
-                    sp.getZ()
-            ), 20)) {
-                ServerPlayNetworking.send(player, new MotionBroadcastPacket(sp.getUUID(), event.getCombo().toString()));
-            }
+        var packet = new MotionBroadcastPacket(sp.getUUID(), event.getCombo().toString(), event.getActionTime());
+        for (ServerPlayer player : PlayerLookup.around(sp.serverLevel(), new Vec3(
+                sp.getX(),
+                sp.getY(),
+                sp.getZ()
+        ), 20)) {
+            ServerPlayNetworking.send(player, packet);
         }
 
     }
