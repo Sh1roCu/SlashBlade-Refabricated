@@ -5,6 +5,8 @@ import mods.flammpfeil.slashblade.item.*;
 import mods.flammpfeil.slashblade.registry.SlashArtsRegistry;
 import mods.flammpfeil.slashblade.registry.SpecialEffectsRegistry;
 import mods.flammpfeil.slashblade.registry.specialeffects.SpecialEffect;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Registry;
@@ -65,6 +67,7 @@ public class SBItems {
                     .rarity(Rarity.RARE)
                     .enchantable(200)
                     .setId(key(id))) {
+                @Environment(EnvType.CLIENT)
                 @Override
                 public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
                     CustomData data = stack.get(DataComponents.CUSTOM_DATA);
