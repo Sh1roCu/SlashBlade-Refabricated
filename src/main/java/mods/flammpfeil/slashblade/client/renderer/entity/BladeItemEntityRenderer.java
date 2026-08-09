@@ -1,6 +1,5 @@
 package mods.flammpfeil.slashblade.client.renderer.entity;
 
-import cn.sh1rocu.slashblade.api.extension.EntityExtension;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
@@ -69,8 +68,6 @@ public class BladeItemEntityRenderer extends ItemEntityRenderer {
                 matrixStackIn.mulPose(Axis.YP.rotationDegrees(state.entityYaw));
 
                 EnumSet<SwordType> types = state.itemRenderState.swordTypes;
-                //state.getPersistentData();
-                ((EntityExtension) state).sb$getPersistentData();
                 Identifier modelLocation = state.modelLocation;
                 Identifier textureLocation = state.textureLocation;
 

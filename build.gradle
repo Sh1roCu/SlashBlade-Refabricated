@@ -128,7 +128,7 @@ dependencies {
 //    annotationProcessor "org.projectlombok:lombok:1.18.38"
 //    implementation "maven.modrinth:accrelatedrendering-refabricated:1.0.5-1.21.1-fabric.1"
 
-    compileOnly "maven.modrinth:iris:1.10.9+26.1-fabric"
+    compileOnly "maven.modrinth:iris:1.11.2+26.1-fabric"
 }
 
 processResources {
