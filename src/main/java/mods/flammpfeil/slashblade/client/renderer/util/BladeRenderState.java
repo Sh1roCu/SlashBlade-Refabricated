@@ -13,6 +13,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import mods.flammpfeil.slashblade.client.renderer.model.obj.Face;
 import mods.flammpfeil.slashblade.client.renderer.model.obj.WavefrontObject;
 import mods.flammpfeil.slashblade.client.renderer.special.state.BladeItemRenderState;
+import mods.flammpfeil.slashblade.compat.iris.IrisCompat;
 import mods.flammpfeil.slashblade.event.client.RenderOverrideEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -145,12 +146,15 @@ public class BladeRenderState {
 
     public static RenderType getSlashBladeBlend(Identifier texture) {
         return slashBladeBlendCache.computeIfAbsent(texture, t -> {
-            RenderPipeline pipeline = RenderPipeline.builder(ITEM_SNIPPET)
-                    .withLocation("pipeline/item_translucent")
+            RenderPipeline pipeline = RenderPipeline.builder(ENTITY_SNIPPET)
+                    .withLocation("pipeline/entity_translucent_cull")
                     .withShaderDefine("ALPHA_CUTOUT", 0.1F)
+                    .withSampler("Sampler1")
                     .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
                     .withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.TRIANGLES)
                     .build();
+
+            IrisCompat.assignPipeline(pipeline, "ENTITIES_TRANSLUCENT");
 
             RenderSetup state = RenderSetup.builder(pipeline)
                     .withTexture("Sampler0", t)
@@ -181,6 +185,8 @@ public class BladeRenderState {
                 .withDepthStencilState(new DepthStencilState(CompareOp.EQUAL, false))
                 .build();
 
+        IrisCompat.assignPipeline(pipeline, "ARMOR_GLINT");
+
         RenderSetup state = RenderSetup.builder(pipeline)
                 .withTexture("Sampler0", ItemFeatureRenderer.ENCHANTED_GLINT_ITEM)
                 .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
@@ -206,6 +212,8 @@ public class BladeRenderState {
                 .withDepthStencilState(new DepthStencilState(CompareOp.EQUAL, false))
                 .build();
 
+        IrisCompat.assignPipeline(pipeline, "ARMOR_GLINT");
+
         RenderSetup state = RenderSetup.builder(pipeline)
                 .withTexture("Sampler0", ItemFeatureRenderer.ENCHANTED_GLINT_ITEM)
                 .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
@@ -227,6 +235,8 @@ public class BladeRenderState {
                     .withColorTargetState(new ColorTargetState(LIGHTNING_ADDITIVE_TRANSPARENCY))
                     .withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.TRIANGLES)
                     .build();
+
+            IrisCompat.assignPipeline(pipeline, "EMISSIVE_ENTITIES");
 
             RenderSetup state = RenderSetup.builder(pipeline)
                     .withTexture("Sampler0", t)
@@ -258,6 +268,8 @@ public class BladeRenderState {
                     .withColorTargetState(new ColorTargetState(LIGHTNING_ADDITIVE_TRANSPARENCY))
                     .withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.TRIANGLES)
                     .build();
+
+            IrisCompat.assignPipeline(pipeline, "EMISSIVE_ENTITIES");
 
             RenderSetup state = RenderSetup.builder(pipeline)
                     .withTexture("Sampler0", t)
@@ -292,6 +304,8 @@ public class BladeRenderState {
                     .withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.TRIANGLES)
                     .build();
 
+            IrisCompat.assignPipeline(pipeline, "ENTITIES");
+
             RenderSetup state = RenderSetup.builder(pipeline)
                     .withTexture("Sampler0", k.texture)
                     .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
@@ -316,6 +330,8 @@ public class BladeRenderState {
                     .withColorTargetState(new ColorTargetState(LIGHTNING_ADDITIVE_TRANSPARENCY))
                     .withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.TRIANGLES)
                     .build();
+
+            IrisCompat.assignPipeline(pipeline, "EMISSIVE_ENTITIES");
 
             RenderSetup state = RenderSetup.builder(pipeline)
                     .withTexture("Sampler0", t)
@@ -346,6 +362,8 @@ public class BladeRenderState {
                     .withColorTargetState(new ColorTargetState(LIGHTNING_REVERSE_TRANSPARENCY))
                     .withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.TRIANGLES)
                     .build();
+
+            IrisCompat.assignPipeline(pipeline, "EMISSIVE_ENTITIES");
 
             RenderSetup state = RenderSetup.builder(pipeline)
                     .withTexture("Sampler0", t)

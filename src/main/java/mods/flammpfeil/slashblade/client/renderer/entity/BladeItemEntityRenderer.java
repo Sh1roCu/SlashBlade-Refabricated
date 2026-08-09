@@ -69,8 +69,6 @@ public class BladeItemEntityRenderer extends ItemEntityRenderer {
                 matrixStackIn.mulPose(Axis.YP.rotationDegrees(state.entityYaw));
 
                 EnumSet<SwordType> types = state.itemRenderState.swordTypes;
-                //state.getPersistentData();
-                ((EntityExtension) state).sb$getPersistentData();
                 Identifier modelLocation = state.modelLocation;
                 Identifier textureLocation = state.textureLocation;
 
