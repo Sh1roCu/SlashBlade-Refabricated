@@ -89,13 +89,5 @@
         0.65
       ]
     }
-  },
-  "overrides": [
-    {
-      "predicate": {
-        "slashblade:user": 1.0
-      },
-      "model": "slashblade:eproudsoul"
-    }
-  ]
+  }
 }

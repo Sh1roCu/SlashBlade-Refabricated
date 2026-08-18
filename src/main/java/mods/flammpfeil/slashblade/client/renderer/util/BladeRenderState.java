@@ -133,7 +133,7 @@ public class BladeRenderState extends RenderStateShard {
         return slashBladeBlendCache.computeIfAbsent(texture, t -> {
             RenderType.CompositeState state = RenderType.CompositeState.builder()
                     .setShaderState(RenderStateShard.RENDERTYPE_ITEM_ENTITY_TRANSLUCENT_CULL_SHADER)
-                    .setOutputState(RenderStateShard.ITEM_ENTITY_TARGET)
+                    .setOutputState(RenderStateShard.MAIN_TARGET)
                     .setTextureState(new RenderStateShard.TextureStateShard(t, false, true))
                     .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
                     .setLightmapState(LIGHTMAP)
@@ -156,7 +156,7 @@ public class BladeRenderState extends RenderStateShard {
                 .setCullState(NO_CULL)
                 .setDepthTestState(EQUAL_DEPTH_TEST)
                 .setTransparencyState(GLINT_TRANSPARENCY)
-                .setOutputState(ITEM_ENTITY_TARGET)
+                .setOutputState(MAIN_TARGET)
                 .setTexturingState(ENTITY_GLINT_TEXTURING)
                 .setOverlayState(OVERLAY)
                 .createCompositeState(false);
@@ -174,7 +174,7 @@ public class BladeRenderState extends RenderStateShard {
                 .setCullState(NO_CULL)
                 .setDepthTestState(EQUAL_DEPTH_TEST)
                 .setTransparencyState(GLINT_TRANSPARENCY)
-                .setOutputState(ITEM_ENTITY_TARGET)
+                .setOutputState(MAIN_TARGET)
                 .setTexturingState(GLINT_TEXTURING)
                 .setOverlayState(OVERLAY)
                 .createCompositeState(false);
@@ -186,7 +186,7 @@ public class BladeRenderState extends RenderStateShard {
         return slashBladeBlendColorWriteCache.computeIfAbsent(texture, t -> {
             RenderType.CompositeState state = RenderType.CompositeState.builder()
                     .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
-                    .setOutputState(RenderStateShard.ITEM_ENTITY_TARGET)
+                    .setOutputState(RenderStateShard.MAIN_TARGET)
                     .setTextureState(new RenderStateShard.TextureStateShard(t, false, true))
                     .setTransparencyState(LIGHTNING_ADDITIVE_TRANSPARENCY)
                     .setLightmapState(LIGHTMAP)
@@ -213,7 +213,7 @@ public class BladeRenderState extends RenderStateShard {
         return slashBladeBlendLuminousCache.computeIfAbsent(texture, t -> {
             RenderType.CompositeState state = RenderType.CompositeState.builder()
                     .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
-                    .setOutputState(ITEM_ENTITY_TARGET)
+                    .setOutputState(MAIN_TARGET)
                     .setCullState(RenderStateShard.NO_CULL)
                     .setTextureState(new RenderStateShard.TextureStateShard(t, true, true))
                     .setTransparencyState(LIGHTNING_ADDITIVE_TRANSPARENCY)
@@ -232,7 +232,7 @@ public class BladeRenderState extends RenderStateShard {
         return chargeEffectCache.computeIfAbsent(key, k -> {
             RenderType.CompositeState state = RenderType.CompositeState.builder()
                     .setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER)
-                    .setOutputState(ITEM_ENTITY_TARGET)
+                    .setOutputState(MAIN_TARGET)
                     .setCullState(RenderStateShard.NO_CULL)
                     .setTextureState(new RenderStateShard.TextureStateShard(k.texture, false, true))
                     .setTexturingState(new RenderStateShard.OffsetTexturingStateShard(k.x, k.y))
@@ -251,7 +251,7 @@ public class BladeRenderState extends RenderStateShard {
         return luminousDepthWriteCache.computeIfAbsent(texture, t -> {
             RenderType.CompositeState state = RenderType.CompositeState.builder()
                     .setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
-                    .setOutputState(RenderStateShard.PARTICLES_TARGET)
+                    .setOutputState(RenderStateShard.MAIN_TARGET)
                     .setTextureState(new RenderStateShard.TextureStateShard(t, true, true))
                     .setTransparencyState(LIGHTNING_ADDITIVE_TRANSPARENCY)
                     .setLightmapState(RenderStateShard.LIGHTMAP)
@@ -280,7 +280,7 @@ public class BladeRenderState extends RenderStateShard {
         return reverseLuminousCache.computeIfAbsent(texture, t -> {
             RenderType.CompositeState state = RenderType.CompositeState.builder()
                     .setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
-                    .setOutputState(RenderStateShard.ITEM_ENTITY_TARGET)
+                    .setOutputState(RenderStateShard.MAIN_TARGET)
                     .setTextureState(new RenderStateShard.TextureStateShard(t, true, true))
                     .setTransparencyState(LIGHTNING_REVERSE_TRANSPARENCY)
                     .setLightmapState(RenderStateShard.LIGHTMAP)
