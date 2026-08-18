@@ -133,7 +133,7 @@ public class Guard {
                 return;
 
             boolean inMotion = slashBlade.filter(s -> {
-                ResourceLocation current = s.resolvCurrentComboState(victim);
+                ResourceLocation current = s.resolveCurrentComboState(victim);
                 ComboState currentCS = ComboStateRegistry.COMBO_STATE.get(current);
                 return !current.equals(ComboStateRegistry.getId(ComboStateRegistry.NONE)) && current.equals(currentCS.getNext(victim));
             }).isPresent();

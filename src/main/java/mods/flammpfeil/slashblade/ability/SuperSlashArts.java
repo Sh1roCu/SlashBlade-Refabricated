@@ -128,7 +128,7 @@ public class SuperSlashArts {
             mainHandItem.hurtAndBreak(mainHandItem.getMaxDamage() / 2, entity.serverLevel(), entity, ItemSlashBlade.getOnBroken(mainHandItem, entity)
             );
 
-            Map.Entry<Integer, ResourceLocation> currentloc = state.resolvCurrentComboStateTicks(entity);
+            Map.Entry<Integer, ResourceLocation> currentloc = state.resolveCurrentComboStateTicks(entity);
 
             ComboState currentCS = ComboStateRegistry.COMBO_STATE.get(currentloc.getValue());
 

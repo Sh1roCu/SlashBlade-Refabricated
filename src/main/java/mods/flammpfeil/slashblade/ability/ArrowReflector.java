@@ -81,7 +81,7 @@ public class ArrowReflector {
                 return;
 
             ResourceLocation old = s.getComboSeq();
-            ResourceLocation current = s.resolvCurrentComboState(attacker);
+            ResourceLocation current = s.resolveCurrentComboState(attacker);
             ComboState currentCS = ComboStateRegistry.COMBO_STATE.get(current) != null
                     ? ComboStateRegistry.COMBO_STATE.get(current)
                     : ComboStateRegistry.NONE;

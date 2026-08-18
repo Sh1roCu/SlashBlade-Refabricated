@@ -20,6 +20,7 @@ import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -93,39 +94,46 @@ public class BladeRenderState extends RenderStateShard {
         RenderOverrideEvent event = RenderOverrideEvent.onRenderOverride(stack, model, target, texture, matrixStackIn,
                 bufferIn, packedLightIn, getRenderType, enableEffect);
 
-        if (event.isCanceled())
-            return;
+        try {
+            if (event.isCanceled())
+                return;
 
-        ResourceLocation loc = event.getTexture();
+            ResourceLocation loc = event.getTexture();
 
-        RenderType rt = event.getGetRenderType().apply(loc);// getSlashBladeBlendLuminous(event.getTexture());
-        VertexConsumer vb = bufferIn.getBuffer(rt);
+            RenderType rt = event.getGetRenderType().apply(loc);// getSlashBladeBlendLuminous(event.getTexture());
+            VertexConsumer vb = bufferIn.getBuffer(rt);
+            int color = FastColor.ARGB32.color(
+                    col.getAlpha(),
+                    col.getRed(),
+                    col.getGreen(),
+                    col.getBlue()
+            );
 
-        int color = FastColor.ARGB32.color(
-                col.getAlpha(),
-                col.getRed(),
-                col.getGreen(),
-                col.getBlue()
-        );
 
-
-        event.getModel().tessellateOnly(vb, matrixStackIn, event.getPackedLightIn(), color, event.getTarget());
-
-        if (stack.hasFoil() && event.isEnableEffect()) {
-            vb = bufferIn.getBuffer(target.startsWith("item_") ? BladeRenderState.SLASHBLADE_ITEM_GLINT : BladeRenderState.SLASHBLADE_GLINT);
             event.getModel().tessellateOnly(vb, matrixStackIn, event.getPackedLightIn(), color, event.getTarget());
+
+            if (stack.hasFoil() && event.isEnableEffect()) {
+                vb = bufferIn.getBuffer(target.startsWith("item_") ? BladeRenderState.SLASHBLADE_ITEM_GLINT : BladeRenderState.SLASHBLADE_GLINT);
+                event.getModel().tessellateOnly(vb, matrixStackIn, event.getPackedLightIn(), color, event.getTarget());
+            }
+
+        } finally {
+            Face.resetAlphaOverride();
+            Face.resetUvOperator();
+            resetCol();
         }
-
-        Face.resetAlphaOverride();
-        Face.resetUvOperator();
-
-        resetCol();
     }
 
     private static final Map<ResourceLocation, RenderType> slashBladeBlendCache = new HashMap<>();
     private static final Map<ResourceLocation, RenderType> slashBladeBlendColorWriteCache = new HashMap<>();
     private static final Map<ResourceLocation, RenderType> slashBladeBlendLuminousCache = new HashMap<>();
-    private static final Map<ChargeEffectKey, RenderType> chargeEffectCache = new HashMap<>();
+    private static final int CHARGE_EFFECT_CACHE_MAX = 256;
+    private static final Map<ChargeEffectKey, RenderType> chargeEffectCache = new LinkedHashMap<>(16, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<ChargeEffectKey, RenderType> eldest) {
+            return size() > CHARGE_EFFECT_CACHE_MAX;
+        }
+    };
     private static final Map<ResourceLocation, RenderType> luminousDepthWriteCache = new HashMap<>();
     private static final Map<ResourceLocation, RenderType> reverseLuminousCache = new HashMap<>();
 

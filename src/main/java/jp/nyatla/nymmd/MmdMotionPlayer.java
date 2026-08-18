@@ -168,6 +168,30 @@ public abstract class MmdMotionPlayer {
      * @throws MmdException
      */
     public void updateMotion(float i_position_in_msec) throws MmdException {
+        updateMotionInternal(i_position_in_msec, true, true);
+    }
+
+    /**
+     * 只更新骨骼/IK/矩阵，不计算蒙皮矩阵，也不做顶点蒙皮。
+     * 供只需要骨骼位置/旋转的调用方（如 VmdAnimation）使用。
+     */
+    public void updateMotionBonesOnly(float i_position_in_msec) throws MmdException {
+        updateMotionInternal(i_position_in_msec, false, false);
+    }
+
+    /**
+     * 更新骨骼/IK/矩阵以及蒙皮矩阵，但跳过顶点蒙皮。
+     * 供需要读取 _skinning_mat 但不需要 _fbuf 的调用方（如 LayerMainBlade）使用。
+     */
+    public void updateMotionBonesAndSkinning(float i_position_in_msec) throws MmdException {
+        updateMotionInternal(i_position_in_msec, true, false);
+    }
+
+    public boolean hasVmdMotion() {
+        return this._ref_vmd_motion != null;
+    }
+
+    private void updateMotionInternal(float i_position_in_msec, boolean updateSkinningMat, boolean updateVertices) throws MmdException {
         final PmdIK[] ik_array = this._ref_pmd_model.getIKArray();
         final PmdBone[] bone_array = this._ref_pmd_model.getBoneArray();
         assert i_position_in_msec >= 0;
@@ -211,10 +235,14 @@ public abstract class MmdMotionPlayer {
         }
         //
         // スキニング用行列の更新
-        for (int i = 0; i < bone_array.length; i++) {
-            bone_array[i].updateSkinningMat(this._skinning_mat[i]);
+        if (updateSkinningMat) {
+            for (int i = 0; i < bone_array.length; i++) {
+                bone_array[i].updateSkinningMat(this._skinning_mat[i]);
+            }
         }
-        this.onUpdateSkinningMatrix(this._skinning_mat);
+        if (updateVertices) {
+            this.onUpdateSkinningMatrix(this._skinning_mat);
+        }
     }
 
     protected abstract void onUpdateSkinningMatrix(MmdMatrix[] i_skinning_mat) throws MmdException;

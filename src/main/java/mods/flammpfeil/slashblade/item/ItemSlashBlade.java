@@ -346,7 +346,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 
         CapabilitySlashBlade.getBladeState(stack).ifPresent((state) -> {
-            ResourceLocation loc = state.resolvCurrentComboState(attacker);
+            ResourceLocation loc = state.resolveCurrentComboState(attacker);
             ComboState cs = ComboStateRegistry.COMBO_STATE.get(loc) != null
                     ? ComboStateRegistry.COMBO_STATE.get(loc)
                     : ComboStateRegistry.NONE;
@@ -492,7 +492,7 @@ public class ItemSlashBlade extends SwordItem implements ItemSlashBladeExtension
                 /*
                  * if(0.5f > state.getDamage()) state.setDamage(0.99f);
                  */
-                ResourceLocation loc = state.resolvCurrentComboState(living);
+                ResourceLocation loc = state.resolveCurrentComboState(living);
                 ComboState cs = ComboStateRegistry.COMBO_STATE.get(loc) != null
                         ? ComboStateRegistry.COMBO_STATE.get(loc)
                         : ComboStateRegistry.NONE;

@@ -9,7 +9,6 @@ import mods.flammpfeil.slashblade.registry.slashblade.SlashBladeDefinition;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 
@@ -42,6 +41,7 @@ public class BladeModelManager {
         defaultModel = new WavefrontObject(DefaultResources.resourceDefaultModel);
 
         cache = CacheBuilder.newBuilder()
+                .maximumSize(256)
                 .build(CacheLoader.asyncReloading(new CacheLoader<>() {
                     @Override
                     public WavefrontObject load(ResourceLocation key) {
@@ -52,7 +52,7 @@ public class BladeModelManager {
                         }
                     }
 
-                }, Executors.newCachedThreadPool()));
+                }, Executors.newFixedThreadPool(2)));
     }
 
 //    public void reload(TextureAtlas atlas) {

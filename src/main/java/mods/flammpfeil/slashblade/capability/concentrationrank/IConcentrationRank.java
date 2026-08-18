@@ -125,7 +125,7 @@ public interface IConcentrationRank extends AutoSyncedComponent {
         ItemStack stack = user.getMainHandItem();
 
         Optional<ResourceLocation> combo = CapabilitySlashBlade.getBladeState(stack)
-                .map(s -> s.resolvCurrentComboState(user));
+                .map(s -> s.resolveCurrentComboState(user));
 
         float modifier = combo.map(this::getRankPointModifier).orElse(getRankPointModifier(src));
 

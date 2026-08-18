@@ -8,11 +8,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,6 +47,9 @@ public class WavefrontObject {
     public ArrayList<Vertex> vertexNormals = new ArrayList<Vertex>();
     public ArrayList<TextureCoordinate> textureCoordinates = new ArrayList<TextureCoordinate>();
     public ArrayList<GroupObject> groupObjects = new ArrayList<GroupObject>();
+    @Nullable
+    private Map<String, GroupObject> groupObjectMap;
+    @Nullable
     private GroupObject currentGroupObject;
     private final String fileName;
 
@@ -134,6 +141,19 @@ public class WavefrontObject {
         }
     }
 
+    private Map<String, GroupObject> getGroupObjectMap() {
+        if (groupObjectMap == null) {
+            Map<String, GroupObject> map = new HashMap<>();
+            for (GroupObject groupObject : groupObjects) {
+                if (groupObject.name != null) {
+                    map.put(groupObject.name.toLowerCase(Locale.ROOT), groupObject);
+                }
+            }
+            groupObjectMap = map;
+        }
+        return groupObjectMap;
+    }
+
     @Environment(EnvType.CLIENT)
     public void tessellateAll(VertexConsumer tessellator, PoseStack matrixStack, int light, int color) {
         for (GroupObject groupObject : groupObjects) {
@@ -143,21 +163,20 @@ public class WavefrontObject {
 
     @Environment(EnvType.CLIENT)
     public void tessellateOnly(VertexConsumer tessellator, PoseStack matrixStack, int light, int color, String... groupNames) {
-        for (GroupObject groupObject : groupObjects) {
-            for (String groupName : groupNames) {
-                if (groupName.equalsIgnoreCase(groupObject.name)) {
-                    groupObject.render(tessellator, matrixStack, light, color);
-                }
+        Map<String, GroupObject> map = getGroupObjectMap();
+        for (String groupName : groupNames) {
+            GroupObject groupObject = map.get(groupName.toLowerCase(Locale.ROOT));
+            if (groupObject != null) {
+                groupObject.render(tessellator, matrixStack, light, color);
             }
         }
     }
 
     @Environment(EnvType.CLIENT)
     public void tessellatePart(VertexConsumer tessellator, PoseStack matrixStack, int light, int color, String partName) {
-        for (GroupObject groupObject : groupObjects) {
-            if (partName.equalsIgnoreCase(groupObject.name)) {
-                groupObject.render(tessellator, matrixStack, light, color);
-            }
+        GroupObject groupObject = getGroupObjectMap().get(partName.toLowerCase(Locale.ROOT));
+        if (groupObject != null) {
+            groupObject.render(tessellator, matrixStack, light, color);
         }
     }
 

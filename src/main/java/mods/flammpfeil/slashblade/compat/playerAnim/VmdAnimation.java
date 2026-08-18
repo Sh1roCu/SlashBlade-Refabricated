@@ -50,6 +50,8 @@ public class VmdAnimation implements IAnimation {
     });
 
     int currentTick;
+    private int lastCachedTick = -1;
+    private float lastCachedPartial = -1.0f;
 
     final ResourceLocation loc;
     double start;
@@ -286,15 +288,26 @@ public class VmdAnimation implements IAnimation {
         if (!motionPlayer.isPresent())
             return;
 
+        if (this.currentTick == this.lastCachedTick
+                && Float.floatToIntBits(tickDelta) == Float.floatToIntBits(this.lastCachedPartial)) {
+            return;
+        }
+        this.lastCachedTick = this.currentTick;
+        this.lastCachedPartial = tickDelta;
+
         MmdMotionPlayerGL2 mmp = motionPlayer.orElse(null);
 
         double eofTime = 0;
         MmdVmdMotionMc motion = BladeMotionManager.getInstance().getMotion(loc);
-        try {
-            mmp.setVmd(motion);
-            eofTime = TimeValueHelper.getMSecFromFrames(motion.getMaxFrame());
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (motion != null) {
+            try {
+                mmp.setVmd(motion);
+                eofTime = TimeValueHelper.getMSecFromFrames(motion.getMaxFrame());
+            } catch (Exception e) {
+                SlashBlade.LOGGER.warn(e);
+            }
+        } else if (!mmp.hasVmdMotion()) {
+            return;
         }
 
         double time = TimeValueHelper.getMSecFromTicks((float) (currentTick + (double) tickDelta));
@@ -302,9 +315,9 @@ public class VmdAnimation implements IAnimation {
         time = TimeValueHelper.getMSecFromFrames((float) start) + time;
 
         try {
-            mmp.updateMotion((float) time);
+            mmp.updateMotionBonesOnly((float) time);
         } catch (MmdException e) {
-            e.printStackTrace();
+            SlashBlade.LOGGER.warn(e);
         }
     }
 }

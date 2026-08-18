@@ -4,6 +4,7 @@ import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
+import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.client.renderer.model.BladeFirstPersonRender;
 import mods.flammpfeil.slashblade.client.renderer.model.BladeModel;
 import mods.flammpfeil.slashblade.client.renderer.model.BladeModelManager;
@@ -33,6 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.awt.*;
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -145,13 +147,10 @@ public class SlashBladeTEISR extends BlockEntityWithoutLevelRenderer {
 
         EnumSet<SwordType> types = SwordType.from(stack);
 
-        ResourceLocation modelLocation = CapabilitySlashBlade.getBladeState(stack)
-                .filter(s -> s.getModel().isPresent()).map(s -> s.getModel().get())
-                .orElseGet(() -> stackDefaultModel(stack));
+        var cap =CapabilitySlashBlade.getBladeState(stack);
+        ResourceLocation modelLocation = cap.flatMap(ISlashBladeState::getModel).orElseGet(() -> stackDefaultModel(stack));
         WavefrontObject model = BladeModelManager.getInstance().getModel(modelLocation);
-        ResourceLocation textureLocation = CapabilitySlashBlade.getBladeState(stack)
-                .filter(s -> s.getTexture().isPresent()).map(s -> s.getTexture().get())
-                .orElseGet(() -> stackDefaultTexture(stack));
+        ResourceLocation textureLocation = cap.flatMap(ISlashBladeState::getTexture).orElseGet(() -> stackDefaultTexture(stack));
 
         String renderTarget;
         if (types.contains(SwordType.BROKEN)) {
@@ -246,13 +245,10 @@ public class SlashBladeTEISR extends BlockEntityWithoutLevelRenderer {
         EnumSet<SwordType> types = SwordType.from(stack);
         // BladeModel.itemBlade.getModelLocation(itemStackIn)
 
-        ResourceLocation modelLocation = CapabilitySlashBlade.getBladeState(stack)
-                .filter(s -> s.getModel().isPresent()).map(s -> s.getModel().get())
-                .orElseGet(() -> stackDefaultModel(stack));
+        Optional<ISlashBladeState> cap = CapabilitySlashBlade.getBladeState(stack);
+        ResourceLocation modelLocation = cap.flatMap(ISlashBladeState::getModel).orElseGet(() -> stackDefaultModel(stack));
         WavefrontObject model = BladeModelManager.getInstance().getModel(modelLocation);
-        ResourceLocation textureLocation = CapabilitySlashBlade.getBladeState(stack)
-                .filter(s -> s.getTexture().isPresent()).map(s -> s.getTexture().get())
-                .orElseGet(() -> stackDefaultTexture(stack));
+        ResourceLocation textureLocation = cap.flatMap(ISlashBladeState::getTexture).orElseGet(() -> stackDefaultTexture(stack));
 
         Vec3 bladeOffset = Vec3.ZERO;
         float bladeOffsetRot = 0;
