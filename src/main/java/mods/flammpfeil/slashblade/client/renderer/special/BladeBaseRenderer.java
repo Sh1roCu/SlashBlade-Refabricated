@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
+import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.client.renderer.SlashBladeTEISR;
 import mods.flammpfeil.slashblade.client.renderer.model.BladeModel;
 import mods.flammpfeil.slashblade.client.renderer.special.state.BladeItemRenderState;
@@ -18,6 +19,7 @@ import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Vector3fc;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class BladeBaseRenderer implements SpecialModelRenderer<BladeItemRenderState> {
@@ -49,12 +51,9 @@ public class BladeBaseRenderer implements SpecialModelRenderer<BladeItemRenderSt
     public static BladeItemRenderState createBladeItemRenderState(ItemStack stack) {
         BladeItemRenderState renderState = new BladeItemRenderState();
         renderState.swordTypes = SwordType.from(stack);
-        renderState.modelLocation = CapabilitySlashBlade.getBladeState(stack)
-                .filter(s -> s.getModel().isPresent()).map(s -> s.getModel().get())
-                .orElseGet(() -> SlashBladeTEISR.stackDefaultModel(stack));
-        renderState.textureLocation = CapabilitySlashBlade.getBladeState(stack)
-                .filter(s -> s.getTexture().isPresent()).map(s -> s.getTexture().get())
-                .orElseGet(() -> SlashBladeTEISR.stackDefaultTexture(stack));
+        Optional<ISlashBladeState> cap = CapabilitySlashBlade.getBladeState(stack);
+        renderState.modelLocation = cap.flatMap(ISlashBladeState::getModel).orElseGet(() -> SlashBladeTEISR.stackDefaultModel(stack));
+        renderState.textureLocation = cap.flatMap(ISlashBladeState::getTexture).orElseGet(() -> SlashBladeTEISR.stackDefaultTexture(stack));
         renderState.hasFoil = stack.hasFoil();
         renderState.damageValue = stack.getDamageValue();
         renderState.maxDamage = stack.getMaxDamage();

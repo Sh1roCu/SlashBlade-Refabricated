@@ -221,7 +221,7 @@ public interface ISlashBladeState {
     }
 
     default Identifier progressCombo(LivingEntity user, boolean isVirtual) {
-        Identifier currentloc = resolvCurrentComboState(user);
+        Identifier currentloc = resolveCurrentComboState(user);
         ComboState current = ComboStateRegistry.COMBO_STATE.getValue(currentloc);
 
         if (current == null)
@@ -258,7 +258,7 @@ public interface ISlashBladeState {
         if (this.isBroken() || this.isSealed())
             return ComboStateRegistry.getId(ComboStateRegistry.NONE);
 
-        Map.Entry<Integer, Identifier> currentloc = resolvCurrentComboStateTicks(user);
+        Map.Entry<Integer, Identifier> currentloc = resolveCurrentComboStateTicks(user);
 
         ComboState current = ComboStateRegistry.COMBO_STATE.getValue(currentloc.getValue());
         if (current == null)
@@ -324,13 +324,13 @@ public interface ISlashBladeState {
         applyComboSeq(entity, loc, this.getLastActionTime());
     }
 
-    default Identifier resolvCurrentComboState(LivingEntity user) {
+    default Identifier resolveCurrentComboState(LivingEntity user) {
         if (!(user.getMainHandItem().getItem() instanceof ItemSlashBlade))
             return ComboStateRegistry.getId(ComboStateRegistry.NONE);
-        return resolvCurrentComboStateTicks(user).getValue();
+        return resolveCurrentComboStateTicks(user).getValue();
     }
 
-    default Map.Entry<Integer, Identifier> resolvCurrentComboStateTicks(LivingEntity user) {
+    default Map.Entry<Integer, Identifier> resolveCurrentComboStateTicks(LivingEntity user) {
         Identifier current = ComboStateRegistry.COMBO_STATE.containsKey(getComboSeq()) ? getComboSeq()
                 : ComboStateRegistry.getId(ComboStateRegistry.NONE);
         ComboState currentCS = ComboStateRegistry.COMBO_STATE.getValue(current) != null

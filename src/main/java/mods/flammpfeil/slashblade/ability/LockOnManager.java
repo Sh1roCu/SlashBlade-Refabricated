@@ -127,7 +127,7 @@ public class LockOnManager {
                         .filter(input -> input.getCommands().contains(InputCommand.SNEAK)).isEmpty())
                     return;
 
-                float partialTicks = mcinstance.getDeltaTracker().getGameTimeDeltaPartialTick(false);
+                float partialTicks = mcinstance.getDeltaTracker().getGameTimeDeltaPartialTick(true);
 
                 float oldYawHead = entity.yHeadRot;
                 float oldYawOffset = entity.yBodyRot;

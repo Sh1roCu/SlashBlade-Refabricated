@@ -40,6 +40,7 @@ public class BladeModelManager {
         defaultModel = new WavefrontObject(DefaultResources.resourceDefaultModel);
 
         cache = CacheBuilder.newBuilder()
+                .maximumSize(256)
                 .build(CacheLoader.asyncReloading(new CacheLoader<>() {
                     @Override
                     public WavefrontObject load(Identifier key) {
@@ -50,7 +51,7 @@ public class BladeModelManager {
                         }
                     }
 
-                }, Executors.newCachedThreadPool()));
+                }, Executors.newFixedThreadPool(2)));
     }
 
 //    public void reload(TextureAtlas atlas) {

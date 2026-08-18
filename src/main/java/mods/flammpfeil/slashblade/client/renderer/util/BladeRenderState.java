@@ -15,7 +15,6 @@ import mods.flammpfeil.slashblade.client.renderer.model.obj.WavefrontObject;
 import mods.flammpfeil.slashblade.client.renderer.special.state.BladeItemRenderState;
 import mods.flammpfeil.slashblade.compat.iris.IrisCompat;
 import mods.flammpfeil.slashblade.event.client.RenderOverrideEvent;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.feature.ItemFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.OutputTarget;
@@ -27,6 +26,7 @@ import net.minecraft.util.ARGB;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -100,47 +100,55 @@ public class BladeRenderState {
         RenderOverrideEvent event = RenderOverrideEvent.onRenderOverride(state, model, target, texture, matrixStackIn,
                 submitNodeCollector, packedLightIn, getRenderType, enableEffect);
 
-        if (event.isCanceled())
-            return;
+        try {
+            if (event.isCanceled())
+                return;
 
-        Identifier loc = event.getTexture();
+            Identifier loc = event.getTexture();
 
-        RenderType rt = event.getGetRenderType().apply(loc);// getSlashBladeBlendLuminous(event.getTexture());
+            RenderType rt = event.getGetRenderType().apply(loc);// getSlashBladeBlendLuminous(event.getTexture());
 
-        int color = ARGB.color(
-                col.getAlpha(),
-                col.getRed(),
-                col.getGreen(),
-                col.getBlue()
-        );
+            int color = ARGB.color(
+                    col.getAlpha(),
+                    col.getRed(),
+                    col.getGreen(),
+                    col.getBlue()
+            );
 
-        submitNodeCollector.submitCustomGeometry(matrixStackIn, rt, (pose, vb) -> {
-            matrixStackIn.pushPose();
-            matrixStackIn.last().set(pose);
-            event.getModel().tessellateOnly(vb, matrixStackIn, event.getPackedLightIn(), color, event.getTarget());
-            matrixStackIn.popPose();
-        });
-
-        if (state.hasFoil && event.isEnableEffect()) {
-            RenderType type = target.startsWith("item_") ? BladeRenderState.SLASHBLADE_ITEM_GLINT : BladeRenderState.SLASHBLADE_GLINT;
-            submitNodeCollector.submitCustomGeometry(matrixStackIn, type, (pose, vb) -> {
+            submitNodeCollector.submitCustomGeometry(matrixStackIn, rt, (pose, vb) -> {
                 matrixStackIn.pushPose();
                 matrixStackIn.last().set(pose);
                 event.getModel().tessellateOnly(vb, matrixStackIn, event.getPackedLightIn(), color, event.getTarget());
                 matrixStackIn.popPose();
             });
+
+            if (state.hasFoil && event.isEnableEffect()) {
+                RenderType type = target.startsWith("item_") ? BladeRenderState.SLASHBLADE_ITEM_GLINT : BladeRenderState.SLASHBLADE_GLINT;
+                submitNodeCollector.submitCustomGeometry(matrixStackIn, type, (pose, vb) -> {
+                    matrixStackIn.pushPose();
+                    matrixStackIn.last().set(pose);
+                    event.getModel().tessellateOnly(vb, matrixStackIn, event.getPackedLightIn(), color, event.getTarget());
+                    matrixStackIn.popPose();
+                });
+            }
+
+        } finally {
+            Face.resetAlphaOverride();
+            Face.resetUvOperator();
+            resetCol();
         }
-
-        Face.resetAlphaOverride();
-        Face.resetUvOperator();
-
-        resetCol();
     }
 
     private static final Map<Identifier, RenderType> slashBladeBlendCache = new HashMap<>();
     private static final Map<Identifier, RenderType> slashBladeBlendColorWriteCache = new HashMap<>();
     private static final Map<Identifier, RenderType> slashBladeBlendLuminousCache = new HashMap<>();
-    private static final Map<ChargeEffectKey, RenderType> chargeEffectCache = new HashMap<>();
+    private static final int CHARGE_EFFECT_CACHE_MAX = 256;
+    private static final Map<ChargeEffectKey, RenderType> chargeEffectCache = new LinkedHashMap<>(16, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<ChargeEffectKey, RenderType> eldest) {
+            return size() > CHARGE_EFFECT_CACHE_MAX;
+        }
+    };
     private static final Map<Identifier, RenderType> luminousDepthWriteCache = new HashMap<>();
     private static final Map<Identifier, RenderType> reverseLuminousCache = new HashMap<>();
 
@@ -158,7 +166,7 @@ public class BladeRenderState {
 
             RenderSetup state = RenderSetup.builder(pipeline)
                     .withTexture("Sampler0", t)
-                    .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
+                    .setOutputTarget(OutputTarget.MAIN_TARGET)
                     .useLightmap()
                     .useOverlay()
                     .affectsCrumbling()
@@ -189,7 +197,7 @@ public class BladeRenderState {
 
         RenderSetup state = RenderSetup.builder(pipeline)
                 .withTexture("Sampler0", ItemFeatureRenderer.ENCHANTED_GLINT_ITEM)
-                .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
+                .setOutputTarget(OutputTarget.MAIN_TARGET)
                 .setTextureTransform(ENTITY_GLINT_TEXTURING)
                 .useOverlay()
                 .bufferSize(256)
@@ -216,7 +224,7 @@ public class BladeRenderState {
 
         RenderSetup state = RenderSetup.builder(pipeline)
                 .withTexture("Sampler0", ItemFeatureRenderer.ENCHANTED_GLINT_ITEM)
-                .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
+                .setOutputTarget(OutputTarget.MAIN_TARGET)
                 .setTextureTransform(GLINT_TEXTURING)
                 .useOverlay()
                 .bufferSize(256)
@@ -240,7 +248,7 @@ public class BladeRenderState {
 
             RenderSetup state = RenderSetup.builder(pipeline)
                     .withTexture("Sampler0", t)
-                    .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
+                    .setOutputTarget(OutputTarget.MAIN_TARGET)
                     .useLightmap()
                     .useOverlay()
                     .affectsCrumbling()
@@ -273,7 +281,7 @@ public class BladeRenderState {
 
             RenderSetup state = RenderSetup.builder(pipeline)
                     .withTexture("Sampler0", t)
-                    .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
+                    .setOutputTarget(OutputTarget.MAIN_TARGET)
                     .useLightmap()
                     .useOverlay()
                     .affectsCrumbling()
@@ -308,7 +316,7 @@ public class BladeRenderState {
 
             RenderSetup state = RenderSetup.builder(pipeline)
                     .withTexture("Sampler0", k.texture)
-                    .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
+                    .setOutputTarget(OutputTarget.MAIN_TARGET)
                     .setTextureTransform(new TextureTransform.OffsetTextureTransform(k.x, k.y))
                     .useLightmap()
                     .useOverlay()
@@ -335,7 +343,7 @@ public class BladeRenderState {
 
             RenderSetup state = RenderSetup.builder(pipeline)
                     .withTexture("Sampler0", t)
-                    .setOutputTarget(new OutputTarget("particles_target", () -> Minecraft.getInstance().levelRenderer.getParticlesTarget()))
+                    .setOutputTarget(OutputTarget.MAIN_TARGET)
                     .useLightmap()
                     .useOverlay()
                     .affectsCrumbling()
@@ -367,7 +375,7 @@ public class BladeRenderState {
 
             RenderSetup state = RenderSetup.builder(pipeline)
                     .withTexture("Sampler0", t)
-                    .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
+                    .setOutputTarget(OutputTarget.MAIN_TARGET)
                     .useLightmap()
                     .useOverlay()
                     .affectsCrumbling()

@@ -38,6 +38,7 @@ public class BladeMotionManager {
         }
 
         cache = CacheBuilder.newBuilder()
+                .maximumSize(64)
                 .build(CacheLoader.asyncReloading(new CacheLoader<Identifier, MmdVmdMotionMc>() {
                     @Override
                     public MmdVmdMotionMc load(Identifier key) throws Exception {
@@ -49,7 +50,7 @@ public class BladeMotionManager {
                         }
                     }
 
-                }, Executors.newCachedThreadPool()));
+                }, Executors.newFixedThreadPool(2)));
     }
 
     public void reload(TextureAtlas atlas) {

@@ -81,7 +81,7 @@ public class ArrowReflector {
                 return;
 
             Identifier old = s.getComboSeq();
-            Identifier current = s.resolvCurrentComboState(attacker);
+            Identifier current = s.resolveCurrentComboState(attacker);
             ComboState currentCS = ComboStateRegistry.COMBO_STATE.get(current).isPresent()
                     ? ComboStateRegistry.COMBO_STATE.getValue(current)
                     : ComboStateRegistry.NONE;

@@ -349,7 +349,7 @@ public class ItemSlashBlade extends Item implements ItemSlashBladeExtension, ISl
     public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 
         CapabilitySlashBlade.getBladeState(stack).ifPresent((state) -> {
-            Identifier loc = state.resolvCurrentComboState(attacker);
+            Identifier loc = state.resolveCurrentComboState(attacker);
             ComboState cs = ComboStateRegistry.COMBO_STATE.get(loc).isPresent()
                     ? ComboStateRegistry.COMBO_STATE.getValue(loc)
                     : ComboStateRegistry.NONE;
@@ -496,7 +496,7 @@ public class ItemSlashBlade extends Item implements ItemSlashBladeExtension, ISl
                 /*
                  * if(0.5f > state.getDamage()) state.setDamage(0.99f);
                  */
-                Identifier loc = state.resolvCurrentComboState(living);
+                Identifier loc = state.resolveCurrentComboState(living);
                 ComboState cs = ComboStateRegistry.COMBO_STATE.get(loc).isPresent()
                         ? ComboStateRegistry.COMBO_STATE.getValue(loc)
                         : ComboStateRegistry.NONE;
