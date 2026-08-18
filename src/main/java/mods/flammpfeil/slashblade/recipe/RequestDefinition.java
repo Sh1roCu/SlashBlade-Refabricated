@@ -1,11 +1,7 @@
 package mods.flammpfeil.slashblade.recipe;
 
-import cn.sh1rocu.slashblade.SlashBladeFabric;
 import com.google.common.collect.Lists;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
@@ -13,19 +9,16 @@ import mods.flammpfeil.slashblade.capability.slashblade.SlashBladeState;
 import mods.flammpfeil.slashblade.item.SwordType;
 import mods.flammpfeil.slashblade.registry.slashblade.EnchantmentDefinition;
 import net.minecraft.Util;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 public class RequestDefinition {
 
@@ -98,43 +91,6 @@ public class RequestDefinition {
         return defaultType;
     }
 
-    public static RequestDefinition fromJSON(JsonObject json) {
-        return CODEC.parse(JsonOps.INSTANCE, json).resultOrPartial(msg -> {
-            SlashBlade.LOGGER.error("Failed to parse : {}", msg);
-        }).orElseGet(Builder.newInstance()::build);
-    }
-
-    public JsonElement toJson() {
-        return CODEC.encodeStart(JsonOps.INSTANCE, this).resultOrPartial(msg -> {
-            SlashBlade.LOGGER.error("Failed to encode : {}", msg);
-        }).orElseThrow();
-    }
-
-    public static void toNetwork(RegistryFriendlyByteBuf buffer, RequestDefinition request) {
-        buffer.writeResourceLocation(request.getName());
-        buffer.writeInt(request.getProudSoulCount());
-        buffer.writeInt(request.getKillCount());
-        buffer.writeInt(request.getRefineCount());
-        buffer.writeCollection(request.getEnchantments(), (buf, enchantment) -> {
-            buf.writeResourceLocation(enchantment.getEnchantmentID());
-            buf.writeByte(enchantment.getEnchantmentLevel());
-        });
-
-        buffer.writeCollection(request.getDefaultType(), (buf, swordType) -> {
-            buf.writeUtf(swordType.name().toLowerCase(Locale.ENGLISH));
-        });
-    }
-
-    public static RequestDefinition fromNetwork(FriendlyByteBuf buffer) {
-        ResourceLocation name = buffer.readResourceLocation();
-        int proud = buffer.readInt();
-        int kill = buffer.readInt();
-        int refine = buffer.readInt();
-        var enchantments = buffer.readList((buf) -> new EnchantmentDefinition(buf.readResourceLocation(), buf.readByte()));
-        var types = buffer.readList((buf) -> SwordType.valueOf(buf.readUtf().toUpperCase(Locale.ENGLISH)));
-        return new RequestDefinition(name, proud, kill, refine, enchantments, types);
-    }
-
     public void initItemStack(ItemStack blade) {
         var state = CapabilitySlashBlade.getBladeState(blade).orElse(new SlashBladeState(blade));
         state.setNonEmpty();
@@ -144,12 +100,8 @@ public class RequestDefinition {
         state.setKillCount(getKillCount());
         state.setRefine(getRefineCount());
 
-        var lookup = SlashBladeFabric.REGISTRY_ACCESS.lookupOrThrow(Registries.ENCHANTMENT);
-        this.getEnchantments()
-                .forEach(enchantment -> blade.enchant(lookup.getOrThrow(
-                                ResourceKey.create(Registries.ENCHANTMENT, enchantment.getEnchantmentID())
-                        ),
-                        enchantment.getEnchantmentLevel()));
+        this.getEnchantments().forEach(enchantment ->
+                blade.enchant(enchantment.getEnchantment(), enchantment.getEnchantmentLevel()));
         this.defaultType.forEach(type -> {
             switch (type) {
                 case BEWITCHED -> state.setDefaultBewitched(true);
@@ -163,7 +115,6 @@ public class RequestDefinition {
             }
         });
     }
-
 
     public boolean test(ItemStack blade) {
         if (blade == null || blade.isEmpty())
@@ -181,14 +132,14 @@ public class RequestDefinition {
         boolean killCheck = state.getKillCount() >= this.getKillCount();
         boolean refineCheck = state.getRefine() >= this.getRefineCount();
 
-        var matching = blade.getEnchantments().entrySet();
-
         for (var enchantment : this.getEnchantments()) {
-            for (var entry : matching) {
-                if (entry.getKey().is(enchantment.getEnchantmentID()) && entry.getIntValue() < enchantment.getEnchantmentLevel()) {
-                    return false;
-                }
+            var ench = enchantment.getEnchantment();
+            var requiredLevel = enchantment.getEnchantmentLevel();
+
+            if (EnchantmentHelper.getItemEnchantmentLevel(ench, blade) < requiredLevel) {
+                return false;
             }
+
         }
 
         boolean types = SwordType.from(blade).containsAll(this.getDefaultType());

@@ -103,11 +103,11 @@ public class SlashBladeDefinition {
         return enchantments;
     }
 
-    public ItemStack getBlade(HolderLookup.Provider access) {
-        return getBlade(getItem(), access);
+    public ItemStack getBlade() {
+        return getBlade(getItem());
     }
 
-    public ItemStack getBlade(Item bladeItem, HolderLookup.Provider access) {
+    public ItemStack getBlade(Item bladeItem) {
         SlashBladeRegistryEvent.Pre event = new SlashBladeRegistryEvent.Pre(this);
         SlashBladeRegistryEvent.PRE.invoker().onPre(event);
         if (event.isCanceled())
@@ -144,11 +144,8 @@ public class SlashBladeDefinition {
         if (!this.getName().equals(SlashBlade.prefix("none")))
             state.setTranslationKey(this.getTranslationKey());
 
-        var lookup = access.lookupOrThrow(Registries.ENCHANTMENT);
         for (var instance : this.enchantments) {
-            var key = ResourceKey.create(Registries.ENCHANTMENT, instance.getEnchantmentID());
-            var enchantment = lookup.getOrThrow(key);
-            result.enchant(enchantment, instance.getEnchantmentLevel());
+            result.enchant(instance.getEnchantment(), instance.getEnchantmentLevel());
 
         }
         if (this.stateDefinition.isUnbreakable())

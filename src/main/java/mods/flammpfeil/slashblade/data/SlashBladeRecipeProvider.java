@@ -16,22 +16,34 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ItemLike;
 
+import javax.annotation.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public class SlashBladeRecipeProvider extends FabricRecipeProvider {
+
+    private final CompletableFuture<HolderLookup.Provider> registries;
+
+    @Nullable
+    private HolderLookup.Provider provider;
+
     public SlashBladeRecipeProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
+        this.registries = registriesFuture;
     }
 
     @Override
@@ -108,7 +120,7 @@ public class SlashBladeRecipeProvider extends FabricRecipeProvider {
                 .define('F', ConventionalItemTags.FEATHERS)
                 .define('C', SlashBladeIngredient.of(RequestDefinition.Builder.newInstance()
                         .name(SlashBladeBuiltInRegistry.RUBY.location())
-                        .addEnchantment(new EnchantmentDefinition(Enchantments.SMITE.location(), 1)).build()).toVanilla())
+                        .addEnchantment(new EnchantmentDefinition(holder(Enchantments.SMITE), 1)).build()).toVanilla())
 
                 .unlockedBy(getHasName(SBItems.SLASHBLADE_SILVERBAMBOO), has(SBItems.SLASHBLADE_SILVERBAMBOO))
                 .save(consumer);
@@ -121,9 +133,7 @@ public class SlashBladeRecipeProvider extends FabricRecipeProvider {
                 .define('C',
                         SlashBladeIngredient.of(
                                 RequestDefinition.Builder.newInstance().name(SlashBladeBuiltInRegistry.RUBY.location())
-
-                                        .addEnchantment(new EnchantmentDefinition(
-                                                Enchantments.LOOTING.location(), 1))
+                                        .addEnchantment(new EnchantmentDefinition(holder(Enchantments.LOOTING), 1))
                                         .build()).toVanilla())
 
                 .unlockedBy(getHasName(SBItems.SLASHBLADE_SILVERBAMBOO), has(SBItems.SLASHBLADE_SILVERBAMBOO))
@@ -147,7 +157,7 @@ public class SlashBladeRecipeProvider extends FabricRecipeProvider {
                 .pattern("DBD").pattern("SES")
                 .define('B',
                         SlashBladeIngredient.of(SBItems.SLASHBLADE_WOOD, RequestDefinition.Builder.newInstance()
-                                .addEnchantment(new EnchantmentDefinition(Enchantments.UNBREAKING.location(), 1))
+                                .addEnchantment(new EnchantmentDefinition(holder(Enchantments.UNBREAKING), 1))
                                 .proudSoul(1000).refineCount(10).build()).toVanilla())
                 .define('S', Ingredient.of(SBItems.PROUDSOUL_SPHERE)).define('E', Ingredient.of(Items.ENDER_EYE))
                 .define('D', Ingredient.of(Items.ENDER_PEARL))
@@ -204,7 +214,7 @@ public class SlashBladeRecipeProvider extends FabricRecipeProvider {
                 .define('B',
                         SlashBladeIngredient.of(RequestDefinition.Builder.newInstance()
                                 .addEnchantment(
-                                        new EnchantmentDefinition(Enchantments.FIRE_ASPECT.location(), 1))
+                                        new EnchantmentDefinition(holder(Enchantments.FIRE_ASPECT), 1))
                                 .build()).toVanilla())
                 .define('S', Ingredient.of(SBItems.PROUDSOUL_SPHERE))
                 .unlockedBy(getHasName(SBItems.SLASHBLADE), inventoryTrigger(ItemPredicate.Builder.item().withSubPredicate(
@@ -240,5 +250,12 @@ public class SlashBladeRecipeProvider extends FabricRecipeProvider {
                 .define('P', Ingredient.of(SBItems.PROUDSOUL_TRAPEZOHEDRON))
                 .unlockedBy(getHasName(SBItems.SLASHBLADE_SILVERBAMBOO), has(SBItems.SLASHBLADE_SILVERBAMBOO))
                 .save(consumer);
+    }
+
+    private Holder<Enchantment> holder(ResourceKey<Enchantment> key) {
+        if (this.provider == null) {
+            provider = this.registries.join();
+        }
+        return this.provider.lookup(Registries.ENCHANTMENT).orElseThrow().getOrThrow(key);
     }
 }

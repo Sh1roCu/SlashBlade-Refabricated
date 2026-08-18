@@ -24,8 +24,6 @@ import net.minecraft.world.item.ItemStack;
 
 public class SlashBladeFabric implements ModInitializer {
 
-    public static final HolderLookup.Provider REGISTRY_ACCESS = VanillaRegistries.createLookup();
-
     @Override
     public void onInitialize() {
         SlashBlade.init();

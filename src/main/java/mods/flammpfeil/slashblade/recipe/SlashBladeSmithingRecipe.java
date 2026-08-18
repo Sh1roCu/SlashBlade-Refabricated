@@ -67,7 +67,7 @@ public record SlashBladeSmithingRecipe(ResourceLocation outputBlade, Ingredient 
 
         if (!BuiltInRegistries.ITEM.getKey(result.getItem()).equals(outputBlade)) {
             result = provider.lookupOrThrow(SlashBladeDefinition.REGISTRY_KEY).getOrThrow(ResourceKey.create(SlashBladeDefinition.REGISTRY_KEY, outputBlade))
-                    .value().getBlade(provider);
+                    .value().getBlade();
         }
 
         return result;

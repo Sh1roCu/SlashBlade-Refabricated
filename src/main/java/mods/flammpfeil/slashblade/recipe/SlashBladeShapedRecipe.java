@@ -80,7 +80,7 @@ public class SlashBladeShapedRecipe extends ShapedRecipe {
 
         if (!BuiltInRegistries.ITEM.getKey(result.getItem()).equals(getOutputBlade())) {
             result = provider.lookupOrThrow(SlashBladeDefinition.REGISTRY_KEY).getOrThrow(getOutputBladeKey())
-                    .value().getBlade(provider);
+                    .value().getBlade();
         }
 
         return result;
