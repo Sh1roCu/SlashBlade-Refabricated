@@ -1,6 +1,5 @@
 package mods.flammpfeil.slashblade.recipe;
 
-import cn.sh1rocu.slashblade.SlashBladeFabric;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import mods.flammpfeil.slashblade.SlashBladeConfig;

@@ -38,6 +38,7 @@ public class SlashBladeFabric implements ModInitializer {
             });
         });
         RecipeSynchronization.synchronizeRecipeSerializer(RecipeSerializerRegistry.SLASHBLADE_SHAPED);
+        RecipeSynchronization.synchronizeRecipeSerializer(RecipeSerializerRegistry.SLASHBLADE_SMITHING);
         CreativeModeTabEvents.MODIFY_OUTPUT_ALL.register(SlashBladeCreativeGroup::onCreativeTagBuilding);
         BlandStandEventHandler.init();
         MobSpawnEvent.FINALIZE_SPAWN.register(EntitySpawnEventHandler::onMobSpawn);
