@@ -28,7 +28,6 @@ public class SlashBladeFabricClient implements ClientModInitializer, ModelLoadin
     public void onInitializeClient() {
         UnbakedModelDeserializer.register(ObjLoader.ID, ObjLoader.INSTANCE);
         ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(ObjLoader.ID, ObjLoader.INSTANCE);
-        ClientRecipeSynchronizedEvent.EVENT.register(ClientRecipeEvent::onRecipeReceived);
         ModelLoadingPlugin.register(this);
         PreloadedModelEvent.registerResourceLoaders();
         NetworkManager.registerClientReceivers();

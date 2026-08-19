@@ -1,6 +1,5 @@
 package mods.flammpfeil.slashblade.recipe;
 
-import cn.sh1rocu.slashblade.SlashBladeFabric;
 import mods.flammpfeil.slashblade.SlashBladeConfig;
 import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 import mods.flammpfeil.slashblade.event.handler.RegistryHandler;
@@ -48,11 +47,6 @@ public class SlashBladeShapedRecipe implements CraftingRecipe {
         this.result = itemStack;
         this.showNotification = showNotification;
         this.outputBlade = blade;
-    }
-
-    @Override
-    public RecipeType<CraftingRecipe> getType() {
-        return RecipeSerializerRegistry.SLASHBLADE_SHAPED_TYPE;
     }
 
     @Override
@@ -126,6 +120,14 @@ public class SlashBladeShapedRecipe implements CraftingRecipe {
     @Override
     public boolean matches(CraftingInput input, Level level) {
         return this.pattern.matches(input);
+    }
+
+    public int getWidth() {
+        return this.pattern.width();
+    }
+
+    public int getHeight() {
+        return this.pattern.height();
     }
 
     @Override

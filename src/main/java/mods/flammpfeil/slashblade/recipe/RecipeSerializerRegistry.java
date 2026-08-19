@@ -4,14 +4,12 @@ import mods.flammpfeil.slashblade.SlashBlade;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 
 public class RecipeSerializerRegistry {
     public static final RecipeSerializer<SlashBladeShapedRecipe> SLASHBLADE_SHAPED = register("shaped_blade", SlashBladeShapedRecipe.SERIALIZER);
-    public static final RecipeType<CraftingRecipe> SLASHBLADE_SHAPED_TYPE = register("shaped_blade", simple(SlashBlade.prefix("shaped_blade")));
 
     public static final RecipeSerializer<ProudsoulShapelessRecipe> PROUDSOUL_RECIPE = register("proudsoul", ProudsoulShapelessRecipe.SERIALIZER);
 
