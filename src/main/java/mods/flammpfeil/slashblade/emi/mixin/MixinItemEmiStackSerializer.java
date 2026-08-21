@@ -3,6 +3,7 @@
 //import com.google.gson.JsonElement;
 //import com.google.gson.JsonObject;
 //import com.google.gson.JsonPrimitive;
+//import com.mojang.serialization.DynamicOps;
 //import dev.emi.emi.EmiPort;
 //import dev.emi.emi.api.stack.EmiIngredient;
 //import dev.emi.emi.api.stack.EmiStack;
@@ -13,13 +14,14 @@
 //import dev.emi.emi.stack.serializer.ItemEmiStackSerializer;
 //import mods.flammpfeil.slashblade.capability.slashblade.CapabilitySlashBlade;
 //import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+//import net.minecraft.client.Minecraft;
 //import net.minecraft.core.Holder;
 //import net.minecraft.core.component.DataComponentPatch;
 //import net.minecraft.nbt.CompoundTag;
 //import net.minecraft.nbt.NbtOps;
 //import net.minecraft.nbt.Tag;
 //import net.minecraft.nbt.TagParser;
-//import net.minecraft.resources.Identifier;
+//import net.minecraft.resources.ResourceLocation;
 //import net.minecraft.util.GsonHelper;
 //import net.minecraft.world.item.Item;
 //import net.minecraft.world.item.ItemStack;
@@ -30,6 +32,11 @@
 //@Mixin(value = ItemEmiStackSerializer.class, remap = false)
 //public abstract class MixinItemEmiStackSerializer implements EmiStackSerializer<ItemEmiStack> {
 //
+//    private static <T> DynamicOps<T> withRegistryAccess(DynamicOps<T> ops) {
+//        Minecraft instance = Minecraft.getInstance();
+//        return instance != null && instance.level != null ? instance.level.registryAccess().createSerializationContext(ops) : ops;
+//    }
+//
 //    @Override
 //    public JsonElement serialize(ItemEmiStack stack) {
 //        if (stack.getAmount() == 1 && stack.getChance() == 1 &&
@@ -38,7 +45,7 @@
 //            String s = getType() + ":" + stack.getId();
 //            DataComponentPatch patch = stack.getComponentChanges();
 //            if (!patch.isEmpty()) {
-//                s += DataComponentPatch.CODEC.encodeStart(NbtOps.INSTANCE, patch).getOrThrow().getAsString();
+//                s += DataComponentPatch.CODEC.encodeStart(withRegistryAccess(NbtOps.INSTANCE), patch).getOrThrow().getAsString();
 //            }
 //            return new JsonPrimitive(s);
 //
@@ -48,7 +55,7 @@
 //            json.addProperty("id", stack.getId().toString());
 //            DataComponentPatch patch = stack.getComponentChanges();
 //            if (!patch.isEmpty()) {
-//                json.addProperty("nbt", DataComponentPatch.CODEC.encodeStart(NbtOps.INSTANCE, patch).getOrThrow().getAsString());
+//                json.addProperty("nbt", DataComponentPatch.CODEC.encodeStart(withRegistryAccess(NbtOps.INSTANCE), patch).getOrThrow().getAsString());
 //            }
 //            if (stack.getAmount() != 1) {
 //                json.addProperty("amount", stack.getAmount());
@@ -82,7 +89,7 @@
 //
 //    @Override
 //    public EmiIngredient deserialize(JsonElement element) {
-//        Identifier id = null;
+//        ResourceLocation id = null;
 //        String nbt = null;
 //        String capNBT = null;
 //        long amount = 1;
@@ -114,7 +121,7 @@
 //                DataComponentPatch nbtPatch = DataComponentPatch.EMPTY;
 //                if (nbt != null) {
 //                    Tag tag = TagParser.parseTag(nbt);
-//                    nbtPatch = DataComponentPatch.CODEC.parse(NbtOps.INSTANCE, tag).getOrThrow();
+//                    nbtPatch = DataComponentPatch.CODEC.parse(withRegistryAccess(NbtOps.INSTANCE), tag).getOrThrow();
 //                }
 //                EmiStack stack;
 //                if (capNBT != null) {
