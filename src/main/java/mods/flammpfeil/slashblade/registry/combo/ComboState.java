@@ -238,14 +238,19 @@ public class ComboState {
                 return;
             }
 
+            if (timeLine.isEmpty()) {
+                persistentData.putInt(LAST_PROCESSED_TICK_KEY, elapsed + 1);
+                return;
+            }
+
             while (lastProcessedTick <= elapsed) {
                 Consumer<LivingEntity> action = timeLine.get(lastProcessedTick);
                 if (action != null) {
                     action.accept(livingEntity);
-                    persistentData.putInt(LAST_PROCESSED_TICK_KEY, elapsed + 1);
                 }
                 lastProcessedTick++;
             }
+            persistentData.putInt(LAST_PROCESSED_TICK_KEY, elapsed + 1);
         }
     }
 
