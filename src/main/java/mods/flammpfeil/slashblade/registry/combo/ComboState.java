@@ -165,7 +165,7 @@ public class ComboState {
 
     public static SlashArts.ArtsType releaseActionQuickCharge(LivingEntity user, Integer elapsed) {
         var holder = user.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.SOUL_SPEED);
-        int level = EnchantmentHelper.getEnchantmentLevel(holder, user);
+        int level = EnchantmentHelper.getItemEnchantmentLevel(holder, user.getMainHandItem());
         if (elapsed <= 3 + level) {
             AdvancementHelper.grantedIf(Enchantments.SOUL_SPEED, user);
             AdvancementHelper.grantCriterion(user, AdvancementHelper.ADVANCEMENT_QUICK_CHARGE);
@@ -238,19 +238,14 @@ public class ComboState {
                 return;
             }
 
-            if (timeLine.isEmpty()) {
-                persistentData.putInt(LAST_PROCESSED_TICK_KEY, elapsed + 1);
-                return;
-            }
-
             while (lastProcessedTick <= elapsed) {
                 Consumer<LivingEntity> action = timeLine.get(lastProcessedTick);
                 if (action != null) {
                     action.accept(livingEntity);
+                    persistentData.putInt(LAST_PROCESSED_TICK_KEY, elapsed + 1);
                 }
                 lastProcessedTick++;
             }
-            persistentData.putInt(LAST_PROCESSED_TICK_KEY, elapsed + 1);
         }
     }
 
@@ -349,13 +344,28 @@ public class ComboState {
             return this;
         }
 
+        public Builder setHoldAction(Consumer<LivingEntity> holdAction) {
+            this.holdAction = holdAction;
+            return this;
+        }
+
         public Builder addHoldAction(Consumer<LivingEntity> holdAction) {
             this.holdAction = this.holdAction.andThen(holdAction);
             return this;
         }
 
+        public Builder setTickAction(Consumer<LivingEntity> tickAction) {
+            this.tickAction = tickAction;
+            return this;
+        }
+
         public Builder addTickAction(Consumer<LivingEntity> tickAction) {
             this.tickAction = this.tickAction.andThen(tickAction);
+            return this;
+        }
+
+        public Builder setHitEffect(BiConsumer<LivingEntity, LivingEntity> hitEffect) {
+            this.hitEffect = hitEffect;
             return this;
         }
 
@@ -369,8 +379,13 @@ public class ComboState {
             return this;
         }
 
-        public Builder releaseAction(BiFunction<LivingEntity, Integer, SlashArts.ArtsType> clickAction) {
-            this.releaseAction = clickAction;
+        public Builder addClickAction(Consumer<LivingEntity> clickAction) {
+            this.clickAction = this.clickAction.andThen(clickAction);
+            return this;
+        }
+
+        public Builder releaseAction(BiFunction<LivingEntity, Integer, SlashArts.ArtsType> releaseAction) {
+            this.releaseAction = releaseAction;
             return this;
         }
     }
@@ -379,15 +394,20 @@ public class ComboState {
         @Override
         default TickAction andThen(Consumer<? super LivingEntity> after) {
             return (LivingEntity livingEntity) -> {
+                CompoundTag persistentData = ((EntityExtension) livingEntity).sb$getPersistentData();
+                int lastProcessedTick = persistentData.getInt(LAST_PROCESSED_TICK_KEY);
+                int lastProcessedTick2 = lastProcessedTick;
                 if (after instanceof TimeLineTickAction) {
-                    CompoundTag persistentData = ((EntityExtension) livingEntity).sb$getPersistentData();
-                    int lastProcessedTick = persistentData.getInt(LAST_PROCESSED_TICK_KEY);
                     accept(livingEntity);
+                    lastProcessedTick2 = persistentData.getInt(LAST_PROCESSED_TICK_KEY);
                     persistentData.putInt(LAST_PROCESSED_TICK_KEY, lastProcessedTick);
                 } else {
                     accept(livingEntity);
                 }
                 after.accept(livingEntity);
+                if (persistentData.getInt(LAST_PROCESSED_TICK_KEY) == lastProcessedTick) {
+                    persistentData.putInt(LAST_PROCESSED_TICK_KEY, lastProcessedTick2);
+                }
             };
         }
     }

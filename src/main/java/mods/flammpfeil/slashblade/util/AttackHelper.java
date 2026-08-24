@@ -77,6 +77,12 @@ public class AttackHelper {
 
         Vec3 originalMotion = target.getDeltaMovement();
 
+        if (attacker.level() instanceof ServerLevel serverLevel) {
+            // 用去基础面板计算而不是最终伤害去计算
+            baseDamage += EnchantmentHelper.modifyDamage(serverLevel, attacker.getMainHandItem(), target, damageSource,
+                    (float) attacker.getAttributeValue(Attributes.ATTACK_DAMAGE)) - attacker.getAttributeValue(Attributes.ATTACK_DAMAGE);
+        }
+
         boolean damageSuccess = target.hurt(damageSource, (float) baseDamage);
 
         if (damageSuccess) {
@@ -98,7 +104,6 @@ public class AttackHelper {
 
         baseDamage += getSweepingBonus(attacker);
         baseDamage += getRankBonus(attacker);
-        baseDamage = getEnchantmentBonus(attacker, target, damageSource, (float) baseDamage);
         baseDamage *= comboRatio * getSlashBladeDamageScale(attacker) * SLASHBLADE_DAMAGE_MULTIPLIER.get();
 
         if (attacker instanceof Player player) {
@@ -138,21 +143,7 @@ public class AttackHelper {
         }
         return (float) rankDamageBonus;
     }
-
-    /**
-     * 附魔加成
-     */
-    public static float getEnchantmentBonus(LivingEntity attacker, Entity target, DamageSource damageSource, float baseDamage) {
-        if (target.level() instanceof ServerLevel serverLevel) {
-            if (target instanceof LivingEntity living) {
-                return EnchantmentHelper.modifyDamage(serverLevel, attacker.getMainHandItem(), living, damageSource, baseDamage);
-            } else if (target instanceof PartEntity<?> part && part.getParent() instanceof LivingEntity living) {
-                return EnchantmentHelper.modifyDamage(serverLevel, attacker.getMainHandItem(), living, damageSource, baseDamage);
-            }
-        }
-        return baseDamage;
-    }
-
+    
     /**
      * 计算击退
      */

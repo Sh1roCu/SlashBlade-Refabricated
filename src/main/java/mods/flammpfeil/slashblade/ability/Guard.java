@@ -106,7 +106,7 @@ public class Guard {
         long timeCurrent = victim.level().getGameTime();
 
         var soulSpeed = victim.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.SOUL_SPEED);
-        int soulSpeedLevel = EnchantmentHelper.getEnchantmentLevel(soulSpeed, victim);
+        int soulSpeedLevel = EnchantmentHelper.getItemEnchantmentLevel(soulSpeed, stack);
         int justAcceptancePeriod = 5 + soulSpeedLevel;
 
         boolean isJust = false;
