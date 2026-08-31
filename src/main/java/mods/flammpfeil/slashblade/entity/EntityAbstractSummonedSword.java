@@ -47,6 +47,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static mods.flammpfeil.slashblade.SlashBladeConfig.SLASHBLADE_DAMAGE_MULTIPLIER;
@@ -71,6 +72,7 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
 
     private int ticksInGround;
     private boolean inGround;
+    @Nullable
     private BlockState inBlockState;
     protected int ticksInAir;
     private double damage = 1.0D;
@@ -308,7 +310,7 @@ public class EntityAbstractSummonedSword extends Projectile implements IShootabl
         }
 
         if (this.inGround && !disallowedHitBlock) {
-            if (this.inBlockState != blockstate && this.level().noCollision(this.getBoundingBox().inflate(0.06D))) {
+            if (!Objects.equals(this.inBlockState, blockstate) && this.level().noCollision(this.getBoundingBox().inflate(0.06D))) {
                 // block breaked
                 this.burst();
             } else if (!this.level().isClientSide()) {
